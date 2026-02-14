@@ -1,17 +1,28 @@
-import streamlit as st
+import os
 import pandas as pd
+import streamlit as st
 
-st.set_page_config(page_title="Paramount Dashboard", layout="wide")
-st.title("Paramount Dashboard")
+candidate_paths = [
+    "data/current.xlsx",
+    "data/WIP Current Data.xlsx",
+    "WIP Current Data.xlsx",
+]
 
-uploaded_file = st.file_uploader("Upload Excel (optional)", type=["xlsx", "xls"])
+found_path = None
+for p in candidate_paths:
+    if os.path.exists(p):
+        found_path = p
+        break
 
-if uploaded_file is not None:
-    df = pd.read_excel(uploaded_file)
-    st.caption("Using uploaded file for this session only.")
-else:
-    df = pd.read_excel("data/current.xlsx")
-    st.caption("Using the published dataset (data/current.xlsx).")
+if found_path is None:
+    st.error("Could not find an Excel file. Looked for: " + ", ".join(candidate_paths))
+    st.write("Repo root files:", os.listdir("."))
+    if os.path.exists("data"):
+        st.write("data/ files:", os.listdir("data"))
+    st.stop()
+
+st.caption("Loading dataset from " + found_path)
+df = pd.read_excel(found_path)
 
 df = pd.read_excel(uploaded_file)
 st.subheader("Dashboard Builder")
