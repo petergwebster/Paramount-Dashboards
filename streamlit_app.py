@@ -2,34 +2,20 @@ import os
 import pandas as pd
 import streamlit as st
 
-candidate_paths = [
-    "data/current.xlsx",
-    "data/WIP Current Data.xlsx",
-    "WIP Current Data.xlsx",
-]
-
-found_path = None
-for p in candidate_paths:
-    if os.path.exists(p):
-        found_path = p
-        break
-
-if found_path is None:
-    st.error("Could not find an Excel file. Looked for: " + ", ".join(candidate_paths))
-    st.write("Repo root files:", os.listdir("."))
-    if os.path.exists("data"):
-        st.write("data/ files:", os.listdir("data"))
-    st.stop()
-
-st.caption("Loading dataset from " + found_path)
-df = pd.read_excel(found_path)
-
-df = pd.read_excel(uploaded_file)
 st.subheader("Dashboard Builder")
 
-filter_cols = st.multiselect("Filter columns (optional)", options=list(df.columns))
-df_filtered = df.copy()
+uploaded_file = st.file_uploader("Upload Excel (optional)", type=["xlsx", "xls"])
 
+if uploaded_file is not None:
+    df = pd.read_excel(uploaded_file)
+    st.caption("Using uploaded file for this session only.")
+else:
+    df = pd.read_excel("data/current.xlsx")
+    st.caption("Loading dataset from data/current.xlsx")
+
+filter_cols = st.multiselect("Filter columns (optional)", options=list(df.columns))
+
+df_filtered = df.copy()
 for filter_col in filter_cols:
     vals = df_filtered[filter_col].astype(str).fillna("(blank)")
     unique_vals = sorted(vals.unique().tolist())
@@ -38,7 +24,6 @@ for filter_col in filter_cols:
         df_filtered = df_filtered[vals.isin(chosen_vals)]
 
 st.caption("Rows after filters: " + str(len(df_filtered)))
-
 st.divider()
 
 group_col = st.selectbox(
@@ -48,6 +33,7 @@ group_col = st.selectbox(
 )
 
 agg_mode = st.selectbox("Metric", options=["Count rows", "Count unique", "Sum", "Average"])
+
 value_col = None
 if agg_mode in ["Count unique", "Sum", "Average"]:
     value_col = st.selectbox("Value column", options=list(df.columns))
@@ -74,10 +60,12 @@ st.dataframe(summary_df, use_container_width=True)
 
 st.subheader("Chart")
 st.bar_chart(summary_df.set_index(group_col)["Value"])
+
 st.subheader("Preview")
 st.dataframe(df.head(50), use_container_width=True)
 
 st.subheader("Columns")
 st.write(list(df.columns))
+
 st.divider()
 
