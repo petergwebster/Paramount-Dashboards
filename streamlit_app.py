@@ -4,10 +4,14 @@ import pandas as pd
 st.set_page_config(page_title="Paramount Dashboard", layout="wide")
 st.title("Paramount Dashboard")
 
-uploaded_file = st.file_uploader("Upload Excel", type=["xlsx", "xls"])
-if uploaded_file is None:
-    st.info("Upload an Excel file to begin.")
-    st.stop()
+uploaded_file = st.file_uploader("Upload Excel (optional)", type=["xlsx", "xls"])
+
+if uploaded_file is not None:
+    df = pd.read_excel(uploaded_file)
+    st.caption("Using uploaded file for this session only.")
+else:
+    df = pd.read_excel("data/current.xlsx")
+    st.caption("Using the published dataset (data/current.xlsx).")
 
 df = pd.read_excel(uploaded_file)
 st.subheader("Dashboard Builder")
