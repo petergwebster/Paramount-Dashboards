@@ -12,6 +12,12 @@ if uploaded_file is not None:
 else:
     df = pd.read_excel("data/current.xlsx")
     st.caption("Loading dataset from data/current.xlsx")
+import datetime
+
+file_mtime = os.path.getmtime("data/current.xlsx")
+st.caption(
+    "Published data last updated: "
+    + datetime.datetime.fromtimestamp(file_mtime).strftime("%Y-%m-%d %H:%M:%S")
 
 filter_cols = st.multiselect("Filter columns (optional)", options=list(df.columns))
 
