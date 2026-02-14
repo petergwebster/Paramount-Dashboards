@@ -1,4 +1,5 @@
 import os
+import datetime
 import pandas as pd
 import streamlit as st
 
@@ -10,14 +11,15 @@ if uploaded_file is not None:
     df = pd.read_excel(uploaded_file)
     st.caption("Using uploaded file for this session only.")
 else:
-    df = pd.read_excel("data/current.xlsx")
-    st.caption("Loading dataset from data/current.xlsx")
-import datetime
+    published_path = "data/current.xlsx"
+    df = pd.read_excel(published_path)
+    st.caption("Loading dataset from " + published_path)
 
-file_mtime = os.path.getmtime("data/current.xlsx")
-st.caption(
-    "Published data last updated: "
-    + datetime.datetime.fromtimestamp(file_mtime).strftime("%Y-%m-%d %H:%M:%S")
+    file_mtime = os.path.getmtime(published_path)
+    st.caption(
+        "Published data last updated: "
+        + datetime.datetime.fromtimestamp(file_mtime).strftime("%Y-%m-%d %H:%M:%S")
+    )
 
 filter_cols = st.multiselect("Filter columns (optional)", options=list(df.columns))
 
@@ -35,7 +37,7 @@ st.divider()
 group_col = st.selectbox(
     "Group by",
     options=list(df.columns),
-    index=list(df.columns).index("PRODUCT_TYPE") if "PRODUCT_TYPE" in df.columns else 0
+    index=list(df.columns).index("PRODUCT_TYPE") if "PRODUCT_TYPE" in df.columns else 0,
 )
 
 agg_mode = st.selectbox("Metric", options=["Count rows", "Count unique", "Sum", "Average"])
