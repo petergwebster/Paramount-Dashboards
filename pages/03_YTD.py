@@ -137,6 +137,8 @@ with tab_dash:
         if time_col is not None and time_col in df_plot.columns:
             df_plot[time_col] = df_plot[time_col].astype(str).str.strip()
             df_plot = df_plot.dropna(subset=[time_col])
+            df_plot[time_col] = df_plot[time_col].astype(str).str.strip()
+            df_plot = df_plot[df_plot[time_col].notna() & (df_plot[time_col] != "") & (df_plot[time_col].str.lower() != "")]
             df_plot = df_plot.groupby(time_col, as_index=False)[[plan_col, actual_col]].sum()
 
             df_plot["_time_sort"] = pd.to_numeric(df_plot[time_col], errors="coerce")
