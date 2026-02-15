@@ -52,11 +52,11 @@ def guess_header_row(df_in, max_scan_rows=25):
         joined = " ".join(row_vals)
         if "division" in joined and "weeks" in joined:
             return i
+        if "division" in joined and "week" in joined:
+            return i
         if "division" in joined and "month" in joined:
             return i
-        if "yards" in joined and "plan" in joined:
-            return i
-        if "income" in joined and "plan" in joined:
+        if "plan" in joined and ("actual" in joined or "net" in joined):
             return i
     return 2
 
@@ -80,6 +80,8 @@ def fmt_int(x):
     except Exception:
         return "NA"
 
+tab_dash, tab_head, tab_debug = st.tabs(["Dashboard", "Head", "Debug"])
+
 header_row_idx = guess_header_row(df_raw)
 df0 = df_raw.copy()
 if header_row_idx is not None and header_row_idx >= 0 and header_row_idx < len(df0):
@@ -87,83 +89,67 @@ if header_row_idx is not None and header_row_idx >= 0 and header_row_idx < len(d
 
 df0.columns = make_unique_columns(df0.columns)
 
-cols_clean = list(df0.columns)
+time_col = (
+    find_first_col(df0.columns, ["weeks"])
+    or find_first_col(df0.columns, ["week"])
+    or find_first_col(df0.columns, ["period"])
+    or find_first_col(df0.columns, ["month"])
+)
 
-time_col = None
-time_col = find_first_col(cols_clean, ["weeks"])
-if time_col is None:
-    time_col = find_first_col(cols_clean, ["week"])
-if time_col is None:
-    time_col = find_first_col(cols_clean, ["period"])
-if time_col is None:
-    time_col = find_first_col(cols_clean, ["month"])
-if time_col is None:
-    time_col = find_first_col(cols_clean, ["445", "month"])
+plan_col = (
+    find_first_col(df0.columns, ["plan"])
+    or find_first_col(df0.columns, ["planned"])
+)
 
-plan_col = None
-plan_col = find_first_col(cols_clean, ["yards", "plan"])
-if plan_col is None:
-    plan_col = find_first_col(cols_clean, ["plan", "yards"])
-if plan_col is None:
-    plan_col = find_first_col(cols_clean, ["plan"])
-
-actual_col = None
-actual_col = find_first_col(cols_clean, ["net", "yards"])
-if actual_col is None:
-    actual_col = find_first_col(cols_clean, ["yards", "invoiced"])
-if actual_col is None:
-    actual_col = find_first_col(cols_clean, ["invoiced"])
-if actual_col is None:
-    actual_col = find_first_col(cols_clean, ["yards", "produced"])
-if actual_col is None:
-    actual_col = find_first_col(cols_clean, ["produced"])
-
-tab_dash, tab_head, tab_debug = st.tabs(["Dashboard", "Head", "Debug"])
+actual_col = (
+    find_first_col(df0.columns, ["actual"])
+    or find_first_col(df0.columns, ["net"])
+    or find_first_col(df0.columns, ["invoiced"])
+)
 
 with tab_dash:
-    st.caption("Source sheet: " + str(ytd_name) + " | Header promoted from row: " + str(header_row_idx))
     st.subheader("Plan vs Actual (quick)")
+    st.caption("Source sheet: " + str(ytd_name) + " | Header promoted from row: " + str(header_row_idx))
 
     if plan_col is None or actual_col is None:
-        st.warning("Could not confidently detect Plan and Actual columns. See Debug tab.")
-    else:
-        df_plot = df0.copy()
+        st.warning("Could not reliably detect Plan and Actual columns. Use Debug tab to inspect detected columns.")
+        st.stop()
 
-        df_plot[plan_col] = _to_num(df_plot[plan_col])
-        df_plot[actual_col] = _to_num(df_plot[actual_col])
+    df_plot = df0.copy()
 
-        if time_col is not None and time_col in df_plot.columns:
-            df_plot[time_col] = df_plot[time_col].astype(str).str.strip()
-            bad_time_vals = {"", "", "none", "nat", "null"}
-            df_plot = df_plot[~df_plot[time_col].str.lower().isin(bad_time_vals)].copy()
+    df_plot[plan_col] = _to_num(df_plot[plan_col])
+    df_plot[actual_col] = _to_num(df_plot[actual_col])
 
-            time_as_num = pd.to_numeric(df_plot[time_col], errors="coerce")
-            if time_as_num.notna().sum() > 0:
-                df_plot = df_plot[time_as_num.notna()].copy()
-                df_plot["_time_sort"] = pd.to_numeric(df_plot[time_col], errors="coerce")
-            else:
-                df_plot["_time_sort"] = df_plot[time_col]
+    if time_col is not None and time_col in df_plot.columns:
+        df_plot[time_col] = df_plot[time_col].astype(str).str.strip()
+        bad_time_vals = {"", "", "none", "nat", "null"}
+        df_plot = df_plot[~df_plot[time_col].str.lower().isin(bad_time_vals)].copy()
 
-            df_plot = df_plot.groupby(time_col, as_index=False)[[plan_col, actual_col]].sum()
+        df_plot = df_plot.groupby(time_col, as_index=False)[[plan_col, actual_col]].sum()
+
+        df_plot["_time_sort"] = pd.to_numeric(df_plot[time_col], errors="coerce")
+        if df_plot["_time_sort"].notna().sum() > 0:
             df_plot = df_plot.sort_values("_time_sort")
         else:
-            df_plot = df_plot[[plan_col, actual_col]].copy()
+            df_plot = df_plot.sort_values(time_col)
+    else:
+        df_plot = df_plot[[plan_col, actual_col]].copy()
 
-        total_plan = float(df_plot[plan_col].sum(skipna=True))
-        total_actual = float(df_plot[actual_col].sum(skipna=True))
-        total_var = total_actual - total_plan
+    total_plan = float(df_plot[plan_col].sum(skipna=True))
+    total_actual = float(df_plot[actual_col].sum(skipna=True))
+    total_var = total_actual - total_plan
 
-        c1, c2, c3 = st.columns(3)
-        c1.metric("Plan (sum)", fmt_int(total_plan))
-        c2.metric("Actual or Net (sum)", fmt_int(total_actual))
-        c3.metric("Variance (Actual - Plan)", fmt_int(total_var))
+    c1, c2, c3 = st.columns(3)
+    c1.metric("Plan (sum)", fmt_int(total_plan))
+    c2.metric("Actual or Net (sum)", fmt_int(total_actual))
+    c3.metric("Variance (Actual - Plan)", fmt_int(total_var))
 
-        if time_col is not None and time_col in df0.columns:
-            st.subheader("Trend")
-            chart_df = df_plot[[time_col, plan_col, actual_col]].set_index(time_col)
-            st.line_chart(chart_df, use_container_width=True)
-        else:
-            st.info("No time bucket column detected. Showing totals only.")
+    if time_col is not None and time_col in df0.columns:
+        st.subheader("Trend")
+        chart_df = df_plot[[time_col, plan_col, actual_col]].set_index(time_col)
+        st.line_chart(chart_df, use_container_width=True)
+    else:
+        st.info("No time bucket column detected. Showing totals only.")
 
 with tab_head:
     st.subheader("Head (after header promotion and dedupe)")
