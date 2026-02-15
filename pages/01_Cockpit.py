@@ -1,90 +1,152 @@
-import pandas as pd
 import streamlit as st
-from data_loader import load_df, show_published_timestamp
+import pandas as pd
+import numpy as np
 
 st.set_page_config(page_title="Cockpit", layout="wide")
 
-st.title("Cockpit")
-show_published_timestamp()
+def _to_num(series_in):
+    return pd.to_numeric(series_in, errors="coerce")
 
-df = load_df()
+def _find_header_row(df_in, required_tokens, max_scan=60):
+    max_scan = min(max_scan, len(df_in))
+    for ridx in range(max_scan):
+        row_vals = [str(x).strip() for x in df_in.iloc[ridx].tolist()]
+        joined = " | ".join(row_vals).lower()
+        ok = True
+        for tok in required_tokens:
+            if tok.lower() not in joined:
+                ok = False
+                break
+        if ok:
+            return ridx
+    return None
 
-# Find a reasonable date column (optional)
-date_candidates = ["DATE", "Date", "date", "REPORT_DATE", "Report Date", "WORK_DATE", "Work Date"]
-date_col = None
-for c in date_candidates:
-    if c in df.columns:
-        date_col = c
-        break
+def _clean_sheet_with_header(df_in, required_tokens):
+    hdr_idx = _find_header_row(df_in, required_tokens)
+    if hdr_idx is None:
+        df_out = df_in.copy().reset_index(drop=True)
+        df_out.columns = [str(c).strip() for c in df_out.columns]
+        return df_out
 
-# Find numeric columns for placeholder KPI and trend
-numeric_cols = []
-for c in df.columns:
-    s = pd.to_numeric(df[c], errors="coerce")
-    if s.notna().any():
-        numeric_cols.append(c)
+    new_cols = [str(x).strip() for x in df_in.iloc[hdr_idx].tolist()]
+    df_out = df_in.iloc[hdr_idx + 1:].copy()
+    df_out.columns = new_cols
+    df_out = df_out.reset_index(drop=True)
+    df_out.columns = [c.strip() for c in df_out.columns]
+    return df_out
 
-primary_value_col = numeric_cols[0] if len(numeric_cols) > 0 else None
+def _get_sheets_dict_from_session():
+    # Assumption to move ahead: your Data tab stored sheets into one of these common keys.
+    # We try a few so you don’t have to wire anything up right now.
+    for key in ["sheets_raw", "sheets", "dfs", "dataframes", "sheet_previews"]:
+        maybe = st.session_state.get(key)
+        if isinstance(maybe, dict) and len(maybe) > 0:
+            return maybe, key
+    return None, None
 
-# KPIs
-col_a, col_b, col_c = st.columns(3)
-col_a.metric("Rows", str(len(df)))
-col_b.metric("Columns", str(len(df.columns)))
+def _safe_sum(df_in, col):
+    if df_in is None or col not in df_in.columns:
+        return np.
+    return float(pd.to_numeric(df_in[col], errors="coerce").sum())
 
-if primary_value_col is not None:
-    total_val = pd.to_numeric(df[primary_value_col], errors="coerce").sum()
-    col_c.metric("Total " + str(primary_value_col), str(round(float(total_val), 2)))
-else:
-    col_c.metric("Total (numeric)", "No numeric columns found")
+def render():
+    st.title("Cockpit")
 
-st.divider()
+    sheets_dict, source_key = _get_sheets_dict_from_session()
+    if sheets_dict is None:
+        st.warning("No loaded data found in session. Go to your Data tab first (the one that loads dashboard.xlsx).")
+        return
 
-# Trend
-st.subheader("Trend")
+    st.caption("Using data from st.session_state[" + source_key + "]")
 
-if date_col is None:
-    st.write("No obvious date column found yet. If you add one (like DATE), this will become a trend chart.")
-else:
-    df_trend = df.copy()
-    df_trend[date_col] = pd.to_datetime(df_trend[date_col], errors="coerce")
-    df_trend = df_trend.dropna(subset=[date_col]).sort_values(date_col)
+    # --- Load required sheets from session
+    ytd_raw = sheets_dict.get("YTD Plan vs Act")
+    orders_raw = sheets_dict.get("Order Status for Angel Report")
 
-    if primary_value_col is None:
-        trend_series = df_trend.groupby(pd.Grouper(key=date_col, freq="D")).size()
-        trend_df = trend_series.to_frame("Rows").reset_index()
-        st.line_chart(trend_df.set_index(date_col)["Rows"])
+    if ytd_raw is None or orders_raw is None:
+        st.error("Missing required sheets in session. Need `YTD Plan vs Act` and `Order Status for Angel Report`.")
+        st.write("Available sheets")
+        st.write(list(sheets_dict.keys()))
+        return
+
+    # --- Clean (handles pivot-style pre-header rows)
+    ytd_df = _clean_sheet_with_header(ytd_raw, ["Division", "Weeks", "Yards Produced", "Yards Planned"])
+    orders_df = _clean_sheet_with_header(orders_raw, ["ORDER_NUMBER", "Yards Written", "Income Written"])
+
+    # --- Coerce numerics for YTD
+    for col in ["Weeks", "Yards Produced", "Yards Planned", "Income Produced", "Income Planned"]:
+        if col in ytd_df.columns:
+            ytd_df[col] = _to_num(ytd_df[col])
+
+    # Keep only rows that look like actual division rows
+    if "Division" in ytd_df.columns:
+        ytd_valid = ytd_df[ytd_df["Division"].notna()].copy()
     else:
-        df_trend[primary_value_col] = pd.to_numeric(df_trend[primary_value_col], errors="coerce")
-        trend_series = df_trend.groupby(pd.Grouper(key=date_col, freq="D"))[primary_value_col].sum()
-        trend_df = trend_series.to_frame("Total").reset_index()
-        st.line_chart(trend_df.set_index(date_col)["Total"])
+        ytd_valid = ytd_df.copy()
 
-st.divider()
+    # --- Coerce numerics for Orders
+    for col in ["Yards Written", "Income Written"]:
+        if col in orders_df.columns:
+            orders_df[col] = _to_num(orders_df[col])
 
-# Top groups (defaults to PRODUCT_TYPE if present)
-st.subheader("Top groups")
+    # --- KPI Totals
+    ytd_yards_produced = _safe_sum(ytd_valid, "Yards Produced")
+    ytd_yards_planned = _safe_sum(ytd_valid, "Yards Planned")
+    ytd_income_produced = _safe_sum(ytd_valid, "Income Produced")
+    ytd_income_planned = _safe_sum(ytd_valid, "Income Planned")
 
-group_col = "PRODUCT_TYPE" if "PRODUCT_TYPE" in df.columns else None
-if group_col is None:
-    for c in df.columns:
-        if c != date_col and df[c].dtype == "object":
-            group_col = c
-            break
+    ytd_yards_vs_plan = (ytd_yards_produced / ytd_yards_planned) if ytd_yards_planned and not np.isnan(ytd_yards_planned) else np.
+    ytd_income_vs_plan = (ytd_income_produced / ytd_income_planned) if ytd_income_planned and not np.isnan(ytd_income_planned) else np.
 
-if group_col is None:
-    st.write("No good grouping column found to show a top-groups chart.")
-else:
-    top_n = st.slider("Top N", min_value=5, max_value=50, value=10, step=5)
+    open_orders = int(orders_df["ORDER_NUMBER"].nunique()) if "ORDER_NUMBER" in orders_df.columns else np.
+    open_yards_written = _safe_sum(orders_df, "Yards Written")
+    open_income_written = _safe_sum(orders_df, "Income Written")
 
-    if primary_value_col is None:
-        grp_series = df.groupby(group_col, dropna=False).size().sort_values(ascending=False).head(top_n)
-        grp_df = grp_series.to_frame("Rows").reset_index()
-        st.bar_chart(grp_df.set_index(group_col)["Rows"])
-        st.dataframe(grp_df, use_container_width=True)
+    # --- Display KPI Tiles
+    c1, c2, c3, c4, c5, c6 = st.columns(6)
+    c1.metric("YTD Yards Produced", "{:,.0f}".format(ytd_yards_produced) if not np.isnan(ytd_yards_produced) else "NA")
+    c2.metric("YTD Yards Planned", "{:,.0f}".format(ytd_yards_planned) if not np.isnan(ytd_yards_planned) else "NA")
+    c3.metric("Yards vs Plan", "{:.1f}%".format(100 * ytd_yards_vs_plan) if not np.isnan(ytd_yards_vs_plan) else "NA")
+
+    c4.metric("YTD Income Produced", "${:,.0f}".format(ytd_income_produced) if not np.isnan(ytd_income_produced) else "NA")
+    c5.metric("YTD Income Planned", "${:,.0f}".format(ytd_income_planned) if not np.isnan(ytd_income_planned) else "NA")
+    c6.metric("Income vs Plan", "{:.1f}%".format(100 * ytd_income_vs_plan) if not np.isnan(ytd_income_vs_plan) else "NA")
+
+    d1, d2, d3 = st.columns(3)
+    d1.metric("Open Orders", "{:,}".format(open_orders) if not isinstance(open_orders, float) else "NA")
+    d2.metric("Open Yards Written", "{:,.0f}".format(open_yards_written) if not np.isnan(open_yards_written) else "NA")
+    d3.metric("Open Income Written", "${:,.0f}".format(open_income_written) if not np.isnan(open_income_written) else "NA")
+
+    st.divider()
+
+    # --- Trend charts (weekly)
+    if "Weeks" in ytd_valid.columns:
+        ytd_week_yards = ytd_valid[[c for c in ["Weeks", "Yards Produced", "Yards Planned"] if c in ytd_valid.columns]].copy()
+        ytd_week_yards = ytd_week_yards.dropna(subset=["Weeks"])
+        ytd_week_yards = ytd_week_yards.groupby("Weeks", as_index=False).sum().sort_values("Weeks")
+
+        st.subheader("Produced vs Planned (Yards) by Week")
+        if "Yards Produced" in ytd_week_yards.columns and "Yards Planned" in ytd_week_yards.columns:
+            st.line_chart(ytd_week_yards.set_index("Weeks")[["Yards Produced", "Yards Planned"]])
+        else:
+            st.info("Missing columns for yards trend chart.")
+
+        ytd_week_income = ytd_valid[[c for c in ["Weeks", "Income Produced", "Income Planned"] if c in ytd_valid.columns]].copy()
+        ytd_week_income = ytd_week_income.dropna(subset=["Weeks"])
+        ytd_week_income = ytd_week_income.groupby("Weeks", as_index=False).sum().sort_values("Weeks")
+
+        st.subheader("Produced vs Planned (Income) by Week")
+        if "Income Produced" in ytd_week_income.columns and "Income Planned" in ytd_week_income.columns:
+            st.line_chart(ytd_week_income.set_index("Weeks")[["Income Produced", "Income Planned"]])
+        else:
+            st.info("Missing columns for income trend chart.")
     else:
-        df_grp = df.copy()
-        df_grp[primary_value_col] = pd.to_numeric(df_grp[primary_value_col], errors="coerce")
-        grp_series = df_grp.groupby(group_col, dropna=False)[primary_value_col].sum().sort_values(ascending=False).head(top_n)
-        grp_df = grp_series.to_frame("Total").reset_index()
-        st.bar_chart(grp_df.set_index(group_col)["Total"])
-        st.dataframe(grp_df, use_container_width=True)
+        st.info("No `Weeks` column found in YTD sheet after cleaning, so weekly trend charts are hidden.")
+
+    with st.expander("Debug: show cleaned inputs"):
+        st.write("YTD Plan vs Act cleaned (head)")
+        st.dataframe(ytd_valid.head(30), use_container_width=True)
+        st.write("Order Status cleaned (head)")
+        st.dataframe(orders_df.head(30), use_container_width=True)
+
+render()
