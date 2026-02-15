@@ -1,50 +1,55 @@
 from pathlib import Path
-import hashlib
+import os
 import requests
 import streamlit as st
 
 DATA_DIR = Path("data")
-DATA_PATH = DATA_DIR / "current.xlsx"
+LOCAL_XLSX_PATH = DATA_DIR / "current.xlsx"
 
-def _sha256_bytes(blob):
-    h = hashlib.sha256()
-    h.update(blob)
-    return h.hexdigest()
+
+def _get_secret(name, default=None):
+    try:
+        return st.secrets.get(name, default)
+    except Exception:
+        return os.environ.get(name, default)
+
 
 def ensure_latest_workbook():
     """
-    Downloads the workbook from st.secrets["DATA_XLSX_URL"] into data/current.xlsx
-    Returns updated_bool, message_str
+    Downloads the Excel workbook from DATA_XLSX_URL (Streamlit secrets) to data/current.xlsx.
+
+    Returns
+    - updated bool
+    - message str
     """
-    DATA_DIR.mkdir(exist_ok=True)
+    url = _get_secret("DATA_XLSX_URL", None)
+    if url is None or str(url).strip() == "":
+        return False, "DATA_XLSX_URL not set in Secrets."
 
-    url = st.secrets.get("DATA_XLSX_URL", "")
-    if not url:
-        return False, "No DATA_XLSX_URL set in Streamlit Secrets."
-
+    auth_header = _get_secret("DATA_AUTH_HEADER", "")
     headers = {}
-    bearer = st.secrets.get("DATA_BEARER_TOKEN", "")
-    if bearer:
-        headers["Authorization"] = "Bearer " + bearer
+    if auth_header is not None and str(auth_header).strip() != "":
+        headers["Authorization"] = str(auth_header).strip()
 
-    resp = requests.get(url, headers=headers, timeout=60)
-    resp.raise_for_status()
-    blob = resp.content
+    DATA_DIR.mkdir(parents=True, exist_ok=True)
 
-    if len(blob) < 2000:
-        first_bytes = blob[:200].decode("utf-8", errors="ignore")
-        if "<html" in first_bytes.lower():
-            return False, "Downloaded HTML not XLSX check DATA_XLSX_URL permissions."
+    try:
+        resp = requests.get(url, headers=headers, timeout=60)
+        resp.raise_for_status()
+    except Exception as exc:
+        return False, "Download failed: " + str(exc)
 
-    new_hash = _sha256_bytes(blob)
+    content_type = str(resp.headers.get("Content-Type", "")).lower()
+    content_bytes = resp.content
 
-    if DATA_PATH.exists():
-        old_blob = DATA_PATH.read_bytes()
-        old_hash = _sha256_bytes(old_blob)
-        if old_hash == new_hash:
-            return False, "Workbook already up to date."
-        DATA_PATH.write_bytes(blob)
-        return True, "Workbook updated."
+    if "text/html" in content_type or content_bytes[:20].lower().find(b"<html") != -1:
+        return False, "URL returned HTML, not an .xlsx. Check DATA_XLSX_URL is a direct download link."
 
-    DATA_PATH.write_bytes(blob)
-    return True, "Workbook downloaded."
+    old_size = LOCAL_XLSX_PATH.stat().st_size if LOCAL_XLSX_PATH.exists() else -1
+    new_size = len(content_bytes)
+
+    if old_size == new_size and old_size > 0:
+        return False, "No change detected. File already up to date."
+
+    LOCAL_XLSX_PATH.write_bytes(content_bytes)
+    return True, "Downloaded workbook to " + str(LOCAL_XLSX_PATH) + " (" + str(round(new_size / (1024 * 1024), 2)) + " MB)"
