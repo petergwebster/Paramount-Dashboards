@@ -8,19 +8,46 @@ st.title("Weekly")
 
 tables = require_tables()
 
-weekly_df, weekly_name = get_table(tables, "Written produced by week")
-if weekly_df is None:
-    weekly_df, weekly_name = get_table(tables, "Written produced invoiced")
+weekly_raw, weekly_name = get_table(tables, "Written produced by week")
+if weekly_raw is None:
+    weekly_raw, weekly_name = get_table(tables, "Written produced invoiced")
 
-if weekly_df is None:
-    st.error("Could not find weekly sheet (Written Produced...). Check Data page load.")
+if weekly_raw is None:
+    st.error("Could not find weekly sheet. Check Data page load.")
     st.stop()
 
-df0 = weekly_df.copy()
+df_raw = weekly_raw.copy()
+df_raw.columns = [str(c).strip() for c in df_raw.columns]
+
+def promote_header_row(df_in, header_row_idx):
+    df2 = df_in.copy()
+    new_cols = df2.iloc[header_row_idx].astype(str).tolist()
+    df2.columns = [str(c).strip() for c in new_cols]
+    df2 = df2.iloc[header_row_idx + 1 :].reset_index(drop=True)
+    return df2
+
+def guess_header_row(df_in, max_scan_rows=15):
+    scan_rows = min(max_scan_rows, len(df_in))
+    for i in range(scan_rows):
+        row_vals = df_in.iloc[i].astype(str).str.lower().tolist()
+        joined = " ".join(row_vals)
+        if "division" in joined and "week" in joined:
+            return i
+        if "weeks" in joined and "yards" in joined:
+            return i
+    return 4
+
+header_row_idx = guess_header_row(df_raw, max_scan_rows=20)
+df0 = promote_header_row(df_raw, header_row_idx)
+
 df0.columns = [str(c).strip() for c in df0.columns]
+df0 = df0.loc[:, [c for c in df0.columns if c != "" and c != "None"]]
+
+def _to_num(series_in):
+    return pd.to_numeric(series_in, errors="coerce")
 
 def _find_time_col(cols):
-    prefs = ["week", "wk", "period", "date", "month", "fiscal"]
+    prefs = ["week", "weeks", "wk", "period", "date", "month", "fiscal"]
     for p in prefs:
         for c in cols:
             if p in str(c).lower():
@@ -41,101 +68,113 @@ def _find_measure_col(cols, keywords):
 
 time_col = _find_time_col(df0.columns)
 
-written_col = _find_measure_col(df0.columns, ["written"])
-produced_col = _find_measure_col(df0.columns, ["produced"])
+written_col = _find_measure_col(df0.columns, ["writ"])
+produced_col = _find_measure_col(df0.columns, ["prod"])
 invoiced_col = _find_measure_col(df0.columns, ["invoic"])
 
 if written_col is None:
-    written_col = _find_measure_col(df0.columns, ["write"])
+    written_col = _find_measure_col(df0.columns, ["wr"])
+if produced_col is None:
+    produced_col = _find_measure_col(df0.columns, ["produ"])
 if invoiced_col is None:
-    invoiced_col = _find_measure_col(df0.columns, ["invoice"])
-
-def _to_num(s):
-    return pd.to_numeric(s, errors="coerce")
+    invoiced_col = _find_measure_col(df0.columns, ["net"])
 
 def _fmt_int(x):
-    if x is None:
-        return "NA"
     try:
+        if x is None:
+            return "NA"
         return "{:,.0f}".format(float(x))
     except Exception:
         return "NA"
 
-def _safe_last_val(series_in):
-    s2 = _to_num(series_in)
-    s2 = s2.dropna()
+def _metric_delta(last_val, prev_val):
+    if last_val is None or prev_val is None:
+        return None
+    return float(last_val) - float(prev_val)
+
+def _safe_last(series_in):
+    s2 = _to_num(series_in).dropna()
     if len(s2) == 0:
         return None
     return float(s2.iloc[-1])
 
-def _safe_prev_val(series_in):
-    s2 = _to_num(series_in)
-    s2 = s2.dropna()
+def _safe_prev(series_in):
+    s2 = _to_num(series_in).dropna()
     if len(s2) < 2:
         return None
     return float(s2.iloc[-2])
 
-df_chart = df0.copy()
+st.caption("Source sheet: " + str(weekly_name) + "   Header promoted from row: " + str(header_row_idx))
 
-if time_col is not None:
-    df_chart[time_col] = df_chart[time_col].astype(str).str.strip()
+tab_dash, tab_head, tab_debug = st.tabs(["Dashboard", "Head", "Debug"])
 
-for c in [written_col, produced_col, invoiced_col]:
-    if c is not None and c in df_chart.columns:
-        df_chart[c] = _to_num(df_chart[c])
+with tab_dash:
+    if time_col is None:
+        st.warning("Could not detect a time column (week/date/period). Check Debug tab.")
+    else:
+        df_chart = df0.copy()
+        df_chart[time_col] = df_chart[time_col].astype(str).str.strip()
 
-if time_col is not None:
-    df_chart = df_chart.dropna(subset=[time_col])
+        for c in [written_col, produced_col, invoiced_col]:
+            if c is not None and c in df_chart.columns:
+                df_chart[c] = _to_num(df_chart[c])
 
-st.caption("Source sheet: " + str(weekly_name))
+        measure_cols = [c for c in [written_col, produced_col, invoiced_col] if c is not None]
 
-st.subheader("Latest period KPIs")
+        if len(measure_cols) == 0:
+            st.warning("Could not detect written/produced/invoiced numeric columns. Check Debug tab.")
+        else:
+            df_plot = df_chart[[time_col] + measure_cols].copy()
 
-k1, k2, k3 = st.columns(3)
+            for c in measure_cols:
+                df_plot[c] = _to_num(df_plot[c])
 
-latest_written = _safe_last_val(df_chart[written_col]) if written_col is not None else None
-prev_written = _safe_prev_val(df_chart[written_col]) if written_col is not None else None
+            df_plot = df_plot.dropna(subset=[time_col])
+            df_plot = df_plot.groupby(time_col, as_index=False)[measure_cols].sum()
 
-latest_produced = _safe_last_val(df_chart[produced_col]) if produced_col is not None else None
-prev_produced = _safe_prev_val(df_chart[produced_col]) if produced_col is not None else None
+            df_plot["_time_sort"] = pd.to_numeric(df_plot[time_col], errors="coerce")
+            if df_plot["_time_sort"].notna().sum() > 0:
+                df_plot = df_plot.sort_values("_time_sort")
+            else:
+                df_plot = df_plot.sort_values(time_col)
 
-latest_invoiced = _safe_last_val(df_chart[invoiced_col]) if invoiced_col is not None else None
-prev_invoiced = _safe_prev_val(df_chart[invoiced_col]) if invoiced_col is not None else None
+            last_written = _safe_last(df_plot[written_col]) if written_col is not None else None
+            prev_written = _safe_prev(df_plot[written_col]) if written_col is not None else None
 
-k1.metric("Written (latest)", _fmt_int(latest_written), None if prev_written is None else _fmt_int(latest_written - prev_written))
-k2.metric("Produced (latest)", _fmt_int(latest_produced), None if prev_produced is None else _fmt_int(latest_produced - prev_produced))
-k3.metric("Invoiced (latest)", _fmt_int(latest_invoiced), None if prev_invoiced is None else _fmt_int(latest_invoiced - prev_invoiced))
+            last_produced = _safe_last(df_plot[produced_col]) if produced_col is not None else None
+            prev_produced = _safe_prev(df_plot[produced_col]) if produced_col is not None else None
 
-st.divider()
+            last_invoiced = _safe_last(df_plot[invoiced_col]) if invoiced_col is not None else None
+            prev_invoiced = _safe_prev(df_plot[invoiced_col]) if invoiced_col is not None else None
 
-st.subheader("Trend")
-measure_cols = []
-if written_col is not None:
-    measure_cols.append(written_col)
-if produced_col is not None:
-    measure_cols.append(produced_col)
-if invoiced_col is not None:
-    measure_cols.append(invoiced_col)
+            c1, c2, c3 = st.columns(3)
+            if written_col is not None:
+                c1.metric("Written (latest)", _fmt_int(last_written), _fmt_int(_metric_delta(last_written, prev_written)))
+            if produced_col is not None:
+                c2.metric("Produced (latest)", _fmt_int(last_produced), _fmt_int(_metric_delta(last_produced, prev_produced)))
+            if invoiced_col is not None:
+                c3.metric("Invoiced or Net (latest)", _fmt_int(last_invoiced), _fmt_int(_metric_delta(last_invoiced, prev_invoiced)))
 
-if time_col is None:
-    st.info("No obvious time column found. Showing first 120 rows only.")
-    st.dataframe(df_chart.head(120), use_container_width=True)
-else:
-    plot_df = df_chart[[time_col] + measure_cols].copy()
-    plot_df = plot_df.dropna(subset=[time_col])
-    plot_df = plot_df.tail(150)
+            st.subheader("Trend")
+            st.line_chart(df_plot.set_index(time_col)[measure_cols], use_container_width=True)
 
-    plot_df = plot_df.set_index(time_col)
-    st.line_chart(plot_df, use_container_width=True)
+with tab_head:
+    st.subheader("Head (after header promotion)")
+    st.dataframe(df0.head(60), use_container_width=True)
 
-st.divider()
+with tab_debug:
+    st.subheader("Detected columns")
+    st.write(
+        {
+            "time_col": time_col,
+            "written_col": written_col,
+            "produced_col": produced_col,
+            "invoiced_or_net_col": invoiced_col,
+        }
+    )
 
-with st.expander("Debug"):
-    st.write("Detected time column")
-    st.write(time_col)
-    st.write("Detected measure columns")
-    st.write({"written": written_col, "produced": produced_col, "invoiced": invoiced_col})
-    st.write("All columns")
+    st.subheader("All columns (cleaned)")
     st.write(list(df0.columns))
-    st.write("Head")
-    st.dataframe(df0.head(20), use_container_width=True)
+
+    st.subheader("Raw head (before promotion)")
+    st.dataframe(df_raw.head(10), use_container_width=True)
