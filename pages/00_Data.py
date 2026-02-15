@@ -16,14 +16,17 @@ st.markdown("#### Auto-sync status")
 try:
     updated, msg = ensure_latest_workbook()
     st.caption("Auto data sync: " + msg)
-except Exception as e:
+    if updated:
+        st.cache_data.clear()
+except Exception as exc:
     st.warning("Auto-sync failed (upload still works).")
-    st.exception(e)
+    st.exception(exc)
 
 st.markdown("#### Manual upload override (optional)")
 uploaded = st.file_uploader("Upload Excel (.xlsx) to override current.xlsx", type=["xlsx"])
 if uploaded is not None:
     xlsx_path.write_bytes(uploaded.getbuffer())
+    st.cache_data.clear()
     st.success("Saved to " + str(xlsx_path))
 
 if not xlsx_path.exists():
@@ -49,24 +52,30 @@ min_text_cells = st.slider(
 )
 
 try:
-    _, _, all_sheets = load_workbook_tables(
-        str(xlsx_path),
-        selected_sheets=[],
-        min_text_cells=min_text_cells
-    )
-except Exception as e:
-    st.error("Failed to read workbook as an Excel file.")
-    st.exception(e)
+    xl_obj = pd.ExcelFile(xlsx_path)
+    all_sheets = xl_obj.sheet_names
+except Exception as exc:
+    st.error("Failed to read workbook as Excel.")
+    st.exception(exc)
+    st.stop()
+
+if len(all_sheets) == 0:
+    st.warning("Workbook has no sheets.")
     st.stop()
 
 selected = st.multiselect("Sheets to load", options=all_sheets, default=all_sheets)
 
 if st.button("Load and preview selected tabs"):
-    tables, meta_df, _ = load_workbook_tables(
-        str(xlsx_path),
-        selected_sheets=selected,
-        min_text_cells=min_text_cells
-    )
+    try:
+        tables, meta_df, _ = load_workbook_tables(
+            str(xlsx_path),
+            selected_sheets=selected,
+            min_text_cells=min_text_cells
+        )
+    except Exception as exc:
+        st.error("Failed while cleaning/loading selected sheets.")
+        st.exception(exc)
+        st.stop()
 
     st.markdown("### Cleaning summary")
     st.dataframe(meta_df, use_container_width=True)
@@ -75,8 +84,8 @@ if st.button("Load and preview selected tabs"):
     for sn in selected:
         st.markdown("#### " + sn)
         df_prev = tables.get(sn)
-        if df_prev is None:
-            st.warning("This sheet failed to load.")
+        if df_prev is None or df_prev.shape[0] == 0:
+            st.warning("This sheet returned no rows.")
             continue
 
         st.write("Shape")
