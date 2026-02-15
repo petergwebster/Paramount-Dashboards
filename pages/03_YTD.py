@@ -89,22 +89,24 @@ if header_row_idx is not None and header_row_idx >= 0 and header_row_idx < len(d
 
 df0.columns = make_unique_columns(df0.columns)
 
+cols = list(df0.columns)
+
 time_col = (
-    find_first_col(df0.columns, ["weeks"])
-    or find_first_col(df0.columns, ["week"])
-    or find_first_col(df0.columns, ["period"])
-    or find_first_col(df0.columns, ["month"])
+    find_first_col(cols, ["week"])
+    or find_first_col(cols, ["weeks"])
+    or find_first_col(cols, ["period"])
+    or find_first_col(cols, ["month"])
 )
 
 plan_col = (
-    find_first_col(df0.columns, ["plan"])
-    or find_first_col(df0.columns, ["planned"])
+    find_first_col(cols, ["plan"])
+    or find_first_col(cols, ["budget"])
 )
 
 actual_col = (
-    find_first_col(df0.columns, ["actual"])
-    or find_first_col(df0.columns, ["net"])
-    or find_first_col(df0.columns, ["invoiced"])
+    find_first_col(cols, ["actual"])
+    or find_first_col(cols, ["act"])
+    or find_first_col(cols, ["net"])
 )
 
 with tab_dash:
@@ -116,22 +118,25 @@ with tab_dash:
         st.stop()
 
     df_plot = df0.copy()
-
     df_plot[plan_col] = _to_num(df_plot[plan_col])
     df_plot[actual_col] = _to_num(df_plot[actual_col])
 
     if time_col is not None and time_col in df_plot.columns:
-        df_plot[time_col] = df_plot[time_col].astype(str).str.strip()
+        time_clean = df_plot[time_col].astype(str).str.strip()
+        time_clean = time_clean.str.replace("\u00a0", " ", regex=False)
+        time_clean = time_clean.str.strip()
+
         bad_time_vals = {"", "", "none", "nat", "null"}
-        df_plot = df_plot[~df_plot[time_col].str.lower().isin(bad_time_vals)].copy()
+        mask_good = ~time_clean.str.lower().isin(bad_time_vals)
+
+        df_plot = df_plot[mask_good].copy()
+        df_plot[time_col] = time_clean[mask_good]
 
         df_plot = df_plot.groupby(time_col, as_index=False)[[plan_col, actual_col]].sum()
 
         df_plot["_time_sort"] = pd.to_numeric(df_plot[time_col], errors="coerce")
-        if df_plot["_time_sort"].notna().sum() > 0:
-            df_plot = df_plot.sort_values("_time_sort")
-        else:
-            df_plot = df_plot.sort_values(time_col)
+        df_plot = df_plot[df_plot["_time_sort"].notna()].copy()
+        df_plot = df_plot.sort_values("_time_sort")
     else:
         df_plot = df_plot[[plan_col, actual_col]].copy()
 
