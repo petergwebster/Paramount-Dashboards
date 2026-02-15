@@ -18,13 +18,38 @@ def _norm_name(name_in):
     """
     return "".join([c.lower() for c in str(name_in).strip() if c.isalnum()])
 
+def list_tables(tables=None):
+    """
+    Returns a sorted list of sheet names currently loaded in memory.
+
+    If `tables` is not passed, it will pull from session via require_tables(),
+    so it never reloads from disk.
+    """
+    if tables is None:
+        tables = require_tables()
+    return sorted(list(tables.keys()), key=lambda x: str(x).lower())
+
+def tables_debug_map(tables=None):
+    """
+    Debug helper: returns a list of dicts showing actual sheet name and its
+    normalized form, useful for diagnosing matching issues.
+    """
+    if tables is None:
+        tables = require_tables()
+
+    rows = []
+    for k in tables.keys():
+        rows.append({"sheet_name": k, "normalized": _norm_name(k)})
+    rows = sorted(rows, key=lambda r: str(r["sheet_name"]).lower())
+    return rows
+
 def get_table(tables, desired_name):
     """
     Retrieves a dataframe from `tables` using robust matching:
     - direct match
     - normalized exact match
     - normalized contains match
-    - synonym candidates (for your 7 priority sheets)
+    - synonym candidates (for your priority sheets)
     Returns (df, actual_sheet_name) or (None, None) if not found.
     """
     synonyms = {
@@ -32,7 +57,6 @@ def get_table(tables, desired_name):
             "written produced by week",
             "written produced week",
             "written produced weekly",
-            "written produced by wk",
             "written produced by wk",
             "written produced",
             "written v produced by week",
@@ -43,7 +67,6 @@ def get_table(tables, desired_name):
             "written produced and invoiced",
             "written produced invoice",
             "written produced invoicing",
-            "written produced invoiced ",
         ],
         "ytd plan v actual": [
             "ytd plan v actual",
@@ -65,7 +88,7 @@ def get_table(tables, desired_name):
             "color yds",
             "color yards",
             "color yds.",
-            "color yards ",
+            "color yards",
             "color yards report",
             "color yards by",
             "color",
