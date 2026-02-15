@@ -1,61 +1,84 @@
-from pathlib import Path
-from datetime import datetime
-
 import pandas as pd
 import streamlit as st
+from pathlib import Path
 
-# Prefer a published/current file if present, otherwise fall back to the static workbook.
-PUBLISHED_PATH = Path("data") / "current.xlsx"
-FALLBACK_PATH = Path("data") / "WIP Test Data.xlsx"
-
-
-def _resolve_data_path() -> Path:
-    """
-    Picks the best available data file.
-    """
-    if PUBLISHED_PATH.exists():
-        return PUBLISHED_PATH
-    return FALLBACK_PATH
+DATA_PATH_DEFAULT = Path('data/current.xlsx')
 
 
-def _mtime_or_none(path_obj: Path) -> float | None:
-    """
-    Used only to invalidate Streamlit cache when the file changes.
-    """
-    try:
-        return path_obj.stat().st_mtime
-    except Exception:
-        return None
+def _row_text_count(row_vals):
+    ser = row_vals.astype(str).str.strip()
+    ser = ser.replace('', '')
+    return int(ser.ne('').sum())
 
 
-@st.cache_data(show_spinner="Loading data...")
-def _load_df_cached(data_path_str: str, cache_bust_mtime: float | None) -> pd.DataFrame:
-    """
-    Internal cached loader. Cache key includes:
-    - the resolved file path (as string)
-    - the file modified time (so cache refreshes automatically when Excel updates)
-    """
-    return pd.read_excel(data_path_str)
+def clean_pivot_export_sheet(xl_obj, sheet_name, min_text_cells=4):
+    df_raw = pd.read_excel(xl_obj, sheet_name=sheet_name, header=None)
+
+    row_text_counts = df_raw.apply(lambda r: _row_text_count(r), axis=1)
+    header_row_idx = int((row_text_counts >= min_text_cells).idxmax())
+
+    new_cols = [str(x).strip() for x in df_raw.iloc[header_row_idx].tolist()]
+    df_clean = df_raw.iloc[header_row_idx + 1:].copy()
+    df_clean.columns = new_cols
+
+    # Drop fully empty rows/cols
+    nonempty_row_mask = df_clean.apply(lambda r: _row_text_count(r) > 0, axis=1)
+    df_clean = df_clean.loc[nonempty_row_mask].reset_index(drop=True)
+
+    nonempty_col_mask = df_clean.apply(
+        lambda c: c.astype(str).str.strip().replace('', '').ne('').any(),
+        axis=0
+    )
+    df_clean = df_clean.loc[:, nonempty_col_mask]
+
+    # De-duplicate column names
+    col_series = pd.Series(df_clean.columns)
+    if col_series.duplicated().any():
+        deduped_cols = []
+        seen = {}
+        for c in df_clean.columns:
+            if c not in seen:
+                seen[c] = 0
+                deduped_cols.append(c)
+            else:
+                seen[c] += 1
+                deduped_cols.append(c + '_' + str(seen[c]))
+        df_clean.columns = deduped_cols
+
+    meta = {
+        'sheet': sheet_name,
+        'header_row_idx': header_row_idx,
+        'rows': int(df_clean.shape[0]),
+        'cols': int(df_clean.shape[1]),
+        'columns_preview': ', '.join([str(c) for c in df_clean.columns.tolist()[:12]])
+    }
+    return df_clean, meta
 
 
-def load_df(path: str | Path | None = None) -> pd.DataFrame:
-    """
-    Public loader used by your pages.
-    - If `path` is None, uses the resolved data path.
-    - If a path is provided, loads that file instead.
-    """
-    data_path = Path(path) if path is not None else _resolve_data_path()
-    return _load_df_cached(str(data_path), _mtime_or_none(data_path))
+@st.cache_data(show_spinner=False)
+def load_workbook_tables(xlsx_path_str=None, selected_sheets=None, min_text_cells=4):
+    xlsx_path = Path(xlsx_path_str) if xlsx_path_str else DATA_PATH_DEFAULT
+    xl_obj = pd.ExcelFile(xlsx_path)
 
+    sheets = xl_obj.sheet_names
+    if selected_sheets is not None:
+        sheets = [s for s in sheets if s in set(selected_sheets)]
 
-def show_published_timestamp(path: str | Path | None = None) -> None:
-    """
-    Shows 'Published data last updated' for whichever file is being used.
-    """
-    data_path = Path(path) if path is not None else _resolve_data_path()
+    tables = {}
+    meta_rows = []
+    for sn in sheets:
+        try:
+            df_clean, meta = clean_pivot_export_sheet(xl_obj, sn, min_text_cells=min_text_cells)
+            tables[sn] = df_clean
+            meta_rows.append(meta)
+        except Exception as e:
+            meta_rows.append({
+                'sheet': sn,
+                'header_row_idx': None,
+                'rows': None,
+                'cols': None,
+                'columns_preview': 'ERROR: ' + str(e)
+            })
 
-    try:
-        ts = datetime.fromtimestamp(data_path.stat().st_mtime)
-        st.caption("Published data last updated: " + ts.strftime("%Y-%m-%d %H:%M:%S"))
-    except Exception:
-        st.caption("Published data last updated: (timestamp unavailable)")
+    meta_df = pd.DataFrame(meta_rows).sort_values('sheet').reset_index(drop=True)
+    return tables, meta_df, xl_obj.sheet_names
