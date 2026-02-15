@@ -1,4 +1,3 @@
-import os
 from pathlib import Path
 from datetime import datetime
 
@@ -12,44 +11,50 @@ FALLBACK_PATH = Path("data") / "WIP Test Data.xlsx"
 
 def _resolve_data_path() -> Path:
     """
-    Return the path we should actually load:
-    - data/current.xlsx if it exists
-    - otherwise data/WIP Test Data.xlsx
+    Picks the best available data file.
     """
     if PUBLISHED_PATH.exists():
         return PUBLISHED_PATH
     return FALLBACK_PATH
 
 
+def _mtime_or_none(path_obj: Path) -> float | None:
+    """
+    Used only to invalidate Streamlit cache when the file changes.
+    """
+    try:
+        return path_obj.stat().st_mtime
+    except Exception:
+        return None
+
+
 @st.cache_data(show_spinner="Loading data...")
+def _load_df_cached(data_path_str: str, cache_bust_mtime: float | None) -> pd.DataFrame:
+    """
+    Internal cached loader. Cache key includes:
+    - the resolved file path (as string)
+    - the file modified time (so cache refreshes automatically when Excel updates)
+    """
+    return pd.read_excel(data_path_str)
+
+
 def load_df(path: str | Path | None = None) -> pd.DataFrame:
     """
-    Load the main dataframe, with caching.
-
-    If `path` is None, use _resolve_data_path().
-    You can pass an explicit path if you ever want to override.
+    Public loader used by your pages.
+    - If `path` is None, uses the resolved data path.
+    - If a path is provided, loads that file instead.
     """
-    if path is None:
-        data_path = _resolve_data_path()
-    else:
-        data_path = Path(path)
-
-    df = pd.read_excel(data_path)
-    return df
+    data_path = Path(path) if path is not None else _resolve_data_path()
+    return _load_df_cached(str(data_path), _mtime_or_none(data_path))
 
 
 def show_published_timestamp(path: str | Path | None = None) -> None:
     """
-    Show a 'Published data last updated' timestamp in the app.
-
-    If `path` is None, it uses the same logic as _resolve_data_path().
+    Shows 'Published data last updated' for whichever file is being used.
     """
-    try:
-        if path is None:
-            data_path = _resolve_data_path()
-        else:
-            data_path = Path(path)
+    data_path = Path(path) if path is not None else _resolve_data_path()
 
+    try:
         ts = datetime.fromtimestamp(data_path.stat().st_mtime)
         st.caption("Published data last updated: " + ts.strftime("%Y-%m-%d %H:%M:%S"))
     except Exception:
