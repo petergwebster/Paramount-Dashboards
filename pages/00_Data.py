@@ -1,36 +1,34 @@
-import streamlit as st
 from pathlib import Path
 import pandas as pd
+import streamlit as st
 
-from data_loader import load_workbook_tables
 from data_sync import ensure_latest_workbook
+from data_loader import load_workbook_tables
 
-st.set_page_config(page_title="Data", layout="wide")
-st.title("Data Loader Verification")
+st.title("Data")
 
-data_dir = Path("data")
-data_dir.mkdir(exist_ok=True)
-xlsx_path = data_dir / "current.xlsx"
+xlsx_path = Path("data") / "current.xlsx"
 
-st.markdown("#### Auto-sync status")
+# --- Auto-sync on page load so /Data always reflects the latest workbook ---
 try:
     updated, msg = ensure_latest_workbook()
     st.caption("Auto data sync: " + msg)
     if updated:
         st.cache_data.clear()
 except Exception as exc:
-    st.warning("Auto-sync failed (upload still works).")
+    st.warning("Auto-sync failed. Using whatever workbook is currently on disk.")
     st.exception(exc)
 
 st.markdown("#### Manual upload override (optional)")
-uploaded = st.file_uploader("Upload Excel (.xlsx) to override current.xlsx", type=["xlsx"])
+uploaded = st.file_uploader("Upload a workbook (.xlsx) to override current.xlsx", type=["xlsx"])
 if uploaded is not None:
+    xlsx_path.parent.mkdir(parents=True, exist_ok=True)
     xlsx_path.write_bytes(uploaded.getbuffer())
     st.cache_data.clear()
     st.success("Saved to " + str(xlsx_path))
 
 if not xlsx_path.exists():
-    st.info("No workbook found yet. Either fix auto-sync or upload a workbook above.")
+    st.info("No workbook found yet. Fix auto-sync or upload a workbook above.")
     st.stop()
 
 mod_ts = pd.to_datetime(xlsx_path.stat().st_mtime, unit="s")
@@ -44,6 +42,8 @@ st.write("Size (MB)")
 st.write(file_size_mb)
 
 st.markdown("#### Step 2: Choose tabs and preview cleaning")
+
+# Important: get sheet names directly from ExcelFile (not from cleaner)
 min_text_cells = st.slider(
     "Header detection sensitivity (min non-empty cells in header row)",
     2,
