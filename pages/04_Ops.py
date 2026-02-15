@@ -8,84 +8,97 @@ st.title("Ops")
 
 tables = require_tables()
 
-color_df, color_name = get_table(tables, "Color yds")
-wip_df, wip_name = get_table(tables, "WIP")
-waste_df, waste_name = get_table(tables, "Yds wasted")
+color_raw, color_name = get_table(tables, "Color yds")
+wip_raw, wip_name = get_table(tables, "WIP")
+waste_raw, waste_name = get_table(tables, "Yds wasted")
 
-def _to_num(s):
-    return pd.to_numeric(s, errors="coerce")
+def _to_num(series_in):
+    return pd.to_numeric(series_in, errors="coerce")
 
-def _fmt_int(x):
-    if x is None:
-        return "NA"
-    try:
-        return "{:,.0f}".format(float(x))
-    except Exception:
-        return "NA"
+def make_unique_columns(cols):
+    seen = {}
+    out_cols = []
+    for c in cols:
+        base = "" if c is None else str(c)
+        base = base.strip()
+        if base == "" or base.lower() in ["", "none", "nat", "null"]:
+            base = "unnamed"
+        if base not in seen:
+            seen[base] = 0
+            out_cols.append(base)
+        else:
+            seen[base] += 1
+            out_cols.append(base + "__" + str(seen[base]))
+    return out_cols
 
-tab_overview, tab_color, tab_wip, tab_waste, tab_debug = st.tabs(["Overview", "Color", "WIP", "Waste", "Debug"])
+def promote_header_row(df_in, header_row_idx):
+    df2 = df_in.copy()
+    new_cols = df2.iloc[header_row_idx].astype(str).tolist()
+    df2.columns = [str(c).strip() for c in new_cols]
+    df2 = df2.iloc[header_row_idx + 1 :].reset_index(drop=True)
+    return df2
 
-with tab_overview:
-    st.subheader("Overview KPIs")
+def guess_header_row_ops(df_in, max_scan_rows=25):
+    scan_rows = min(max_scan_rows, len(df_in))
+    for i in range(scan_rows):
+        row_vals = df_in.iloc[i].astype(str).str.lower().tolist()
+        joined = " ".join(row_vals)
+        if "division" in joined and "yards" in joined:
+            return i
+        if "wip" in joined and "yards" in joined:
+            return i
+        if "waste" in joined and "yards" in joined:
+            return i
+    return 0
 
-    total_color = None
-    if color_df is not None:
-        df0 = color_df.copy()
-        df0.columns = [str(c).strip() for c in df0.columns]
-        num_cols = []
-        for c in df0.columns:
-            s_num = _to_num(df0[c])
-            if s_num.notna().sum() >= max(5, int(0.2 * len(s_num))):
-                num_cols.append(c)
-        if len(num_cols) > 0:
-            total_color = float(_to_num(df0[num_cols[0]]).sum(skipna=True))
+def quick_sum_first_numeric(df_in):
+    if df_in is None or len(df_in) == 0:
+        return None, None
+    df2 = df_in.copy()
+    df2.columns = [str(c).strip() for c in df2.columns]
+    for c in list(df2.columns):
+        non_na = _to_num(df2[c]).notna().sum()
+        if non_na >= max(5, int(0.2 * len(df2))):
+            return float(_to_num(df2[c]).sum(skipna=True)), c
+    return None, None
 
-    total_wip = None
-    if wip_df is not None:
-        df0 = wip_df.copy()
-        df0.columns = [str(c).strip() for c in df0.columns]
-        num_cols = []
-        for c in df0.columns:
-            s_num = _to_num(df0[c])
-            if s_num.notna().sum() >= max(5, int(0.2 * len(s_num))):
-                num_cols.append(c)
-        if len(num_cols) > 0:
-            total_wip = float(_to_num(df0[num_cols[0]]).sum(skipna=True))
+tab_dash, tab_color, tab_wip, tab_waste, tab_debug = st.tabs(
+    ["Dashboard", "Color Yards", "WIP", "Yards Wasted", "Debug"]
+)
 
-    total_waste = None
-    if waste_df is not None:
-        df0 = waste_df.copy()
-        df0.columns = [str(c).strip() for c in df0.columns]
-        num_cols = []
-        for c in df0.columns:
-            s_num = _to_num(df0[c])
-            if s_num.notna().sum() >= max(5, int(0.2 * len(s_num))):
-                num_cols.append(c)
-        if len(num_cols) > 0:
-            total_waste = float(_to_num(df0[num_cols[0]]).sum(skipna=True))
+with tab_dash:
+    st.subheader("Ops snapshot")
+
+    color_sum, color_sum_col = quick_sum_first_numeric(color_raw)
+    wip_sum, wip_sum_col = quick_sum_first_numeric(wip_raw)
+    waste_sum, waste_sum_col = quick_sum_first_numeric(waste_raw)
 
     c1, c2, c3 = st.columns(3)
-    c1.metric("Color yards (sum)", _fmt_int(total_color))
-    c2.metric("WIP (sum)", _fmt_int(total_wip))
-    c3.metric("Yards wasted (sum)", _fmt_int(total_waste))
+    c1.metric("Color yards (sum)", "NA" if color_sum is None else "{:,.0f}".format(color_sum))
+    c2.metric("WIP (sum)", "NA" if wip_sum is None else "{:,.0f}".format(wip_sum))
+    c3.metric("Yards wasted (sum)", "NA" if waste_sum is None else "{:,.0f}".format(waste_sum))
 
-    st.caption("These are quick sums using the first strong numeric column detected per sheet. We can lock to exact columns next.")
+    st.caption("These are quick sums using the first strong numeric column detected per sheet. Use the Debug tab to lock exact columns later.")
 
 with tab_color:
     st.subheader("Color Yards")
 
-    if color_df is None:
+    if color_raw is None:
         st.info("Missing Color Yards sheet.")
     else:
-        df0 = color_df.copy()
-        df0.columns = [str(c).strip() for c in df0.columns]
+        df0 = color_raw.copy()
+        header_row_idx = guess_header_row_ops(df0)
+        if header_row_idx > 0:
+            df0 = promote_header_row(df0, header_row_idx)
+        df0.columns = make_unique_columns(df0.columns)
+
         st.caption("Source sheet: " + str(color_name))
-        st.dataframe(df0.head(40), use_container_width=True)
+        st.dataframe(df0.head(60), use_container_width=True)
 
         cat_col = None
         for c in df0.columns:
             if _to_num(df0[c]).notna().sum() < max(5, int(0.1 * len(df0))):
-                if df0[c].nunique(dropna=True) > 1 and df0[c].nunique(dropna=True) < 40:
+                if df0[c].nunique(dropna=True) > 1 and df0[c].nunique(dropna=True) < 50:
                     cat_col = c
                     break
 
@@ -100,42 +113,57 @@ with tab_color:
             grp[num_col] = _to_num(grp[num_col])
             grp = grp.dropna(subset=[cat_col])
             grp = grp.groupby(cat_col, as_index=True)[num_col].sum().sort_values(ascending=False).head(20)
+            st.subheader("Top 20")
             st.bar_chart(grp, use_container_width=True)
 
 with tab_wip:
     st.subheader("WIP")
 
-    if wip_df is None:
+    if wip_raw is None:
         st.info("Missing WIP sheet.")
     else:
-        df0 = wip_df.copy()
-        df0.columns = [str(c).strip() for c in df0.columns]
+        df0 = wip_raw.copy()
+        header_row_idx = guess_header_row_ops(df0)
+        if header_row_idx > 0:
+            df0 = promote_header_row(df0, header_row_idx)
+        df0.columns = make_unique_columns(df0.columns)
+
         st.caption("Source sheet: " + str(wip_name))
-        st.dataframe(df0.head(60), use_container_width=True)
+        st.dataframe(df0.head(80), use_container_width=True)
 
 with tab_waste:
     st.subheader("Yards Wasted")
 
-    if waste_df is None:
+    if waste_raw is None:
         st.info("Missing Yards Wasted sheet.")
     else:
-        df0 = waste_df.copy()
-        df0.columns = [str(c).strip() for c in df0.columns]
+        df0 = waste_raw.copy()
+        header_row_idx = guess_header_row_ops(df0)
+        if header_row_idx > 0:
+            df0 = promote_header_row(df0, header_row_idx)
+        df0.columns = make_unique_columns(df0.columns)
+
         st.caption("Source sheet: " + str(waste_name))
-        st.dataframe(df0.head(60), use_container_width=True)
+        st.dataframe(df0.head(80), use_container_width=True)
 
 with tab_debug:
-    st.subheader("Debug: loaded sources")
-    st.write({"color": color_name, "wip": wip_name, "waste": waste_name})
+    st.subheader("Loaded sources")
+    st.write(
+        {
+            "color_sheet": color_name,
+            "wip_sheet": wip_name,
+            "waste_sheet": waste_name,
+        }
+    )
 
-    if color_df is not None:
-        st.markdown("**Color Yards columns**")
-        st.write(list(color_df.columns))
+    if color_raw is not None:
+        st.subheader("Color raw columns")
+        st.write(list(color_raw.columns))
 
-    if wip_df is not None:
-        st.markdown("**WIP columns**")
-        st.write(list(wip_df.columns))
+    if wip_raw is not None:
+        st.subheader("WIP raw columns")
+        st.write(list(wip_raw.columns))
 
-    if waste_df is not None:
-        st.markdown("**Yards Wasted columns**")
-        st.write(list(waste_df.columns))
+    if waste_raw is not None:
+        st.subheader("Waste raw columns")
+        st.write(list(waste_raw.columns))
