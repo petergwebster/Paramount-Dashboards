@@ -5,12 +5,10 @@ import streamlit as st
 DATA_DIR = Path("data")
 DATA_PATH_DEFAULT = DATA_DIR / "current.xlsx"
 
-
 def _nonempty_count(vals):
     s = vals.astype(str).str.strip()
     s = s.replace("", "")
     return int(s.ne("").sum())
-
 
 def clean_pivot_export_sheet(xl_obj, sheet_name, min_text_cells=4):
     """
@@ -58,7 +56,6 @@ def clean_pivot_export_sheet(xl_obj, sheet_name, min_text_cells=4):
     }
     return df, meta
 
-
 @st.cache_data(show_spinner=False)
 def load_workbook_tables(xlsx_path_str=None, selected_sheets=None, min_text_cells=4):
     """
@@ -66,13 +63,17 @@ def load_workbook_tables(xlsx_path_str=None, selected_sheets=None, min_text_cell
       - tables: dict of {sheet_name: cleaned_df}
       - meta_df: summary dataframe for verification
       - sheet_names: list of all sheet names in the workbook
+
+    Behavior:
+      - selected_sheets is None means load all sheets
+      - selected_sheets is [] means load zero sheets but still return sheet_names
     """
     DATA_DIR.mkdir(exist_ok=True)
 
     xlsx_path = Path(xlsx_path_str) if xlsx_path_str else DATA_PATH_DEFAULT
     xl_obj = pd.ExcelFile(xlsx_path)
-
     sheet_names = xl_obj.sheet_names
+
     use_sheets = sheet_names
     if selected_sheets is not None:
         selected_set = set(selected_sheets)
@@ -80,6 +81,7 @@ def load_workbook_tables(xlsx_path_str=None, selected_sheets=None, min_text_cell
 
     tables = {}
     meta_rows = []
+
     for sn in use_sheets:
         try:
             df_clean, meta = clean_pivot_export_sheet(
@@ -98,9 +100,18 @@ def load_workbook_tables(xlsx_path_str=None, selected_sheets=None, min_text_cell
                 }
             )
 
-    meta_df = pd.DataFrame(meta_rows).sort_values("sheet").reset_index(drop=True)
-    return tables, meta_df, sheet_names
+    if len(meta_rows) == 0:
+        meta_df = pd.DataFrame(
+            columns=["sheet", "header_row_idx", "rows", "cols", "columns_preview"]
+        )
+    else:
+        meta_df = pd.DataFrame(meta_rows)
+        if "sheet" in meta_df.columns:
+            meta_df = meta_df.sort_values("sheet").reset_index(drop=True)
+        else:
+            meta_df = meta_df.reset_index(drop=True)
 
+    return tables, meta_df, sheet_names
 
 def show_published_timestamp(xlsx_path_str=None):
     """
@@ -113,7 +124,6 @@ def show_published_timestamp(xlsx_path_str=None):
 
     mod_ts = pd.to_datetime(xlsx_path.stat().st_mtime, unit="s")
     st.caption("Data file last updated: " + str(mod_ts))
-
 
 @st.cache_data(show_spinner=False)
 def load_df(sheet_name=None, xlsx_path_str=None, min_text_cells=4):
