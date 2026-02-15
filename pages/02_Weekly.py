@@ -52,9 +52,9 @@ def guess_header_row(df_in, max_scan_rows=25):
         joined = " ".join(row_vals)
         if "division" in joined and "week" in joined:
             return i
-        if "divisions" in joined and "weeks" in joined:
-            return i
         if "weeks" in joined and "yards" in joined:
+            return i
+        if "yards" in joined and "written" in joined and "produced" in joined:
             return i
         if "yards wr" in joined and "yards prod" in joined:
             return i
@@ -92,11 +92,11 @@ def safe_prev(series_in):
         return None
     return float(s2.iloc[-2])
 
-def metric_delta(curr, prev):
-    if curr is None or prev is None:
+def metric_delta(curr_val, prev_val):
+    if curr_val is None or prev_val is None:
         return None
     try:
-        return float(curr) - float(prev)
+        return float(curr_val) - float(prev_val)
     except Exception:
         return None
 
@@ -110,27 +110,31 @@ time_col = find_first_col(cols_clean, ["week"])
 if time_col is None:
     time_col = find_first_col(cols_clean, ["weeks"])
 if time_col is None:
-    time_col = find_first_col(cols_clean, ["period"])
-if time_col is None:
-    time_col = find_first_col(cols_clean, ["date"])
-if time_col is None:
-    time_col = find_first_col(cols_clean, ["month"])
+    time_col = find_first_col(cols_clean, ["wk"])
 
 written_col = find_first_col(cols_clean, ["written"])
+if written_col is None:
+    written_col = find_first_col(cols_clean, ["yards", "wr"])
+
 produced_col = find_first_col(cols_clean, ["produced"])
-invoiced_col = find_first_col(cols_clean, ["invoic"])
-if invoiced_col is None:
-    invoiced_col = find_first_col(cols_clean, ["net", "yards"])
+if produced_col is None:
+    produced_col = find_first_col(cols_clean, ["yards", "prod"])
+
+invoiced_col = find_first_col(cols_clean, ["invoiced"])
 if invoiced_col is None:
     invoiced_col = find_first_col(cols_clean, ["net"])
+if invoiced_col is None:
+    invoiced_col = find_first_col(cols_clean, ["income"])
 
 tab_dash, tab_head, tab_debug = st.tabs(["Dashboard", "Head", "Debug"])
 
 with tab_dash:
+    st.subheader("Weekly snapshot")
+
     st.caption("Source sheet: " + str(weekly_name) + " | Header promoted from row: " + str(header_row_idx))
 
     if time_col is None:
-        st.warning("Could not detect a time column (Week/Period/Date). See Debug tab.")
+        st.warning("Could not detect a Week column. See Debug tab.")
     else:
         use_cols = []
         if written_col is not None:
@@ -141,7 +145,7 @@ with tab_dash:
             use_cols.append(invoiced_col)
 
         if len(use_cols) == 0:
-            st.warning("Could not detect written/produced/invoiced columns. See Debug tab.")
+            st.warning("Could not detect Written/Produced/Invoiced columns. See Debug tab.")
         else:
             df_plot = df0[[time_col] + use_cols].copy()
 
@@ -174,18 +178,31 @@ with tab_dash:
             prev_invoiced = safe_prev(df_plot[invoiced_col]) if invoiced_col is not None else None
 
             c1, c2, c3 = st.columns(3)
+
             if written_col is not None:
-                c1.metric("Written (latest)", fmt_int(last_written), fmt_int(metric_delta(last_written, prev_written)))
+                c1.metric(
+                    "Written (latest)",
+                    fmt_int(last_written),
+                    fmt_int(metric_delta(last_written, prev_written)),
+                )
             if produced_col is not None:
-                c2.metric("Produced (latest)", fmt_int(last_produced), fmt_int(metric_delta(last_produced, prev_produced)))
+                c2.metric(
+                    "Produced (latest)",
+                    fmt_int(last_produced),
+                    fmt_int(metric_delta(last_produced, prev_produced)),
+                )
             if invoiced_col is not None:
-                c3.metric("Invoiced or Net (latest)", fmt_int(last_invoiced), fmt_int(metric_delta(last_invoiced, prev_invoiced)))
+                c3.metric(
+                    "Invoiced or Net (latest)",
+                    fmt_int(last_invoiced),
+                    fmt_int(metric_delta(last_invoiced, prev_invoiced)),
+                )
 
             st.subheader("Trend")
             st.line_chart(df_plot.set_index(time_col)[use_cols], use_container_width=True)
 
 with tab_head:
-    st.subheader("Head (after header promotion + column dedupe)")
+    st.subheader("Head (after header promotion and dedupe)")
     st.dataframe(df0.head(60), use_container_width=True)
 
 with tab_debug:
@@ -203,7 +220,14 @@ with tab_debug:
 
     if time_col is not None and time_col in df0.columns:
         st.subheader("Time bucket value counts (top 25)")
-        st.write(df0[time_col].astype(str).str.strip().str.lower().value_counts().head(25))
+        st.write(
+            df0[time_col]
+            .astype(str)
+            .str.strip()
+            .str.lower()
+            .value_counts()
+            .head(25)
+        )
 
     st.subheader("All columns (cleaned)")
     st.write(list(df0.columns))
