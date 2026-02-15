@@ -25,7 +25,7 @@ def make_unique_columns(cols):
     for c in cols:
         base = "" if c is None else str(c)
         base = base.strip()
-        if base == "" or base.lower() == "" or base.lower() == "none":
+        if base == "" or base.lower() in ["", "none", "nat", "null"]:
             base = "unnamed"
         if base not in seen:
             seen[base] = 0
@@ -42,7 +42,7 @@ def promote_header_row(df_in, header_row_idx):
     df2 = df2.iloc[header_row_idx + 1 :].reset_index(drop=True)
     return df2
 
-def guess_header_row(df_in, max_scan_rows=20):
+def guess_header_row(df_in, max_scan_rows=25):
     scan_rows = min(max_scan_rows, len(df_in))
     for i in range(scan_rows):
         row_vals = df_in.iloc[i].astype(str).str.lower().tolist()
@@ -75,70 +75,61 @@ def fmt_int(x):
     except Exception:
         return "NA"
 
-def safe_last(series_in):
-    s2 = _to_num(series_in).dropna()
-    if len(s2) == 0:
-        return None
-    return float(s2.iloc[-1])
-
-def safe_prev(series_in):
-    s2 = _to_num(series_in).dropna()
-    if len(s2) < 2:
-        return None
-    return float(s2.iloc[-2])
-
-def metric_delta(a, b):
-    if a is None or b is None:
-        return None
-    return a - b
-
-header_row_idx = guess_header_row(df_raw, max_scan_rows=25)
+header_row_idx = guess_header_row(df_raw)
 df0 = promote_header_row(df_raw, header_row_idx)
 df0.columns = make_unique_columns(df0.columns)
 
-st.caption("Source sheet: " + str(ytd_name) + "  |  Header promoted from row: " + str(header_row_idx))
-
 cols_clean = list(df0.columns)
 
-time_col = None
-for cand in ["Weeks", "Week", "weeks", "week"]:
-    if cand in cols_clean:
-        time_col = cand
-        break
+time_col = find_first_col(cols_clean, ["week"])
 if time_col is None:
-    time_col = find_first_col(cols_clean, ["week"])
+    time_col = find_first_col(cols_clean, ["weeks"])
+if time_col is None:
+    time_col = find_first_col(cols_clean, ["period"])
 if time_col is None:
     time_col = find_first_col(cols_clean, ["month"])
+if time_col is None:
+    time_col = find_first_col(cols_clean, ["date"])
 
-plan_col = find_first_col(cols_clean, ["plan"])
-actual_col = find_first_col(cols_clean, ["actual"])
-if actual_col is None:
-    actual_col = find_first_col(cols_clean, ["net", "yards"])
-if actual_col is None:
-    actual_col = find_first_col(cols_clean, ["produced"])
+plan_col = find_first_col(cols_clean, ["plan", "yard"])
+if plan_col is None:
+    plan_col = find_first_col(cols_clean, ["yards", "plan"])
+if plan_col is None:
+    plan_col = find_first_col(cols_clean, ["planned"])
 
-variance_col = find_first_col(cols_clean, ["plan"])
-if variance_col is not None:
-    pass
+actual_col = find_first_col(cols_clean, ["net", "yards"])
+if actual_col is None:
+    actual_col = find_first_col(cols_clean, ["invoic"])
+if actual_col is None:
+    actual_col = find_first_col(cols_clean, ["actual"])
+if actual_col is None:
+    actual_col = find_first_col(cols_clean, ["produced", "yards"])
 
 tab_dash, tab_head, tab_debug = st.tabs(["Dashboard", "Head", "Debug"])
 
 with tab_dash:
-    st.subheader("Plan vs Actual (quick)")
+    st.caption("Source sheet: " + str(ytd_name) + " | Header promoted from row: " + str(header_row_idx))
 
     if plan_col is None or actual_col is None:
         st.warning("Could not confidently detect Plan and Actual columns. See Debug tab.")
     else:
-        df_plot = df0.copy()
+        if time_col is None:
+            df_plot = df0[[plan_col, actual_col]].copy()
+        else:
+            df_plot = df0[[time_col, plan_col, actual_col]].copy()
 
         df_plot[plan_col] = _to_num(df_plot[plan_col])
         df_plot[actual_col] = _to_num(df_plot[actual_col])
 
         if time_col is not None and time_col in df_plot.columns:
             df_plot[time_col] = df_plot[time_col].astype(str).str.strip()
-            df_plot = df_plot.dropna(subset=[time_col])
-            df_plot[time_col] = df_plot[time_col].astype(str).str.strip()
-            df_plot = df_plot[df_plot[time_col].notna() & (df_plot[time_col] != "") & (df_plot[time_col].str.lower() != "")]
+            bad_time_vals = {"", "", "none", "nat", "null"}
+            df_plot = df_plot[~df_plot[time_col].str.lower().isin(bad_time_vals)].copy()
+
+            time_as_num = pd.to_numeric(df_plot[time_col], errors="coerce")
+            if time_as_num.notna().sum() > 0:
+                df_plot = df_plot[time_as_num.notna()].copy()
+
             df_plot = df_plot.groupby(time_col, as_index=False)[[plan_col, actual_col]].sum()
 
             df_plot["_time_sort"] = pd.to_numeric(df_plot[time_col], errors="coerce")
@@ -158,27 +149,32 @@ with tab_dash:
 
         if time_col is not None and time_col in df_plot.columns:
             st.subheader("Trend")
-            chart_df = df_plot[[time_col, plan_col, actual_col]].set_index(time_col)
-            st.line_chart(chart_df, use_container_width=True)
+            st.line_chart(df_plot.set_index(time_col)[[plan_col, actual_col]], use_container_width=True)
         else:
-            st.info("No week/month column detected for a trend line. Showing totals only.")
+            st.info("No time column detected for a trend chart. Totals only.")
 
 with tab_head:
-    st.subheader("Head (after header promotion and dedupe)")
+    st.subheader("Head (after header promotion + column dedupe)")
     st.dataframe(df0.head(60), use_container_width=True)
 
 with tab_debug:
     st.subheader("Detected columns")
     st.write(
         {
+            "source_sheet": ytd_name,
+            "header_row_idx": header_row_idx,
             "time_col": time_col,
             "plan_col": plan_col,
             "actual_or_net_col": actual_col,
         }
     )
 
+    if time_col is not None and time_col in df0.columns:
+        st.subheader("Time bucket value counts (top 25)")
+        st.write(df0[time_col].astype(str).str.strip().str.lower().value_counts().head(25))
+
     st.subheader("All columns (cleaned)")
-    st.write(cols_clean)
+    st.write(list(df0.columns))
 
     st.subheader("Raw head (before promotion)")
     st.dataframe(df_raw.head(10), use_container_width=True)
