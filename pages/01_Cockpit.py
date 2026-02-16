@@ -1,30 +1,22 @@
 import streamlit as st
 
 st.set_page_config(page_title="Cockpit", layout="wide")
+
 st.title("Cockpit")
-st.caption("Weekly operating view. Filters + KPIs + core drivers.")
 
-with st.sidebar:
-    st.header("Filters")
-    st.selectbox("Location", ["All", "Brooklyn Digital", "Passaic Screen"], index=0)
-    st.selectbox("Fiscal Year", ["FY2026"], index=0)
-    st.slider("Week Range", 1, 52, (1, 8))
+tables = st.session_state.get("tables")
 
-tab_weekly, tab_monthly, tab_ytd = st.tabs(["Weekly", "Monthly", "YTD vs Plan"])
+if tables is None:
+    st.warning("No data loaded yet. Go to the Data page and click Load workbook.")
+    st.stop()
 
-with tab_weekly:
-    st.subheader("Written / Produced / Invoiced")
-    c1, c2, c3, c4 = st.columns(4)
-    c1.metric("Written", "—")
-    c2.metric("Produced", "—")
-    c3.metric("Invoiced", "—")
-    c4.metric("Produced - Written", "—")
-    st.info("Next: weekly trend chart + Produced minus Written bars, plus Digital vs Screen split.")
+st.markdown("#### Tables available (from memory)")
+st.write("Total tables")
+st.write(len(tables))
 
-with tab_monthly:
-    st.subheader("Monthly rollups (4-4-5)")
-    st.info("Next: month view on your 4-4-5 calendar.")
+table_keys = sorted(list(tables.keys()))
+st.write("First 60 table keys")
+st.write(table_keys[:60])
 
-with tab_ytd:
-    st.subheader("YTD vs Plan / vs LY")
-    st.info("Next: YTD actual vs plan, and YTD vs last year.")
+st.markdown("#### Next step")
+st.write("Pick the correct weekly table key from the list above. Then we will wire a single Weekly metric and one chart.")
