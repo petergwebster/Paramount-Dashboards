@@ -77,14 +77,11 @@ def _make_parquet_safe(df_val):
 
     out_df = df_val.copy()
 
+    # Critical: avoid pyarrow type inference issues on mixed object columns (ex: Weeks has "1 Total")
     for col_val in out_df.columns:
         if out_df[col_val].dtype == "object":
-            non_null = out_df[col_val].dropna()
-            if len(non_null) == 0:
-                continue
-            sample = non_null.iloc[0]
-            if isinstance(sample, (list, dict)):
-                out_df[col_val] = out_df[col_val].astype(str)
+            out_df[col_val] = out_df[col_val].astype(str)
+            out_df.loc[out_df[col_val].str.lower().isin(["", "none", "nat"]), col_val] = None
 
     return out_df
 
@@ -130,6 +127,7 @@ def _build_landing_vs_ly_df(workbook_path_obj):
     exclude_set = set([x.lower() for x in EXCLUDE_DIVISIONS])
 
     def _block(df_in, div_col, ly_col, ty_col, out_ly_name, out_ty_name):
+        # Only pull the columns we need (never Weeks)
         slim = df_in[[div_col, ly_col, ty_col]].copy()
         slim["Location"] = slim[div_col].apply(_base_division_name).apply(_clean_loc)
         slim = slim[slim[div_col].apply(_is_total_row)].copy()
@@ -148,18 +146,20 @@ def _build_landing_vs_ly_df(workbook_path_obj):
         "Written Current",
     )
 
+    produced_div_col = "Divisions.1" if "Divisions.1" in df_val.columns else "Divisions"
     produced_df = _block(
         df_val,
-        "Divisions.1" if "Divisions.1" in df_val.columns else "Divisions",
+        produced_div_col,
         "2024 Income Produced",
         "2025 Income Produced",
         "Produced LY",
         "Produced Current",
     )
 
+    invoiced_div_col = "Divisions.2" if "Divisions.2" in df_val.columns else "Divisions"
     invoiced_df = _block(
         df_val,
-        "Divisions.2" if "Divisions.2" in df_val.columns else "Divisions",
+        invoiced_div_col,
         "2024 Net Income Invoiced",
         "2025 Net Income Invoiced",
         "Invoiced LY",
@@ -169,16 +169,15 @@ def _build_landing_vs_ly_df(workbook_path_obj):
     out_df = written_df.merge(produced_df, on="Location", how="outer").merge(invoiced_df, on="Location", how="outer")
     out_df = out_df.dropna(subset=["Location"]).copy()
 
-    out_df["__sort"] = out_df["Location"].astype(str).str.strip().str.lower().apply(lambda x: 9999 if x == "grand total" else 0)
+    out_df["__sort"] = out_df["Location"].astype(str).str.strip().str.lower().apply(
+        lambda x: 9999 if x == "grand total" else 0
+    )
     out_df = out_df.sort_values(["__sort", "Location"]).drop(columns=["__sort"]).reset_index(drop=True)
 
     return out_df
 
-# NOTE
-# The functions below are placeholders.
-# If your existing pages/90_Data.py already has correct implementations for these,
-# keep yours and only replace _build_landing_vs_ly_df above.
-
+# Note: these are intentionally simple "read sheet and write parquet" builders.
+# If you already have more specific logic for these in your existing repo, keep yours.
 def _build_landing_plan_df(workbook_path_obj):
     sheet_name = "YTD Plan vs Act"
     header_row_idx = _detect_header_row(workbook_path_obj, sheet_name)
