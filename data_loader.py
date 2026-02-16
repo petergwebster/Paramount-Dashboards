@@ -1,7 +1,7 @@
-import pandas as pd
 from pathlib import Path
+import pandas as pd
 
-# Allow importing this module even in environments without streamlit
+# Make this module importable even in non-Streamlit contexts (tests, notebooks)
 try:
     import streamlit as st
 except Exception:
@@ -20,15 +20,17 @@ except Exception:
         def info(self, *args, **kwargs):
             return None
 
+        def warning(self, *args, **kwargs):
+            return None
+
+        def error(self, *args, **kwargs):
+            return None
+
     st = _StubStreamlit()
-
-
-# -----------------------------
-# Defaults / configuration
-# -----------------------------
 
 DEFAULT_DATA_PATH = Path("data/current.xlsx")
 
+# Default sheet whitelist (your 7 dashboard tabs)
 DEFAULT_SHEET_WHITELIST = [
     "Written and Produced by Week",
     "Written Produced Invoiced",
@@ -39,17 +41,13 @@ DEFAULT_SHEET_WHITELIST = [
     "Yards Wasted",
 ]
 
+# Optional aliases so the app stays stable if Excel tab names drift
 SHEET_ALIASES = {
     "Witten Produced Invoiced": "Written Produced Invoiced",
     "YTD Plan vs Actual": "YTD Plan vs Act",
     "YTD Plan vs Actuals": "YTD Plan vs Act",
     "Production WIP": "WIP",
 }
-
-
-# -----------------------------
-# Small helpers
-# -----------------------------
 
 def _normalize_sheet_name(name_val):
     name_str = str(name_val).strip()
@@ -77,8 +75,8 @@ def _drop_excel_junk_columns(df_in):
     return df_in
 
 def _remove_pivot_totals(df_in):
-    # Remove subtotal/total rows so we never double-count pivot exports.
-    # Drops any row where any object column contains the substring "total".
+    # Conservative but effective:
+    # If ANY object column contains 'total' or 'grand total' (case-insensitive), drop that row.
     if df_in is None:
         return df_in
     if not hasattr(df_in, "shape"):
@@ -107,49 +105,13 @@ def _remove_pivot_totals(df_in):
 
     return df.loc[~mask_total].copy()
 
-
-# -----------------------------
-# UI helper required by streamlit_app.py
-# -----------------------------
-
-def show_published_timestamp(xlsx_path=None):
-    """
-    Used by streamlit_app.py.
-    Shows last modified time + file size for the workbook.
-    Keeps UI stable even if file is missing.
-    """
-    if xlsx_path is None:
-        xlsx_path = DEFAULT_DATA_PATH
-    xlsx_path = Path(xlsx_path)
-
-    if not xlsx_path.exists():
-        try:
-            st.info("Workbook not found at " + str(xlsx_path))
-        except Exception:
-            pass
-        return None
-
-    mod_ts = pd.to_datetime(xlsx_path.stat().st_mtime, unit="s")
-    file_size_mb = round(xlsx_path.stat().st_size / (1024 * 1024), 2)
-
-    try:
-        st.caption("Workbook: " + str(xlsx_path))
-        st.caption("Last modified: " + str(mod_ts))
-        st.caption("Size (MB): " + str(file_size_mb))
-    except Exception:
-        pass
-
-    return {"path": str(xlsx_path), "modified": mod_ts, "size_mb": file_size_mb}
-
-
-# -----------------------------
-# Main cleaning + loading
-# -----------------------------
-
 def clean_pivot_export_sheet(xl_obj, sheet_name, min_text_cells=4, remove_totals=True):
+    # Reads an Excel pivot-export-like sheet where the header row isn't guaranteed to be row 1
     df_raw = pd.read_excel(xl_obj, sheet_name=sheet_name, header=None)
 
     row_text_counts = df_raw.apply(lambda r: _row_text_count(r), axis=1)
+
+    # Find first row that looks like a header row
     header_row_idx = int((row_text_counts >= min_text_cells).idxmax())
 
     new_cols = [str(x).strip() for x in df_raw.iloc[header_row_idx].tolist()]
@@ -166,14 +128,14 @@ def clean_pivot_export_sheet(xl_obj, sheet_name, min_text_cells=4, remove_totals
     )
     df_clean = df_clean.loc[:, nonempty_col_mask].copy()
 
-    # Drop Excel junk columns and remove totals
+    # Drop Excel spillover columns like  / .1 / Unnamed
     df_clean = _drop_excel_junk_columns(df_clean)
 
+    # Remove subtotal/total rows from pivot exports
     if remove_totals:
         df_clean = _remove_pivot_totals(df_clean)
 
     return df_clean
-
 
 @st.cache_data(show_spinner=False)
 def load_workbook_tables(
@@ -192,11 +154,13 @@ def load_workbook_tables(
     if selected_sheets is None:
         selected_sheets = []
 
+    # If selected_sheets is passed (non-empty), it overrides the whitelist.
     if len(selected_sheets) > 0:
         requested = [_normalize_sheet_name(x) for x in selected_sheets]
     else:
         requested = whitelist
 
+    # Only load sheets that exist
     requested = [s for s in requested if s in all_sheets]
 
     tables = {}
@@ -233,3 +197,34 @@ def load_workbook_tables(
 
     meta_df = pd.DataFrame(meta_rows).sort_values(["sheet_name"]).reset_index(drop=True)
     return tables, meta_df, all_sheets
+
+def show_published_timestamp(excel_path=None):
+    # Backwards-compatible helper expected by streamlit_app.py
+    # Shows last-modified time and size for the locally present workbook.
+    if excel_path is None:
+        excel_path = DEFAULT_DATA_PATH
+
+    excel_path = Path(excel_path)
+
+    if not excel_path.exists():
+        try:
+            st.warning("Workbook not found at " + str(excel_path))
+        except Exception:
+            pass
+        return None
+
+    mod_ts = pd.to_datetime(excel_path.stat().st_mtime, unit="s")
+    file_size_mb = round(excel_path.stat().st_size / (1024 * 1024), 2)
+
+    try:
+        st.caption("Data workbook")
+        st.write(str(excel_path))
+        st.write("Last modified")
+        st.write(mod_ts)
+        st.write("Size MB")
+        st.write(file_size_mb)
+    except Exception:
+        # In non-streamlit contexts just return the info
+        pass
+
+    return {"path": str(excel_path), "last_modified": mod_ts, "size_mb": file_size_mb}
