@@ -1,6 +1,7 @@
 import pandas as pd
+from pathlib import Path
 
-# Make this module importable in environments without Streamlit (tests, scripts)
+# Allow importing this module even in environments without streamlit
 try:
     import streamlit as st
 except Exception:
@@ -9,10 +10,25 @@ except Exception:
             def _decor(fn):
                 return fn
             return _decor
+
+        def write(self, *args, **kwargs):
+            return None
+
+        def caption(self, *args, **kwargs):
+            return None
+
+        def info(self, *args, **kwargs):
+            return None
+
     st = _StubStreamlit()
 
 
-# Default sheet whitelist (your 7 dashboard tabs)
+# -----------------------------
+# Defaults / configuration
+# -----------------------------
+
+DEFAULT_DATA_PATH = Path("data/current.xlsx")
+
 DEFAULT_SHEET_WHITELIST = [
     "Written and Produced by Week",
     "Written Produced Invoiced",
@@ -23,19 +39,17 @@ DEFAULT_SHEET_WHITELIST = [
     "Yards Wasted",
 ]
 
-# Optional aliases so the app stays stable if Excel tab names drift
 SHEET_ALIASES = {
     "Witten Produced Invoiced": "Written Produced Invoiced",
     "YTD Plan vs Actual": "YTD Plan vs Act",
     "YTD Plan vs Actuals": "YTD Plan vs Act",
+    "Production WIP": "WIP",
 }
 
 
-def _row_text_count(row_vals):
-    ser = row_vals.astype(str).str.strip()
-    ser = ser.replace("", "")
-    return int(ser.ne("").sum())
-
+# -----------------------------
+# Small helpers
+# -----------------------------
 
 def _normalize_sheet_name(name_val):
     name_str = str(name_val).strip()
@@ -43,10 +57,28 @@ def _normalize_sheet_name(name_val):
         return SHEET_ALIASES[name_str]
     return name_str
 
+def _row_text_count(row_vals):
+    ser = row_vals.astype(str).str.strip()
+    ser = ser.replace("", "")
+    return int(ser.ne("").sum())
+
+def _drop_excel_junk_columns(df_in):
+    if df_in is None or not hasattr(df_in, "columns"):
+        return df_in
+
+    bad_cols = []
+    for c in df_in.columns:
+        c_str = str(c).strip().lower()
+        if c_str == "" or c_str == "" or c_str.startswith("") or c_str.startswith("unnamed"):
+            bad_cols.append(c)
+
+    if len(bad_cols) > 0:
+        return df_in.drop(columns=bad_cols)
+    return df_in
 
 def _remove_pivot_totals(df_in):
-    # Remove subtotal/total rows so we never double-count pivot exports
-    # Heuristic: if ANY string-like cell in ANY object column contains 'total' or 'grand total', drop the row.
+    # Remove subtotal/total rows so we never double-count pivot exports.
+    # Drops any row where any object column contains the substring "total".
     if df_in is None:
         return df_in
     if not hasattr(df_in, "shape"):
@@ -76,37 +108,67 @@ def _remove_pivot_totals(df_in):
     return df.loc[~mask_total].copy()
 
 
+# -----------------------------
+# UI helper required by streamlit_app.py
+# -----------------------------
+
+def show_published_timestamp(xlsx_path=None):
+    """
+    Used by streamlit_app.py.
+    Shows last modified time + file size for the workbook.
+    Keeps UI stable even if file is missing.
+    """
+    if xlsx_path is None:
+        xlsx_path = DEFAULT_DATA_PATH
+    xlsx_path = Path(xlsx_path)
+
+    if not xlsx_path.exists():
+        try:
+            st.info("Workbook not found at " + str(xlsx_path))
+        except Exception:
+            pass
+        return None
+
+    mod_ts = pd.to_datetime(xlsx_path.stat().st_mtime, unit="s")
+    file_size_mb = round(xlsx_path.stat().st_size / (1024 * 1024), 2)
+
+    try:
+        st.caption("Workbook: " + str(xlsx_path))
+        st.caption("Last modified: " + str(mod_ts))
+        st.caption("Size (MB): " + str(file_size_mb))
+    except Exception:
+        pass
+
+    return {"path": str(xlsx_path), "modified": mod_ts, "size_mb": file_size_mb}
+
+
+# -----------------------------
+# Main cleaning + loading
+# -----------------------------
+
 def clean_pivot_export_sheet(xl_obj, sheet_name, min_text_cells=4, remove_totals=True):
-    # Reads an Excel pivot-export-like sheet where the header row isn't guaranteed to be row 1
     df_raw = pd.read_excel(xl_obj, sheet_name=sheet_name, header=None)
 
     row_text_counts = df_raw.apply(lambda r: _row_text_count(r), axis=1)
     header_row_idx = int((row_text_counts >= min_text_cells).idxmax())
 
     new_cols = [str(x).strip() for x in df_raw.iloc[header_row_idx].tolist()]
-    df_clean = df_raw.iloc[header_row_idx + 1:].copy()
+    df_clean = df_raw.iloc[header_row_idx + 1 :].copy()
     df_clean.columns = new_cols
 
     # Drop fully empty rows
     nonempty_row_mask = df_clean.apply(lambda r: _row_text_count(r) > 0, axis=1)
     df_clean = df_clean.loc[nonempty_row_mask].reset_index(drop=True)
 
-    # Drop fully empty columns
+    # Drop fully empty cols
     nonempty_col_mask = df_clean.apply(
         lambda c: c.astype(str).str.strip().replace("", "").ne("").any(), axis=0
     )
     df_clean = df_clean.loc[:, nonempty_col_mask].copy()
 
-    # Drop Excel spillover columns like  / .1 / Unnamed
-    bad_cols = []
-    for c in df_clean.columns:
-        c_str = str(c).strip().lower()
-        if c_str == "" or c_str == "" or c_str.startswith("") or c_str.startswith("unnamed"):
-            bad_cols.append(c)
-    if len(bad_cols) > 0:
-        df_clean = df_clean.drop(columns=bad_cols)
+    # Drop Excel junk columns and remove totals
+    df_clean = _drop_excel_junk_columns(df_clean)
 
-    # Remove pivot subtotal/total rows
     if remove_totals:
         df_clean = _remove_pivot_totals(df_clean)
 
@@ -121,8 +183,6 @@ def load_workbook_tables(
     sheet_whitelist=None,
     remove_pivot_totals=True,
 ):
-    # selected_sheets: explicit user selection (if provided)
-    # sheet_whitelist: default operational set the app cares about
     xl = pd.ExcelFile(excel_path)
     all_sheets = xl.sheet_names
 
@@ -132,13 +192,11 @@ def load_workbook_tables(
     if selected_sheets is None:
         selected_sheets = []
 
-    # IMPORTANT: if selected_sheets is passed (non-empty), it overrides whitelist
     if len(selected_sheets) > 0:
         requested = [_normalize_sheet_name(x) for x in selected_sheets]
     else:
         requested = whitelist
 
-    # Keep only sheets that exist in the workbook
     requested = [s for s in requested if s in all_sheets]
 
     tables = {}
