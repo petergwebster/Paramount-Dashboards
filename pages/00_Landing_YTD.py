@@ -3,15 +3,16 @@ import pandas as pd
 import numpy as np
 
 st.set_page_config(page_title="Landing - YTD", layout="wide")
-st.title("Landing - YTD")
-st.caption("YTD Scoreboard")
+st.title("YTD Scoreboard")
 
 LY_OUT_PATH = "landing_ytd_vs_ly.parquet"
 
 def _read_landing_df():
     df_val = pd.read_parquet(LY_OUT_PATH)
+
     if "Location" not in df_val.columns:
         df_val["Location"] = ""
+
     df_val["Location"] = df_val["Location"].astype(str).str.strip()
 
     num_cols = [
@@ -22,6 +23,7 @@ def _read_landing_df():
         "Invoiced LY",
         "Invoiced Current",
     ]
+
     for c in num_cols:
         if c in df_val.columns:
             df_val[c] = pd.to_numeric(df_val[c], errors="coerce")
@@ -41,9 +43,11 @@ def _safe_scalar(loc_df, col_name, default_val=0.0):
         return float(default_val)
     if col_name not in loc_df.columns:
         return float(default_val)
+
     s_val = pd.to_numeric(loc_df[col_name], errors="coerce")
     if s_val.dropna().empty:
         return float(default_val)
+
     return float(s_val.dropna().iloc[0])
 
 def _pct_vs_ly(curr_val, ly_val):
@@ -76,21 +80,21 @@ def _metric_block(title_txt, curr_val, ly_val):
     pct_val = _pct_vs_ly(curr_val, ly_val)
     color_val = _delta_color(pct_val)
 
-    st.markdown(
-        """
-        <div style="border: 1px solid #e5e7eb; border-radius: 12px; padding: 14px 16px; background: white;">
-          <div style="font-size: 14px; color: #374151; margin-bottom: 6px; font-weight: 600;">{title}</div>
-          <div style="font-size: 34px; line-height: 1.1; font-weight: 700; color: #111827;">{curr}</div>
-          <div style="margin-top: 6px; display: inline-block; padding: 4px 10px; border-radius: 999px; background: #f3f4f6; color: {color}; font-weight: 600; font-size: 13px;">
-            {pct}
-          </div>
-        </div>
-        """.replace("{title}", str(title_txt))
-           .replace("{curr}", _fmt_currency(curr_val))
-           .replace("{pct}", _fmt_pct(pct_val))
-           .replace("{color}", str(color_val)),
-        unsafe_allow_html=True,
-    )
+    html_val = """
+    <div style="border: 1px solid #e5e7eb; border-radius: 12px; padding: 14px 16px; background: white;">
+      <div style="font-size: 14px; color: #374151; margin-bottom: 6px; font-weight: 600;">TITLE</div>
+      <div style="font-size: 34px; line-height: 1.1; font-weight: 700; color: #111827;">CURR</div>
+      <div style="margin-top: 6px; display: inline-block; padding: 4px 10px; border-radius: 999px; background: #f3f4f6; color: COLOR; font-weight: 600; font-size: 13px;">
+        PCT
+      </div>
+    </div>
+    """
+    html_val = html_val.replace("TITLE", str(title_txt))
+    html_val = html_val.replace("CURR", _fmt_currency(curr_val))
+    html_val = html_val.replace("PCT", _fmt_pct(pct_val))
+    html_val = html_val.replace("COLOR", str(color_val))
+
+    st.markdown(html_val, unsafe_allow_html=True)
 
 def _render_location(df_val, loc_name, header_label=None):
     label = loc_name if header_label is None else header_label
@@ -122,8 +126,6 @@ except Exception as e:
     st.error("Could not load " + LY_OUT_PATH)
     st.code(str(e))
     st.stop()
-
-st.markdown("### Divisions")
 
 _render_location(landing_df, "Digital")
 st.divider()
