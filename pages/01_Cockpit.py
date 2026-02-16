@@ -2,33 +2,29 @@ import streamlit as st
 
 st.set_page_config(page_title="Cockpit", layout="wide")
 st.title("Cockpit")
+st.caption("Weekly operating view. Filters + KPIs + core drivers.")
 
-st.caption("Cockpit parsed successfully.")
+with st.sidebar:
+    st.header("Filters")
+    st.selectbox("Location", ["All", "Brooklyn Digital", "Passaic Screen"], index=0)
+    st.selectbox("Fiscal Year", ["FY2026"], index=0)
+    st.slider("Week Range", 1, 52, (1, 8))
 
-st.subheader("Session state keys")
-st.write(sorted(list(st.session_state.keys())))
+tab_weekly, tab_monthly, tab_ytd = st.tabs(["Weekly", "Monthly", "YTD vs Plan"])
 
-tables = st.session_state.get("sheets_raw")
+with tab_weekly:
+    st.subheader("Written / Produced / Invoiced")
+    c1, c2, c3, c4 = st.columns(4)
+    c1.metric("Written", "—")
+    c2.metric("Produced", "—")
+    c3.metric("Invoiced", "—")
+    c4.metric("Produced - Written", "—")
+    st.info("Next: weekly trend chart + Produced minus Written bars, plus Digital vs Screen split.")
 
-if tables is None:
-    st.warning("No data loaded yet. Go to Data and click Load and preview selected tabs.")
-    st.stop()
+with tab_monthly:
+    st.subheader("Monthly rollups (4-4-5)")
+    st.info("Next: month view on your 4-4-5 calendar.")
 
-if not isinstance(tables, dict):
-    st.error("sheets_raw exists but is not a dict.")
-    st.write(type(tables))
-    st.stop()
-
-if len(tables) == 0:
-    st.warning("sheets_raw is an empty dict.")
-    st.stop()
-
-st.success("Found " + str(len(tables)) + " sheets in st.session_state[sheets_raw].")
-
-st.subheader("Sheet names")
-sheet_names = sorted(list(tables.keys()))
-st.write(sheet_names)
-
-first_name = sheet_names[0]
-st.subheader("Preview: " + first_name)
-st.dataframe(tables[first_name].head(25), use_container_width=True)
+with tab_ytd:
+    st.subheader("YTD vs Plan / vs LY")
+    st.info("Next: YTD actual vs plan, and YTD vs last year.")
