@@ -1,17 +1,13 @@
+from pathlib import Path
 import os
 import re
-from pathlib import Path
-
 import streamlit as st
 import pandas as pd
 
 from data_sync import ensure_latest_workbook
 
 st.set_page_config(page_title="Data", layout="wide")
-st.title("Data")
-
-PLAN_OUT_PATH = "landing_ytd_plan.parquet"
-LY_OUT_PATH = "landing_ytd_vs_ly.parquet"
+st.title("Admin - Data")
 
 ALLOWED_SHEETS = [
     "Written and Produced by Week",
@@ -22,6 +18,14 @@ ALLOWED_SHEETS = [
     "WIP",
     "Yards Wasted",
 ]
+
+PLAN_OUT_PATH = "landing_ytd_plan.parquet"
+LY_OUT_PATH = "landing_ytd_vs_ly.parquet"
+
+EXCLUDE_DIVISIONS = {
+    "design services",
+    "design services total",
+}
 
 def _clean_columns(cols_val):
     clean_cols = []
@@ -47,13 +51,12 @@ def _score_header_row(row_vals):
     score = len(non_empty) + unique_count
     return score
 
-def _detect_header_row(excel_path, sheet_name, max_scan_rows=25):
+def _detect_header_row(excel_path, sheet_name, max_scan_rows=30):
     preview_df = pd.read_excel(
         str(excel_path),
         sheet_name=sheet_name,
         header=None,
-        nrows=int(max_scan_rows),
-        engine=None
+        nrows=int(max_scan_rows)
     )
     best_idx = 0
     best_score = -1
@@ -75,165 +78,196 @@ def _read_sheet_cached(excel_path_str, sheet_name, header_row_idx):
     df_val = _drop_unnamed_and_empty_columns(df_val)
     return df_val
 
-def _norm_col(col_name):
+def _norm_key(col_name):
     return str(col_name).strip().lower().replace(" ", "_").replace("-", "_")
 
 def _find_col(df_val, candidates):
     if df_val is None or len(df_val.columns) == 0:
         return None
-    norm_map = {_norm_col(c): c for c in df_val.columns}
+    norm_map = {_norm_key(c): c for c in df_val.columns}
     for cand in candidates:
-        cand_norm = _norm_col(cand)
+        cand_norm = _norm_key(cand)
         if cand_norm in norm_map:
             return norm_map[cand_norm]
     return None
 
-def _canonical_location(loc_val):
+def _clean_loc(loc_val):
     if pd.isna(loc_val):
         return None
-    loc_str = str(loc_val).strip()
-    if loc_str == "":
+    s_val = str(loc_val).strip()
+    if s_val == "":
         return None
-    loc_low = re.sub(r"\s+", " ", loc_str.lower()).strip()
+    if s_val.lower() == "":
+        return None
+    return s_val
 
-    if loc_low == "grand total":
-        return "Grand Total"
+def _is_grand_total(loc_str):
+    if loc_str is None:
+        return False
+    return str(loc_str).strip().lower() == "grand total"
 
-    if loc_low.endswith(" total"):
-        base = loc_str[:-6].strip()
-        base_low = base.lower()
-        if base_low == "grand":
-            return "Grand Total"
-        return base
+def _is_division_total(loc_str):
+    if loc_str is None:
+        return False
+    s_val = str(loc_str).strip().lower()
+    if s_val == "grand total":
+        return False
+    return s_val.endswith(" total")
 
-    return loc_str
+def _base_division_name(loc_str):
+    if loc_str is None:
+        return None
+    s_val = str(loc_str).strip()
+    s_low = s_val.lower()
+    if s_low.endswith(" total") and s_low != "grand total":
+        return s_val[: -len(" total")].strip()
+    return s_val
 
 def _build_landing_plan_df(workbook_path_obj):
     sheet_name = "YTD Plan vs Act"
-    header_row_idx = _detect_header_row(workbook_path_obj, sheet_name, max_scan_rows=35)
+    header_row_idx = _detect_header_row(workbook_path_obj, sheet_name)
     raw_df = _read_sheet_cached(str(workbook_path_obj), sheet_name, header_row_idx)
 
-    div_col = _find_col(raw_df, ["Division", "Location"])
-    if div_col is None:
-        div_col = raw_df.columns[0]
+    division_col = _find_col(raw_df, ["Division", "Location"])
+    if division_col is None:
+        division_col = raw_df.columns[0]
 
-    yards_prod_col = _find_col(raw_df, ["Yards Produced"])
-    yards_plan_col = _find_col(raw_df, ["Yards Planned"])
-    income_prod_col = _find_col(raw_df, ["Income Produced"])
-    income_plan_col = _find_col(raw_df, ["Income Planned"])
-    net_yards_inv_col = _find_col(raw_df, ["Net Yards Invoiced"])
-    net_income_inv_col = _find_col(raw_df, ["Net Income Invoiced"])
+    yards_produced_col = _find_col(raw_df, ["Yards Produced"])
+    yards_planned_col = _find_col(raw_df, ["Yards Planned"])
+    income_produced_col = _find_col(raw_df, ["Income Produced"])
+    income_planned_col = _find_col(raw_df, ["Income Planned"])
+    net_yards_invoiced_col = _find_col(raw_df, ["Net Yards Invoiced"])
+    net_income_invoiced_col = _find_col(raw_df, ["Net Income Invoiced"])
 
-    for col_name in [
-        yards_prod_col,
-        yards_plan_col,
-        income_prod_col,
-        income_plan_col,
-        net_yards_inv_col,
-        net_income_inv_col,
+    keep_cols = [division_col]
+    for c in [
+        yards_produced_col,
+        yards_planned_col,
+        income_produced_col,
+        income_planned_col,
+        net_yards_invoiced_col,
+        net_income_invoiced_col,
     ]:
-        if col_name is not None and col_name in raw_df.columns:
-            raw_df[col_name] = pd.to_numeric(raw_df[col_name], errors="coerce")
+        if c is not None and c not in keep_cols:
+            keep_cols.append(c)
 
-    div_series = raw_df[div_col].astype(str).str.strip()
-    is_grand_total = div_series.str.lower().eq("grand total")
-    is_div_total = div_series.str.lower().str.endswith(" total") & (~is_grand_total)
+    df_val = raw_df.loc[:, keep_cols].copy()
+    df_val[division_col] = df_val[division_col].apply(_clean_loc)
 
-    keep_mask = is_grand_total | is_div_total
-    df_keep = raw_df.loc[keep_mask, :].copy()
+    for c in keep_cols:
+        if c != division_col:
+            df_val[c] = pd.to_numeric(df_val[c], errors="coerce")
 
-    df_keep["Location"] = df_keep[div_col].apply(_canonical_location)
+    df_val["__is_grand_total"] = df_val[division_col].apply(_is_grand_total)
+    df_val["__is_div_total"] = df_val[division_col].apply(_is_division_total)
 
-    exclude_locs = {"design services", "design service"}
-    df_keep = df_keep[~df_keep["Location"].astype(str).str.strip().str.lower().isin(exclude_locs)].copy()
+    totals_df = df_val[df_val["__is_grand_total"] | df_val["__is_div_total"]].copy()
+
+    totals_df["Location"] = totals_df[division_col].apply(_base_division_name)
+    totals_df["Location"] = totals_df["Location"].apply(_clean_loc)
+
+    totals_df = totals_df[totals_df["Location"].notna()].copy()
+    totals_df = totals_df[~totals_df["Location"].astype(str).str.strip().str.lower().isin(EXCLUDE_DIVISIONS)].copy()
 
     out_df = pd.DataFrame()
-    out_df["Location"] = df_keep["Location"]
+    out_df["Location"] = totals_df["Location"]
 
-    out_df["Yards Produced"] = df_keep[yards_prod_col] if yards_prod_col in df_keep.columns else pd.NA
-    out_df["Yards Planned"] = df_keep[yards_plan_col] if yards_plan_col in df_keep.columns else pd.NA
-    out_df["Income Produced"] = df_keep[income_prod_col] if income_prod_col in df_keep.columns else pd.NA
-    out_df["Income Planned"] = df_keep[income_plan_col] if income_plan_col in df_keep.columns else pd.NA
-    out_df["Net Yards Invoiced"] = df_keep[net_yards_inv_col] if net_yards_inv_col in df_keep.columns else pd.NA
-    out_df["Net Income Invoiced"] = df_keep[net_income_inv_col] if net_income_inv_col in df_keep.columns else pd.NA
+    if yards_produced_col is not None:
+        out_df["Yards Produced"] = totals_df[yards_produced_col]
+    if yards_planned_col is not None:
+        out_df["Yards Planned"] = totals_df[yards_planned_col]
+    if income_produced_col is not None:
+        out_df["Income Produced"] = totals_df[income_produced_col]
+    if income_planned_col is not None:
+        out_df["Income Planned"] = totals_df[income_planned_col]
+    if net_yards_invoiced_col is not None:
+        out_df["Net Yards Invoiced"] = totals_df[net_yards_invoiced_col]
+    if net_income_invoiced_col is not None:
+        out_df["Net Income Invoiced"] = totals_df[net_income_invoiced_col]
 
-    out_df = out_df.dropna(subset=["Location"])
-    out_df["Location"] = out_df["Location"].astype(str).str.strip()
+    out_df = out_df.dropna(how="all", subset=[c for c in out_df.columns if c != "Location"])
 
-    def _loc_sort_key(x):
-        x_low = str(x).strip().lower()
-        if x_low == "grand total":
-            return (9, x_low)
-        return (0, x_low)
+    out_df["__sort"] = out_df["Location"].astype(str).str.strip().str.lower().apply(lambda x: 9999 if x == "grand total" else 0)
+    out_df = out_df.sort_values(["__sort", "Location"]).drop(columns=["__sort"]).reset_index(drop=True)
 
-    out_df = out_df.sort_values(by="Location", key=lambda s: s.map(_loc_sort_key)).reset_index(drop=True)
+    out_df = out_df.drop_duplicates(subset=["Location"], keep="last").reset_index(drop=True)
+
     return out_df
 
 def _build_landing_vs_ly_df(workbook_path_obj):
     sheet_name = "YTD vs LY"
-    header_row_idx = _detect_header_row(workbook_path_obj, sheet_name, max_scan_rows=35)
+    header_row_idx = _detect_header_row(workbook_path_obj, sheet_name)
     raw_df = _read_sheet_cached(str(workbook_path_obj), sheet_name, header_row_idx)
 
-    div_col = _find_col(raw_df, ["Division", "Location"])
-    if div_col is None:
-        div_col = raw_df.columns[0]
+    division_col = _find_col(raw_df, ["Division", "Location"])
+    if division_col is None:
+        division_col = raw_df.columns[0]
 
-    produced_cur_col = _find_col(raw_df, ["Produced Current", "Produced CY", "Produced", "Income Produced"])
-    produced_ly_col = _find_col(raw_df, ["Produced LY", "Produced Prior", "Produced PY", "Income Produced LY"])
-    invoiced_cur_col = _find_col(raw_df, ["Invoiced Current", "Invoiced CY", "Invoiced", "Net Income Invoiced"])
-    invoiced_ly_col = _find_col(raw_df, ["Invoiced LY", "Invoiced Prior", "Invoiced PY", "Net Income Invoiced LY"])
+    produced_current_col = _find_col(raw_df, ["Produced", "Produced Current", "Income Produced", "Produced TY", "TY Produced"])
+    produced_ly_col = _find_col(raw_df, ["Produced LY", "LY Produced", "Income Produced LY", "Produced Last Year"])
+    invoiced_current_col = _find_col(raw_df, ["Invoiced", "Invoiced Current", "Net Income Invoiced", "Invoiced TY", "TY Invoiced"])
+    invoiced_ly_col = _find_col(raw_df, ["Invoiced LY", "LY Invoiced", "Net Income Invoiced LY", "Invoiced Last Year"])
 
-    for col_name in [produced_cur_col, produced_ly_col, invoiced_cur_col, invoiced_ly_col]:
-        if col_name is not None and col_name in raw_df.columns:
-            raw_df[col_name] = pd.to_numeric(raw_df[col_name], errors="coerce")
+    keep_cols = [division_col]
+    for c in [produced_current_col, produced_ly_col, invoiced_current_col, invoiced_ly_col]:
+        if c is not None and c not in keep_cols:
+            keep_cols.append(c)
 
-    div_series = raw_df[div_col].astype(str).str.strip()
-    is_grand_total = div_series.str.lower().eq("grand total")
-    is_div_total = div_series.str.lower().str.endswith(" total") & (~is_grand_total)
+    df_val = raw_df.loc[:, keep_cols].copy()
+    df_val[division_col] = df_val[division_col].apply(_clean_loc)
 
-    keep_mask = is_grand_total | is_div_total
-    df_keep = raw_df.loc[keep_mask, :].copy()
+    for c in keep_cols:
+        if c != division_col:
+            df_val[c] = pd.to_numeric(df_val[c], errors="coerce")
 
-    df_keep["Location"] = df_keep[div_col].apply(_canonical_location)
+    df_val["__is_grand_total"] = df_val[division_col].apply(_is_grand_total)
+    df_val["__is_div_total"] = df_val[division_col].apply(_is_division_total)
 
-    exclude_locs = {"design services", "design service"}
-    df_keep = df_keep[~df_keep["Location"].astype(str).str.strip().str.lower().isin(exclude_locs)].copy()
+    totals_df = df_val[df_val["__is_grand_total"] | df_val["__is_div_total"]].copy()
+
+    totals_df["Location"] = totals_df[division_col].apply(_base_division_name)
+    totals_df["Location"] = totals_df["Location"].apply(_clean_loc)
+
+    totals_df = totals_df[totals_df["Location"].notna()].copy()
+    totals_df = totals_df[~totals_df["Location"].astype(str).str.strip().str.lower().isin(EXCLUDE_DIVISIONS)].copy()
 
     out_df = pd.DataFrame()
-    out_df["Location"] = df_keep["Location"]
-    out_df["Produced Current"] = df_keep[produced_cur_col] if produced_cur_col in df_keep.columns else pd.NA
-    out_df["Produced LY"] = df_keep[produced_ly_col] if produced_ly_col in df_keep.columns else pd.NA
-    out_df["Invoiced Current"] = df_keep[invoiced_cur_col] if invoiced_cur_col in df_keep.columns else pd.NA
-    out_df["Invoiced LY"] = df_keep[invoiced_ly_col] if invoiced_ly_col in df_keep.columns else pd.NA
+    out_df["Location"] = totals_df["Location"]
 
-    out_df = out_df.dropna(subset=["Location"])
-    out_df["Location"] = out_df["Location"].astype(str).str.strip()
+    if produced_current_col is not None:
+        out_df["Produced Current"] = totals_df[produced_current_col]
+    if produced_ly_col is not None:
+        out_df["Produced LY"] = totals_df[produced_ly_col]
+    if invoiced_current_col is not None:
+        out_df["Invoiced Current"] = totals_df[invoiced_current_col]
+    if invoiced_ly_col is not None:
+        out_df["Invoiced LY"] = totals_df[invoiced_ly_col]
 
-    def _loc_sort_key(x):
-        x_low = str(x).strip().lower()
-        if x_low == "grand total":
-            return (9, x_low)
-        return (0, x_low)
+    out_df = out_df.dropna(how="all", subset=[c for c in out_df.columns if c != "Location"])
 
-    out_df = out_df.sort_values(by="Location", key=lambda s: s.map(_loc_sort_key)).reset_index(drop=True)
+    out_df["__sort"] = out_df["Location"].astype(str).str.strip().str.lower().apply(lambda x: 9999 if x == "grand total" else 0)
+    out_df = out_df.sort_values(["__sort", "Location"]).drop(columns=["__sort"]).reset_index(drop=True)
+
+    out_df = out_df.drop_duplicates(subset=["Location"], keep="last").reset_index(drop=True)
+
     return out_df
 
 def _write_landing_parquets(workbook_path_obj):
-    plan_out = _build_landing_plan_df(workbook_path_obj)
-    ly_out = _build_landing_vs_ly_df(workbook_path_obj)
+    plan_df_val = _build_landing_plan_df(workbook_path_obj)
+    ly_df_val = _build_landing_vs_ly_df(workbook_path_obj)
 
-    plan_out.to_parquet(PLAN_OUT_PATH, index=False)
-    ly_out.to_parquet(LY_OUT_PATH, index=False)
-    return plan_out, ly_out
+    plan_df_val.to_parquet(PLAN_OUT_PATH, index=False)
+    ly_df_val.to_parquet(LY_OUT_PATH, index=False)
+
+    return plan_df_val, ly_df_val
 
 with st.sidebar:
     st.header("Workbook")
     workbook_path = ensure_latest_workbook()
-    st.write("Workbook path")
     st.code(str(workbook_path))
 
 st.header("Landing data build")
-st.caption("Writes: " + PLAN_OUT_PATH + " and " + LY_OUT_PATH)
+st.caption("Writes " + PLAN_OUT_PATH + " and " + LY_OUT_PATH)
 
 c1, c2 = st.columns([1, 1])
 with c1:
@@ -251,27 +285,28 @@ if build_clicked:
         plan_out_df, ly_out_df = _write_landing_parquets(workbook_path)
 
     st.cache_data.clear()
-    st.success("Parquets written. Cache cleared.")
+    st.success("Parquets written and cache cleared.")
 
-    st.subheader("Locations written")
-    st.write(plan_out_df["Location"].tolist() if "Location" in plan_out_df.columns else [])
-    st.write(ly_out_df["Location"].tolist() if "Location" in ly_out_df.columns else [])
-
-    st.subheader("Plan parquet preview")
+    st.subheader("Plan parquet (what Landing uses)")
     st.dataframe(plan_out_df, use_container_width=True)
 
-    st.subheader("Vs LY parquet preview")
+    st.subheader("Vs LY parquet (what Landing uses)")
     st.dataframe(ly_out_df, use_container_width=True)
+
+    st.subheader("Locations written (sanity check)")
+    if "Location" in plan_out_df.columns:
+        st.write(plan_out_df["Location"].tolist())
+    if "Location" in ly_out_df.columns:
+        st.write(ly_out_df["Location"].tolist())
 
     st.rerun()
 
 st.divider()
-
 st.header("Sheet preview")
-sheet_name_choice = st.selectbox("Sheet", ALLOWED_SHEETS, index=0)
 
-header_row = _detect_header_row(workbook_path, sheet_name_choice, max_scan_rows=35)
-df_preview = _read_sheet_cached(str(workbook_path), sheet_name_choice, header_row)
+sheet_name_choice = st.selectbox("Sheet", ALLOWED_SHEETS, index=ALLOWED_SHEETS.index("YTD Plan vs Act"))
+header_row_idx = _detect_header_row(workbook_path, sheet_name_choice, max_scan_rows=35)
+df_preview = _read_sheet_cached(str(workbook_path), sheet_name_choice, header_row_idx)
 
-st.caption("Detected header row index: " + str(header_row))
-st.dataframe(df_preview.head(40), use_container_width=True)
+st.caption("Detected header row index " + str(header_row_idx))
+st.dataframe(df_preview.head(50), use_container_width=True)
