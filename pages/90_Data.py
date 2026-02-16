@@ -1,3 +1,17 @@
+import streamlit as st
+import pandas as pd
+from data_sync import ensure_latest_workbook
+
+st.write("DATA_XLSX_URL")
+st.code(str(st.secrets.get("DATA_XLSX_URL", "")))
+
+workbook_path = ensure_latest_workbook(ttl_seconds=0)
+st.write("Workbook path used")
+st.code(str(workbook_path))
+
+xl = pd.ExcelFile(str(workbook_path))
+st.write("Sheets detected")
+st.write(xl.sheet_names)
 from pathlib import Path
 import io
 import zipfile
