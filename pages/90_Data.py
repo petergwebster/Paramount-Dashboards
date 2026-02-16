@@ -1,5 +1,4 @@
 from pathlib import Path
-import os
 import re
 import streamlit as st
 import pandas as pd
@@ -21,6 +20,10 @@ ALLOWED_SHEETS = [
 
 PLAN_OUT_PATH = "landing_ytd_plan.parquet"
 LY_OUT_PATH = "landing_ytd_vs_ly.parquet"
+TREND_OUT_PATH = "trend_weekly.parquet"
+WIP_OUT_PATH = "wip.parquet"
+COLOR_YARDS_OUT_PATH = "color_yards.parquet"
+YARDS_WASTED_OUT_PATH = "yards_wasted.parquet"
 
 EXCLUDE_DIVISIONS = {
     "design services",
@@ -97,31 +100,36 @@ def _clean_loc(loc_val):
     s_val = str(loc_val).strip()
     if s_val == "":
         return None
-    if s_val.lower() == "":
-        return None
     return s_val
 
 def _is_grand_total(loc_str):
     if loc_str is None:
         return False
-    return str(loc_str).strip().lower() == "grand total"
+    s = str(loc_str).strip().lower()
+    return s == "grand total" or s == "grand_total"
 
 def _is_division_total(loc_str):
     if loc_str is None:
         return False
-    s_val = str(loc_str).strip().lower()
-    if s_val == "grand total":
-        return False
-    return s_val.endswith(" total")
+    s = str(loc_str).strip().lower()
+    if s.endswith(" total"):
+        return True
+    if s.endswith("total") and s != "grand total":
+        return True
+    return False
 
 def _base_division_name(loc_str):
     if loc_str is None:
         return None
-    s_val = str(loc_str).strip()
-    s_low = s_val.lower()
-    if s_low.endswith(" total") and s_low != "grand total":
-        return s_val[: -len(" total")].strip()
-    return s_val
+    s = str(loc_str).strip()
+    s_low = s.lower()
+    if s_low == "grand total":
+        return "Grand Total"
+    if s_low.endswith(" total"):
+        return s[: -len(" total")].strip()
+    if s_low.endswith("total") and s_low != "grand total":
+        return s[: -len("total")].strip()
+    return s
 
 def _build_landing_plan_df(workbook_path_obj):
     sheet_name = "YTD Plan vs Act"
@@ -132,22 +140,15 @@ def _build_landing_plan_df(workbook_path_obj):
     if division_col is None:
         division_col = raw_df.columns[0]
 
-    yards_produced_col = _find_col(raw_df, ["Yards Produced"])
-    yards_planned_col = _find_col(raw_df, ["Yards Planned"])
-    income_produced_col = _find_col(raw_df, ["Income Produced"])
-    income_planned_col = _find_col(raw_df, ["Income Planned"])
-    net_yards_invoiced_col = _find_col(raw_df, ["Net Yards Invoiced"])
-    net_income_invoiced_col = _find_col(raw_df, ["Net Income Invoiced"])
+    yards_produced_col = _find_col(raw_df, ["Yards Produced", "Produced Yards", "Yards TY", "TY Yards Produced"])
+    yards_planned_col = _find_col(raw_df, ["Yards Planned", "Planned Yards", "Plan Yards", "Yards Plan"])
+    income_produced_col = _find_col(raw_df, ["Income Produced", "Produced Income", "Income TY", "TY Income Produced"])
+    income_planned_col = _find_col(raw_df, ["Income Planned", "Planned Income", "Income Plan", "Plan Income"])
+    net_yards_invoiced_col = _find_col(raw_df, ["Net Yards Invoiced", "Yards Invoiced", "Net Invoiced Yards", "Invoiced Yards"])
+    net_income_invoiced_col = _find_col(raw_df, ["Net Income Invoiced", "Income Invoiced", "Net Invoiced Income", "Invoiced Income"])
 
     keep_cols = [division_col]
-    for c in [
-        yards_produced_col,
-        yards_planned_col,
-        income_produced_col,
-        income_planned_col,
-        net_yards_invoiced_col,
-        net_income_invoiced_col,
-    ]:
+    for c in [yards_produced_col, yards_planned_col, income_produced_col, income_planned_col, net_yards_invoiced_col, net_income_invoiced_col]:
         if c is not None and c not in keep_cols:
             keep_cols.append(c)
 
@@ -186,10 +187,8 @@ def _build_landing_plan_df(workbook_path_obj):
         out_df["Net Income Invoiced"] = totals_df[net_income_invoiced_col]
 
     out_df = out_df.dropna(how="all", subset=[c for c in out_df.columns if c != "Location"])
-
     out_df["__sort"] = out_df["Location"].astype(str).str.strip().str.lower().apply(lambda x: 9999 if x == "grand total" else 0)
     out_df = out_df.sort_values(["__sort", "Location"]).drop(columns=["__sort"]).reset_index(drop=True)
-
     out_df = out_df.drop_duplicates(subset=["Location"], keep="last").reset_index(drop=True)
 
     return out_df
@@ -244,69 +243,156 @@ def _build_landing_vs_ly_df(workbook_path_obj):
         out_df["Invoiced LY"] = totals_df[invoiced_ly_col]
 
     out_df = out_df.dropna(how="all", subset=[c for c in out_df.columns if c != "Location"])
-
     out_df["__sort"] = out_df["Location"].astype(str).str.strip().str.lower().apply(lambda x: 9999 if x == "grand total" else 0)
     out_df = out_df.sort_values(["__sort", "Location"]).drop(columns=["__sort"]).reset_index(drop=True)
-
     out_df = out_df.drop_duplicates(subset=["Location"], keep="last").reset_index(drop=True)
 
     return out_df
 
-def _write_landing_parquets(workbook_path_obj):
+def _build_trend_weekly_df(workbook_path_obj):
+    sheet_name = "Written Produced Invoiced"
+    header_row_idx = _detect_header_row(workbook_path_obj, sheet_name)
+    raw_df = _read_sheet_cached(str(workbook_path_obj), sheet_name, header_row_idx)
+
+    week_col = _find_col(raw_df, ["Week End", "Week Ending", "Week", "Date"])
+    if week_col is None:
+        week_col = raw_df.columns[0]
+
+    df_val = raw_df.copy()
+    df_val[week_col] = pd.to_datetime(df_val[week_col], errors="coerce")
+    df_val = df_val[df_val[week_col].notna()].copy()
+
+    for c in df_val.columns:
+        if c == week_col:
+            continue
+        df_val[c] = pd.to_numeric(df_val[c], errors="coerce")
+
+    keep_cols = [week_col]
+    for c in df_val.columns:
+        if c == week_col:
+            continue
+        if df_val[c].notna().any():
+            keep_cols.append(c)
+
+    out_df = df_val.loc[:, keep_cols].copy()
+    out_df = out_df.sort_values(week_col).reset_index(drop=True)
+    out_df = out_df.rename(columns={week_col: "Week"})
+    return out_df
+
+def _build_color_yards_df(workbook_path_obj):
+    sheet_name = "Color Yards"
+    header_row_idx = _detect_header_row(workbook_path_obj, sheet_name)
+    raw_df = _read_sheet_cached(str(workbook_path_obj), sheet_name, header_row_idx)
+
+    df_val = raw_df.copy()
+    df_val = df_val.dropna(axis=0, how="all")
+
+    loc_col = _find_col(df_val, ["Location", "Division", "Plant"])
+    if loc_col is not None:
+        df_val[loc_col] = df_val[loc_col].apply(_clean_loc)
+
+    for c in df_val.columns:
+        if c == loc_col:
+            continue
+        df_val[c] = pd.to_numeric(df_val[c], errors="ignore")
+
+    return df_val.reset_index(drop=True)
+
+def _build_wip_df(workbook_path_obj):
+    sheet_name = "WIP"
+    header_row_idx = _detect_header_row(workbook_path_obj, sheet_name)
+    raw_df = _read_sheet_cached(str(workbook_path_obj), sheet_name, header_row_idx)
+
+    df_val = raw_df.copy()
+    df_val = df_val.dropna(axis=0, how="all")
+
+    for c in df_val.columns:
+        if "date" in str(c).strip().lower():
+            df_val[c] = pd.to_datetime(df_val[c], errors="coerce")
+
+    for c in df_val.columns:
+        if "date" in str(c).strip().lower():
+            continue
+        df_val[c] = pd.to_numeric(df_val[c], errors="ignore")
+
+    return df_val.reset_index(drop=True)
+
+def _build_yards_wasted_df(workbook_path_obj):
+    sheet_name = "Yards Wasted"
+    header_row_idx = _detect_header_row(workbook_path_obj, sheet_name)
+    raw_df = _read_sheet_cached(str(workbook_path_obj), sheet_name, header_row_idx)
+
+    df_val = raw_df.copy()
+    df_val = df_val.dropna(axis=0, how="all")
+
+    date_col = _find_col(df_val, ["Date", "Day", "Week End", "Week Ending"])
+    if date_col is not None:
+        df_val[date_col] = pd.to_datetime(df_val[date_col], errors="coerce")
+
+    for c in df_val.columns:
+        if c == date_col:
+            continue
+        df_val[c] = pd.to_numeric(df_val[c], errors="ignore")
+
+    return df_val.reset_index(drop=True)
+
+def _write_all_parquets(workbook_path_obj):
     plan_df_val = _build_landing_plan_df(workbook_path_obj)
     ly_df_val = _build_landing_vs_ly_df(workbook_path_obj)
+    trend_df_val = _build_trend_weekly_df(workbook_path_obj)
+    wip_df_val = _build_wip_df(workbook_path_obj)
+    color_df_val = _build_color_yards_df(workbook_path_obj)
+    wasted_df_val = _build_yards_wasted_df(workbook_path_obj)
 
     plan_df_val.to_parquet(PLAN_OUT_PATH, index=False)
     ly_df_val.to_parquet(LY_OUT_PATH, index=False)
+    trend_df_val.to_parquet(TREND_OUT_PATH, index=False)
+    wip_df_val.to_parquet(WIP_OUT_PATH, index=False)
+    color_df_val.to_parquet(COLOR_YARDS_OUT_PATH, index=False)
+    wasted_df_val.to_parquet(YARDS_WASTED_OUT_PATH, index=False)
 
-    return plan_df_val, ly_df_val
+    return plan_df_val, ly_df_val, trend_df_val, wip_df_val, color_df_val, wasted_df_val
 
-with st.sidebar:
-    st.header("Workbook")
-    workbook_path = ensure_latest_workbook()
-    st.code(str(workbook_path))
+st.markdown("#### Workbook")
+with st.spinner("Checking workbook..."):
+    workbook_path_str = ensure_latest_workbook()
+workbook_path_obj = Path(workbook_path_str)
 
-st.header("Landing data build")
-st.caption("Writes " + PLAN_OUT_PATH + " and " + LY_OUT_PATH)
+st.write("Using workbook")
+st.code(str(workbook_path_obj))
 
-c1, c2 = st.columns([1, 1])
-with c1:
-    build_clicked = st.button("Build Landing parquet files", type="primary")
-with c2:
-    clear_clicked = st.button("Clear cache")
+if not workbook_path_obj.exists():
+    st.error("Workbook not found at " + str(workbook_path_obj))
+    st.stop()
 
-if clear_clicked:
-    st.cache_data.clear()
-    st.success("Cache cleared.")
-    st.rerun()
+st.markdown("#### Parquet build")
+st.write("This will generate parquet files used by the dashboard pages.")
+build_clicked = st.button("Build parquets", type="primary")
 
 if build_clicked:
-    with st.spinner("Building landing parquet files..."):
-        plan_out_df, ly_out_df = _write_landing_parquets(workbook_path)
+    with st.spinner("Building parquets..."):
+        plan_df, ly_df, trend_df, wip_df, color_df, wasted_df = _write_all_parquets(workbook_path_obj)
 
-    st.cache_data.clear()
-    st.success("Parquets written and cache cleared.")
+    st.success("Parquets written to repo root.")
 
-    st.subheader("Plan parquet (what Landing uses)")
-    st.dataframe(plan_out_df, use_container_width=True)
+    st.markdown("#### Outputs")
+    st.write(PLAN_OUT_PATH)
+    st.dataframe(plan_df, use_container_width=True)
 
-    st.subheader("Vs LY parquet (what Landing uses)")
-    st.dataframe(ly_out_df, use_container_width=True)
+    st.write(LY_OUT_PATH)
+    st.dataframe(ly_df, use_container_width=True)
 
-    st.subheader("Locations written (sanity check)")
-    if "Location" in plan_out_df.columns:
-        st.write(plan_out_df["Location"].tolist())
-    if "Location" in ly_out_df.columns:
-        st.write(ly_out_df["Location"].tolist())
+    st.write(TREND_OUT_PATH)
+    st.dataframe(trend_df.head(30), use_container_width=True)
 
-    st.rerun()
+    st.write(WIP_OUT_PATH)
+    st.dataframe(wip_df.head(30), use_container_width=True)
 
-st.divider()
-st.header("Sheet preview")
+    st.write(COLOR_YARDS_OUT_PATH)
+    st.dataframe(color_df.head(30), use_container_width=True)
 
-sheet_name_choice = st.selectbox("Sheet", ALLOWED_SHEETS, index=ALLOWED_SHEETS.index("YTD Plan vs Act"))
-header_row_idx = _detect_header_row(workbook_path, sheet_name_choice, max_scan_rows=35)
-df_preview = _read_sheet_cached(str(workbook_path), sheet_name_choice, header_row_idx)
+    st.write(YARDS_WASTED_OUT_PATH)
+    st.dataframe(wasted_df.head(30), use_container_width=True)
 
-st.caption("Detected header row index " + str(header_row_idx))
-st.dataframe(df_preview.head(50), use_container_width=True)
+st.markdown("#### Allowed sheets (FYI)")
+st.write(ALLOWED_SHEETS)
