@@ -23,10 +23,9 @@ st.write(mod_ts)
 st.write("Size MB")
 st.write(file_size_mb)
 
-# Pull all sheet names so user can see what's in the workbook
+# Load sheet names quickly
 _, _, all_sheets = load_workbook_tables(str(xlsx_path), selected_sheets=[])
 
-# Default selection is your 7 dashboard tabs (and only ones that exist in workbook)
 default_selected = [s for s in DEFAULT_SHEET_WHITELIST if s in all_sheets]
 
 st.markdown("**Select which tabs you want the dashboard to use**")
@@ -66,11 +65,3 @@ if st.button("Load and preview selected tabs"):
         st.write("Shape")
         st.write(df_prev.shape)
         st.dataframe(df_prev.head(25), use_container_width=True)
-
-        csv_bytes = df_prev.to_csv(index=False).encode("utf-8")
-        st.download_button(
-            "Download cleaned CSV for " + sn,
-            data=csv_bytes,
-            file_name=sn.replace("/", "_") + ".csv",
-            mime="text/csv",
-        )
