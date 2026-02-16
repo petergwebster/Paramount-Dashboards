@@ -105,31 +105,62 @@ def _clean_loc(loc_val):
 def _is_grand_total(loc_str):
     if loc_str is None:
         return False
-    s = str(loc_str).strip().lower()
-    return s == "grand total" or s == "grand_total"
+    s_val = str(loc_str).strip().lower()
+    return s_val == "grand total"
 
 def _is_division_total(loc_str):
     if loc_str is None:
         return False
-    s = str(loc_str).strip().lower()
-    if s.endswith(" total"):
-        return True
-    if s.endswith("total") and s != "grand total":
-        return True
-    return False
+    s_val = str(loc_str).strip().lower()
+    return s_val.endswith(" total") and s_val != "grand total"
 
 def _base_division_name(loc_str):
     if loc_str is None:
         return None
-    s = str(loc_str).strip()
-    s_low = s.lower()
+    s_val = str(loc_str).strip()
+    s_low = s_val.lower()
     if s_low == "grand total":
         return "Grand Total"
     if s_low.endswith(" total"):
-        return s[: -len(" total")].strip()
-    if s_low.endswith("total") and s_low != "grand total":
-        return s[: -len("total")].strip()
-    return s
+        return s_val[: -len(" total")].strip()
+    return s_val
+
+def _make_parquet_safe(df_val):
+    # Defensive normalization so pyarrow doesn't fail on mixed types like "2026 Total" in a Year column
+    if df_val is None:
+        return df_val
+
+    out_df = df_val.copy()
+    out_df.columns = [str(c) for c in out_df.columns]
+
+    for c in out_df.columns:
+        col_ser = out_df[c]
+        c_norm = str(c).strip().lower()
+
+        if "year" in c_norm:
+            out_df[c] = col_ser.astype(str).str.strip()
+            out_df.loc[out_df[c].str.lower() == "", c] = pd.NA
+            continue
+
+        if col_ser.dtype == "object":
+            numeric_try = pd.to_numeric(col_ser, errors="coerce")
+            non_null = col_ser.notna().sum()
+            numeric_rate = 0.0
+            if non_null > 0:
+                numeric_rate = numeric_try.notna().sum() / non_null
+
+            if numeric_rate >= 0.95:
+                out_df[c] = numeric_try
+            else:
+                out_df[c] = col_ser.astype(str).str.strip()
+                out_df.loc[out_df[c].str.lower() == "", c] = pd.NA
+
+    return out_df
+
+def _write_parquet_safe(df_val, out_path):
+    safe_df = _make_parquet_safe(df_val)
+    safe_df.to_parquet(out_path, index=False)
+    return safe_df
 
 def _build_landing_plan_df(workbook_path_obj):
     sheet_name = "YTD Plan vs Act"
@@ -140,15 +171,22 @@ def _build_landing_plan_df(workbook_path_obj):
     if division_col is None:
         division_col = raw_df.columns[0]
 
-    yards_produced_col = _find_col(raw_df, ["Yards Produced", "Produced Yards", "Yards TY", "TY Yards Produced"])
-    yards_planned_col = _find_col(raw_df, ["Yards Planned", "Planned Yards", "Plan Yards", "Yards Plan"])
-    income_produced_col = _find_col(raw_df, ["Income Produced", "Produced Income", "Income TY", "TY Income Produced"])
-    income_planned_col = _find_col(raw_df, ["Income Planned", "Planned Income", "Income Plan", "Plan Income"])
-    net_yards_invoiced_col = _find_col(raw_df, ["Net Yards Invoiced", "Yards Invoiced", "Net Invoiced Yards", "Invoiced Yards"])
-    net_income_invoiced_col = _find_col(raw_df, ["Net Income Invoiced", "Income Invoiced", "Net Invoiced Income", "Invoiced Income"])
+    yards_produced_col = _find_col(raw_df, ["Yards Produced", "Produced Yards", "Produced"])
+    yards_planned_col = _find_col(raw_df, ["Yards Planned", "Planned Yards", "Plan Yards", "Planned"])
+    income_produced_col = _find_col(raw_df, ["Income Produced", "Produced Income", "Produced $", "Produced"])
+    income_planned_col = _find_col(raw_df, ["Income Planned", "Planned Income", "Plan Income", "Planned $"])
+    net_yards_invoiced_col = _find_col(raw_df, ["Net Yards Invoiced", "Yards Invoiced", "Invoiced Yards"])
+    net_income_invoiced_col = _find_col(raw_df, ["Net Income Invoiced", "Income Invoiced", "Invoiced Income", "Invoiced $"])
 
     keep_cols = [division_col]
-    for c in [yards_produced_col, yards_planned_col, income_produced_col, income_planned_col, net_yards_invoiced_col, net_income_invoiced_col]:
+    for c in [
+        yards_produced_col,
+        yards_planned_col,
+        income_produced_col,
+        income_planned_col,
+        net_yards_invoiced_col,
+        net_income_invoiced_col,
+    ]:
         if c is not None and c not in keep_cols:
             keep_cols.append(c)
 
@@ -161,7 +199,6 @@ def _build_landing_plan_df(workbook_path_obj):
 
     df_val["__is_grand_total"] = df_val[division_col].apply(_is_grand_total)
     df_val["__is_div_total"] = df_val[division_col].apply(_is_division_total)
-
     totals_df = df_val[df_val["__is_grand_total"] | df_val["__is_div_total"]].copy()
 
     totals_df["Location"] = totals_df[division_col].apply(_base_division_name)
@@ -190,7 +227,6 @@ def _build_landing_plan_df(workbook_path_obj):
     out_df["__sort"] = out_df["Location"].astype(str).str.strip().str.lower().apply(lambda x: 9999 if x == "grand total" else 0)
     out_df = out_df.sort_values(["__sort", "Location"]).drop(columns=["__sort"]).reset_index(drop=True)
     out_df = out_df.drop_duplicates(subset=["Location"], keep="last").reset_index(drop=True)
-
     return out_df
 
 def _build_landing_vs_ly_df(workbook_path_obj):
@@ -221,7 +257,6 @@ def _build_landing_vs_ly_df(workbook_path_obj):
 
     df_val["__is_grand_total"] = df_val[division_col].apply(_is_grand_total)
     df_val["__is_div_total"] = df_val[division_col].apply(_is_division_total)
-
     totals_df = df_val[df_val["__is_grand_total"] | df_val["__is_div_total"]].copy()
 
     totals_df["Location"] = totals_df[division_col].apply(_base_division_name)
@@ -246,15 +281,16 @@ def _build_landing_vs_ly_df(workbook_path_obj):
     out_df["__sort"] = out_df["Location"].astype(str).str.strip().str.lower().apply(lambda x: 9999 if x == "grand total" else 0)
     out_df = out_df.sort_values(["__sort", "Location"]).drop(columns=["__sort"]).reset_index(drop=True)
     out_df = out_df.drop_duplicates(subset=["Location"], keep="last").reset_index(drop=True)
-
     return out_df
 
 def _build_trend_weekly_df(workbook_path_obj):
-    sheet_name = "Written Produced Invoiced"
+    # Weekly trends should come from a sheet that has actual week dates + metrics.
+    # We keep it general and just coerce everything except Week to numeric.
+    sheet_name = "Written and Produced by Week"
     header_row_idx = _detect_header_row(workbook_path_obj, sheet_name)
     raw_df = _read_sheet_cached(str(workbook_path_obj), sheet_name, header_row_idx)
 
-    week_col = _find_col(raw_df, ["Week End", "Week Ending", "Week", "Date"])
+    week_col = _find_col(raw_df, ["Week End", "Week", "Week Ending", "Date"])
     if week_col is None:
         week_col = raw_df.columns[0]
 
@@ -279,26 +315,8 @@ def _build_trend_weekly_df(workbook_path_obj):
     out_df = out_df.rename(columns={week_col: "Week"})
     return out_df
 
-def _build_color_yards_df(workbook_path_obj):
-    sheet_name = "Color Yards"
-    header_row_idx = _detect_header_row(workbook_path_obj, sheet_name)
-    raw_df = _read_sheet_cached(str(workbook_path_obj), sheet_name, header_row_idx)
-
-    df_val = raw_df.copy()
-    df_val = df_val.dropna(axis=0, how="all")
-
-    loc_col = _find_col(df_val, ["Location", "Division", "Plant"])
-    if loc_col is not None:
-        df_val[loc_col] = df_val[loc_col].apply(_clean_loc)
-
-    for c in df_val.columns:
-        if c == loc_col:
-            continue
-        df_val[c] = pd.to_numeric(df_val[c], errors="ignore")
-
-    return df_val.reset_index(drop=True)
-
 def _build_wip_df(workbook_path_obj):
+    # WIP is usually already a table. Keep columns, drop all-empty rows/cols, numeric-coerce where possible.
     sheet_name = "WIP"
     header_row_idx = _detect_header_row(workbook_path_obj, sheet_name)
     raw_df = _read_sheet_cached(str(workbook_path_obj), sheet_name, header_row_idx)
@@ -307,14 +325,26 @@ def _build_wip_df(workbook_path_obj):
     df_val = df_val.dropna(axis=0, how="all")
 
     for c in df_val.columns:
-        if "date" in str(c).strip().lower():
-            df_val[c] = pd.to_datetime(df_val[c], errors="coerce")
+        if df_val[c].dtype == "object":
+            numeric_try = pd.to_numeric(df_val[c], errors="coerce")
+            non_null = df_val[c].notna().sum()
+            numeric_rate = 0.0
+            if non_null > 0:
+                numeric_rate = numeric_try.notna().sum() / non_null
+            if numeric_rate >= 0.95:
+                df_val[c] = numeric_try
 
-    for c in df_val.columns:
-        if "date" in str(c).strip().lower():
-            continue
-        df_val[c] = pd.to_numeric(df_val[c], errors="ignore")
+    return df_val.reset_index(drop=True)
 
+def _build_color_yards_df(workbook_path_obj):
+    # This sheet often has pivot-style "Year" columns with "2026 Total" values.
+    # We keep everything and let _make_parquet_safe() normalize types for parquet write.
+    sheet_name = "Color Yards"
+    header_row_idx = _detect_header_row(workbook_path_obj, sheet_name)
+    raw_df = _read_sheet_cached(str(workbook_path_obj), sheet_name, header_row_idx)
+
+    df_val = raw_df.copy()
+    df_val = df_val.dropna(axis=0, how="all")
     return df_val.reset_index(drop=True)
 
 def _build_yards_wasted_df(workbook_path_obj):
@@ -329,11 +359,6 @@ def _build_yards_wasted_df(workbook_path_obj):
     if date_col is not None:
         df_val[date_col] = pd.to_datetime(df_val[date_col], errors="coerce")
 
-    for c in df_val.columns:
-        if c == date_col:
-            continue
-        df_val[c] = pd.to_numeric(df_val[c], errors="ignore")
-
     return df_val.reset_index(drop=True)
 
 def _write_all_parquets(workbook_path_obj):
@@ -344,12 +369,12 @@ def _write_all_parquets(workbook_path_obj):
     color_df_val = _build_color_yards_df(workbook_path_obj)
     wasted_df_val = _build_yards_wasted_df(workbook_path_obj)
 
-    plan_df_val.to_parquet(PLAN_OUT_PATH, index=False)
-    ly_df_val.to_parquet(LY_OUT_PATH, index=False)
-    trend_df_val.to_parquet(TREND_OUT_PATH, index=False)
-    wip_df_val.to_parquet(WIP_OUT_PATH, index=False)
-    color_df_val.to_parquet(COLOR_YARDS_OUT_PATH, index=False)
-    wasted_df_val.to_parquet(YARDS_WASTED_OUT_PATH, index=False)
+    plan_df_val = _write_parquet_safe(plan_df_val, PLAN_OUT_PATH)
+    ly_df_val = _write_parquet_safe(ly_df_val, LY_OUT_PATH)
+    trend_df_val = _write_parquet_safe(trend_df_val, TREND_OUT_PATH)
+    wip_df_val = _write_parquet_safe(wip_df_val, WIP_OUT_PATH)
+    color_df_val = _write_parquet_safe(color_df_val, COLOR_YARDS_OUT_PATH)
+    wasted_df_val = _write_parquet_safe(wasted_df_val, YARDS_WASTED_OUT_PATH)
 
     return plan_df_val, ly_df_val, trend_df_val, wip_df_val, color_df_val, wasted_df_val
 
@@ -366,33 +391,30 @@ if not workbook_path_obj.exists():
     st.stop()
 
 st.markdown("#### Parquet build")
-st.write("This will generate parquet files used by the dashboard pages.")
+st.write("Click to generate all parquet files used by the dashboard pages.")
 build_clicked = st.button("Build parquets", type="primary")
 
 if build_clicked:
     with st.spinner("Building parquets..."):
         plan_df, ly_df, trend_df, wip_df, color_df, wasted_df = _write_all_parquets(workbook_path_obj)
 
-    st.success("Parquets written to repo root.")
+    st.success("Parquets written successfully.")
 
-    st.markdown("#### Outputs")
+    st.markdown("#### Outputs preview")
     st.write(PLAN_OUT_PATH)
-    st.dataframe(plan_df, use_container_width=True)
+    st.dataframe(plan_df, width="stretch")
 
     st.write(LY_OUT_PATH)
-    st.dataframe(ly_df, use_container_width=True)
+    st.dataframe(ly_df, width="stretch")
 
     st.write(TREND_OUT_PATH)
-    st.dataframe(trend_df.head(30), use_container_width=True)
+    st.dataframe(trend_df.head(30), width="stretch")
 
     st.write(WIP_OUT_PATH)
-    st.dataframe(wip_df.head(30), use_container_width=True)
+    st.dataframe(wip_df.head(30), width="stretch")
 
     st.write(COLOR_YARDS_OUT_PATH)
-    st.dataframe(color_df.head(30), use_container_width=True)
+    st.dataframe(color_df.head(30), width="stretch")
 
     st.write(YARDS_WASTED_OUT_PATH)
-    st.dataframe(wasted_df.head(30), use_container_width=True)
-
-st.markdown("#### Allowed sheets (FYI)")
-st.write(ALLOWED_SHEETS)
+    st.dataframe(wasted_df.head(30), width="stretch")
