@@ -67,7 +67,7 @@ def _drop_excel_junk_columns(df_in):
     bad_cols = []
     for c in df_in.columns:
         c_str = str(c).strip().lower()
-        if c_str == "" or c_str == "" or c_str.startswith("") or c_str.startswith("unnamed"):
+        if c_str == "" or c_str.startswith(".") or c_str.startswith("unnamed"):
             bad_cols.append(c)
 
     if len(bad_cols) > 0:
@@ -128,7 +128,7 @@ def clean_pivot_export_sheet(xl_obj, sheet_name, min_text_cells=4, remove_totals
     )
     df_clean = df_clean.loc[:, nonempty_col_mask].copy()
 
-    # Drop Excel spillover columns like  / .1 / Unnamed
+    # Drop Excel spillover columns like .1 / Unnamed
     df_clean = _drop_excel_junk_columns(df_clean)
 
     # Remove subtotal/total rows from pivot exports
@@ -151,14 +151,17 @@ def load_workbook_tables(
     whitelist = DEFAULT_SHEET_WHITELIST if sheet_whitelist is None else sheet_whitelist
     whitelist = [_normalize_sheet_name(x) for x in whitelist]
 
-    if selected_sheets is None:
-        selected_sheets = []
+    # IMPORTANT: if selected_sheets is explicitly [], treat as "names-only"
+    # This avoids loading/cleaning and prevents crashes when the UI just wants sheet names.
+    if selected_sheets == []:
+        meta_df = pd.DataFrame(columns=["key", "sheet_name", "rows", "cols"])
+        return {}, meta_df, all_sheets
 
-    # If selected_sheets is passed (non-empty), it overrides the whitelist.
-    if len(selected_sheets) > 0:
-        requested = [_normalize_sheet_name(x) for x in selected_sheets]
-    else:
+    # selected_sheets None means: use whitelist
+    if selected_sheets is None:
         requested = whitelist
+    else:
+        requested = [_normalize_sheet_name(x) for x in selected_sheets]
 
     # Only load sheets that exist
     requested = [s for s in requested if s in all_sheets]
@@ -195,7 +198,11 @@ def load_workbook_tables(
                 }
             )
 
-    meta_df = pd.DataFrame(meta_rows).sort_values(["sheet_name"]).reset_index(drop=True)
+    if len(meta_rows) == 0:
+        meta_df = pd.DataFrame(columns=["key", "sheet_name", "rows", "cols"])
+    else:
+        meta_df = pd.DataFrame(meta_rows).sort_values(["sheet_name"]).reset_index(drop=True)
+
     return tables, meta_df, all_sheets
 
 def show_published_timestamp(excel_path=None):
@@ -224,7 +231,6 @@ def show_published_timestamp(excel_path=None):
         st.write("Size MB")
         st.write(file_size_mb)
     except Exception:
-        # In non-streamlit contexts just return the info
         pass
 
     return {"path": str(excel_path), "last_modified": mod_ts, "size_mb": file_size_mb}
