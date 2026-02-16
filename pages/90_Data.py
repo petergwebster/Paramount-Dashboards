@@ -4,20 +4,27 @@ from data_loader import load_workbook_tables
 
 st.set_page_config(page_title="Data", layout="wide")
 
-st.markdown("## Data Loader")
+st.markdown("## Data Loader (main)")
 
 with st.sidebar:
     st.header("Source")
     xlsx_path_str = st.text_input("Workbook path", value="data/current.xlsx")
-    min_text_cells_val = st.number_input("Min text cells threshold", min_value=0, max_value=50, value=4, step=1)
+    min_text_cells_val = st.number_input(
+        "Min text cells threshold",
+        min_value=0,
+        max_value=50,
+        value=4,
+        step=1,
+    )
 
+# THIS is the red button
 load_clicked = st.button("Load workbook", type="primary")
 
 if load_clicked:
     xlsx_path = Path(xlsx_path_str)
 
     if not xlsx_path.exists():
-        st.error("File not found at " + str(xlsx_path))
+        st.error(f"File not found at {xlsx_path}")
         st.stop()
 
     with st.spinner("Loading workbook and extracting tables"):
@@ -37,6 +44,7 @@ if load_clicked:
 tables_existing = st.session_state.get("tables")
 
 st.markdown("### Current in-memory status")
+
 if tables_existing is None:
     st.info("No tables in memory yet. Click Load workbook.")
 else:
