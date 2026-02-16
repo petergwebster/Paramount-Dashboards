@@ -1,20 +1,23 @@
 import streamlit as st
 
-from data_sync import ensure_latest_workbook
-from data_loader import show_published_timestamp
+st.set_page_config(page_title="Executive Cockpit", layout="wide")
 
-st.set_page_config(page_title="Paramount Dashboards", layout="wide")
+st.sidebar.success("Router running streamlit_app.py")
 
-# Always sync early so every page uses the same local file
-workbook_path = ensure_latest_workbook()
-
-# Show timestamp info (keeps your existing behavior)
-show_published_timestamp(workbook_path)
-
-pg = st.navigation(
-    [
-        st.Page("pages/01_Cockpit.py", title="Cockpit"),
-        st.Page("pages/90_Data.py", title="Data"),
-    ]
+nav = st.navigation(
+    {
+        "Executive": [
+            st.Page("pages/00_Landing_YTD.py", title="Landing - YTD"),
+        ],
+        "Operations": [
+            st.Page("pages/01_Cockpit.py", title="Cockpit"),
+            st.Page("pages/10_Home.py", title="Home"),
+        ],
+        "Admin": [
+            st.Page("pages/90_Data.py", title="Data"),
+            st.Page("pages/99_Debug.py", title="Debug"),
+        ],
+    }
 )
-pg.run()
+
+nav.run()
