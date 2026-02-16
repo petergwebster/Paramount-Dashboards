@@ -1,11 +1,20 @@
+import io
 import pandas as pd
+import requests
 from openpyxl import load_workbook
 
 
-def _load_all_sheets_as_tables(xlsx_path, selected_sheets=None):
-    wb = load_workbook(xlsx_path, data_only=True)
-    sheet_names = wb.sheetnames
+def download_xlsx_to_bytes(xlsx_url):
+    resp = requests.get(xlsx_url, timeout=120)
+    resp.raise_for_status()
+    return resp.content
 
+
+def _load_all_sheets_as_tables_from_bytes(xlsx_bytes, selected_sheets=None):
+    bio = io.BytesIO(xlsx_bytes)
+    wb = load_workbook(bio, data_only=True)
+
+    sheet_names = wb.sheetnames
     if selected_sheets is not None and len(selected_sheets) > 0:
         sheet_names = [s for s in sheet_names if s in selected_sheets]
 
@@ -13,7 +22,8 @@ def _load_all_sheets_as_tables(xlsx_path, selected_sheets=None):
     meta_rows = []
 
     for sheet_name in sheet_names:
-        df = pd.read_excel(xlsx_path, sheet_name=sheet_name)
+        bio_sheet = io.BytesIO(xlsx_bytes)
+        df = pd.read_excel(bio_sheet, sheet_name=sheet_name)
 
         key = "sheet::" + str(sheet_name)
         tables[key] = df
@@ -31,19 +41,11 @@ def _load_all_sheets_as_tables(xlsx_path, selected_sheets=None):
     return tables, meta_df, wb.sheetnames
 
 
-def load_workbook_tables(xlsx_path, selected_sheets=None, min_text_cells=4):
-    """
-    Main loader used by Streamlit pages.
+def load_workbook_tables_from_url(xlsx_url, selected_sheets=None, min_text_cells=4):
+    xlsx_bytes = download_xlsx_to_bytes(xlsx_url)
 
-    Behavior
-    - Loads all sheets as DataFrames
-    - Applies a lightweight heuristic filter to keep only "table-like" sheets
-    - If filtering results in 0 tables, falls back to returning ALL sheets
-      so the app is never blocked
-    """
-
-    tables_all, meta_all, all_sheets = _load_all_sheets_as_tables(
-        xlsx_path, selected_sheets=selected_sheets
+    tables_all, meta_all, all_sheets = _load_all_sheets_as_tables_from_bytes(
+        xlsx_bytes, selected_sheets=selected_sheets
     )
 
     tables_filtered = {}
