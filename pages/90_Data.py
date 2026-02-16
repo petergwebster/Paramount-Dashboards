@@ -7,7 +7,6 @@ import pandas as pd
 
 from data_sync import ensure_latest_workbook
 
-
 st.set_page_config(page_title="Data", layout="wide")
 st.title("Data")
 
@@ -20,6 +19,9 @@ ALLOWED_SHEETS = [
     "WIP",
     "Yards Wasted",
 ]
+
+PLAN_OUT_PATH = "landing_ytd_plan.parquet"
+LY_OUT_PATH = "landing_ytd_vs_ly.parquet"
 
 
 def _clean_columns(cols_val):
@@ -110,22 +112,19 @@ def _build_landing_plan_df(workbook_path_obj):
     df_val = _read_sheet_cached(str(workbook_path_obj), sheet_name, header_row_idx)
 
     loc_col = _find_col(df_val, ["Location"])
-    if loc_col is None and len(df_val.columns) > 0:
+    if loc_col is None:
         df_val = df_val.rename(columns={df_val.columns[0]: "Location"})
         loc_col = "Location"
 
     rename_map = {}
-
-    pairs = [
-        (["Yards Produced", "Produced Yards", "Yds Produced", "Produced"], "Yards Produced"),
-        (["Yards Planned", "Planned Yards", "Yds Planned", "Plan Yards"], "Yards Planned"),
-        (["Income Produced", "Produced Income", "Income", "Produced $", "Produced Dollars"], "Income Produced"),
-        (["Income Planned", "Planned Income", "Plan Income", "Planned $", "Plan $"], "Income Planned"),
-        (["Net Yards Invoiced", "Invoiced Net Yards", "Net Invoiced Yards"], "Net Yards Invoiced"),
-        (["Net Income Invoiced", "Invoiced Net Income", "Net Invoiced Income"], "Net Income Invoiced"),
-    ]
-
-    for src_list, dst in pairs:
+    for src_list, dst in [
+        (["Yards Produced", "Produced Yards", "Yards - Produced"], "Yards Produced"),
+        (["Yards Planned", "Planned Yards", "Yards - Plan", "Yards Plan"], "Yards Planned"),
+        (["Income Produced", "Produced Income", "Income - Produced"], "Income Produced"),
+        (["Income Planned", "Planned Income", "Income - Plan", "Income Plan"], "Income Planned"),
+        (["Net Yards Invoiced", "Invoiced Net Yards", "Net Yards - Invoiced"], "Net Yards Invoiced"),
+        (["Net Income Invoiced", "Invoiced Net Income", "Net Income - Invoiced"], "Net Income Invoiced"),
+    ]:
         found = _find_col(df_val, src_list)
         if found is not None:
             rename_map[found] = dst
@@ -142,14 +141,17 @@ def _build_landing_plan_df(workbook_path_obj):
     ]:
         df_val = _coerce_numeric(df_val, num_col)
 
-    keep_cols = ["Location"] + [c for c in [
+    keep_cols = ["Location"]
+    for col_name in [
         "Yards Produced",
         "Yards Planned",
         "Income Produced",
         "Income Planned",
         "Net Yards Invoiced",
         "Net Income Invoiced",
-    ] if c in df_val.columns]
+    ]:
+        if col_name in df_val.columns:
+            keep_cols.append(col_name)
 
     df_out = df_val[keep_cols].copy()
     df_out["Location"] = df_out["Location"].astype(str).str.strip()
@@ -165,22 +167,19 @@ def _build_landing_ly_df(workbook_path_obj):
     df_val = _read_sheet_cached(str(workbook_path_obj), sheet_name, header_row_idx)
 
     loc_col = _find_col(df_val, ["Location"])
-    if loc_col is None and len(df_val.columns) > 0:
+    if loc_col is None:
         df_val = df_val.rename(columns={df_val.columns[0]: "Location"})
         loc_col = "Location"
 
     rename_map = {}
-
-    pairs = [
+    for src_list, dst in [
         (["Written Current", "Written CY", "Written"], "Written Current"),
         (["Written LY", "Written Last Year"], "Written LY"),
         (["Produced Current", "Produced CY", "Produced"], "Produced Current"),
         (["Produced LY", "Produced Last Year"], "Produced LY"),
         (["Invoiced Current", "Invoiced CY", "Invoiced"], "Invoiced Current"),
         (["Invoiced LY", "Invoiced Last Year"], "Invoiced LY"),
-    ]
-
-    for src_list, dst in pairs:
+    ]:
         found = _find_col(df_val, src_list)
         if found is not None:
             rename_map[found] = dst
@@ -197,14 +196,17 @@ def _build_landing_ly_df(workbook_path_obj):
     ]:
         df_val = _coerce_numeric(df_val, num_col)
 
-    keep_cols = ["Location"] + [c for c in [
+    keep_cols = ["Location"]
+    for col_name in [
         "Written Current",
         "Written LY",
         "Produced Current",
         "Produced LY",
         "Invoiced Current",
         "Invoiced LY",
-    ] if c in df_val.columns]
+    ]:
+        if col_name in df_val.columns:
+            keep_cols.append(col_name)
 
     df_out = df_val[keep_cols].copy()
     df_out["Location"] = df_out["Location"].astype(str).str.strip()
@@ -215,13 +217,13 @@ def _build_landing_ly_df(workbook_path_obj):
 
 
 def _write_landing_parquets(workbook_path_obj):
-    plan_df_val = _build_landing_plan_df(workbook_path_obj)
-    ly_df_val = _build_landing_ly_df(workbook_path_obj)
+    plan_out = _build_landing_plan_df(workbook_path_obj)
+    ly_out = _build_landing_ly_df(workbook_path_obj)
 
-    plan_df_val.to_parquet("landing_ytd_plan.parquet", index=False)
-    ly_df_val.to_parquet("landing_ytd_vs_ly.parquet", index=False)
+    plan_out.to_parquet(PLAN_OUT_PATH, index=False)
+    ly_out.to_parquet(LY_OUT_PATH, index=False)
 
-    return plan_df_val, ly_df_val
+    return plan_out, ly_out
 
 
 with st.expander("Workbook source", expanded=False):
@@ -249,6 +251,7 @@ workbook_path_obj = Path(str(workbook_path))
 
 xl_obj = pd.ExcelFile(str(workbook_path_obj))
 all_sheet_names = xl_obj.sheet_names
+
 allowed_present = [s for s in all_sheet_names if s in ALLOWED_SHEETS]
 allowed_missing = [s for s in ALLOWED_SHEETS if s not in all_sheet_names]
 
@@ -257,6 +260,7 @@ with st.expander("Sheet visibility (debug)", expanded=False):
     st.write(all_sheet_names)
     st.write("Sheets exposed in UI")
     st.write(allowed_present)
+
     if len(allowed_missing) > 0:
         st.error("Workbook is missing required sheets: " + str(allowed_missing))
         st.stop()
@@ -264,31 +268,37 @@ with st.expander("Sheet visibility (debug)", expanded=False):
 
 st.header("Landing data build")
 
-c1, c2, c3 = st.columns([1.1, 1.1, 2.5])
+st.caption("This generates the two parquet files that the Executive → Landing - YTD page reads.")
+
+c1, c2, c3 = st.columns([1.3, 1.0, 2.7])
 with c1:
     build_btn = st.button("Build Landing parquet files", type="primary")
 with c2:
     clear_cache_btn = st.button("Clear cache")
 with c3:
-    st.caption("Generates landing_ytd_plan.parquet and landing_ytd_vs_ly.parquet used by Executive → Landing - YTD")
+    st.caption("Outputs: " + PLAN_OUT_PATH + " and " + LY_OUT_PATH)
 
 if clear_cache_btn:
     st.cache_data.clear()
-    st.success("Cache cleared. Re-run build if needed.")
+    st.success("Cache cleared.")
 
 if build_btn:
     with st.spinner("Building landing parquet files from workbook..."):
         plan_out, ly_out = _write_landing_parquets(workbook_path_obj)
 
-    st.success("Landing parquet files written.")
-    st.write("landing_ytd_plan.parquet exists: " + str(os.path.exists("landing_ytd_plan.parquet")))
-    st.write("landing_ytd_vs_ly.parquet exists: " + str(os.path.exists("landing_ytd_vs_ly.parquet")))
+    st.cache_data.clear()
+    st.success("Landing parquet files written and cache cleared.")
+
+    st.write(PLAN_OUT_PATH + " exists: " + str(os.path.exists(PLAN_OUT_PATH)))
+    st.write(LY_OUT_PATH + " exists: " + str(os.path.exists(LY_OUT_PATH)))
 
     st.subheader("Plan parquet preview")
     st.dataframe(plan_out.head(25), use_container_width=True)
 
     st.subheader("Vs LY parquet preview")
     st.dataframe(ly_out.head(25), use_container_width=True)
+
+    st.rerun()
 
 
 st.divider()
@@ -330,6 +340,5 @@ else:
             st.dataframe(preview_raw, use_container_width=True)
 
         df_sheet = _read_sheet_cached(str(workbook_path_obj), sheet_val, header_row_idx)
-
         st.caption("Preview (cleaned)")
         st.dataframe(df_sheet.head(int(max_rows)), use_container_width=True)
