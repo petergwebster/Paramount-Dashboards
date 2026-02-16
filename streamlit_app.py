@@ -5,28 +5,16 @@ from data_loader import show_published_timestamp
 
 st.set_page_config(page_title="Paramount Dashboards", layout="wide")
 
-st.title("Paramount Dashboards")
+# Always sync early so every page uses the same local file
+workbook_path = ensure_latest_workbook()
 
-# Auto-download the latest multi-tab workbook into data/current.xlsx
-# This runs on every cold start and also on reruns (Streamlit behavior).
-try:
-    updated, msg = ensure_latest_workbook()
-    st.caption("Auto data sync: " + msg)
-    if updated:
-        # If the underlying Excel changed, cached sheet-lists / tables must be invalidated
-        st.cache_data.clear()
-except Exception as exc:
-    st.warning("Auto-sync failed. The app will use whatever is currently on disk.")
-    st.exception(exc)
+# Show timestamp info (keeps your existing behavior)
+show_published_timestamp(workbook_path)
 
-# Show timestamp/metadata about the local data file the app will read
-show_published_timestamp()
-
-st.markdown(
-    """
-Go to the **Data** page to:
-- confirm the sheet list shows all workbook tabs
-- preview cleaned outputs
-- optionally upload an override workbook
-"""
+pg = st.navigation(
+    [
+        st.Page("pages/01_Cockpit.py", title="Cockpit"),
+        st.Page("pages/90_Data.py", title="Data"),
+    ]
 )
+pg.run()
