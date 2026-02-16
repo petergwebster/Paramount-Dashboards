@@ -1,15 +1,18 @@
 import streamlit as st
-from pathlib import Path
-from data_loader import load_workbook_tables
+from data_loader import load_workbook_tables_from_url
 
 st.set_page_config(page_title="Data", layout="wide")
 
 st.markdown("## Data Loader")
-st.markdown("**VERSION STAMP: 90_Data.py / main**")
+st.markdown("**Source: GitHub Release URL from Streamlit Secrets**")
+
+xlsx_url_default = ""
+if "DATA_XLSX_URL" in st.secrets:
+    xlsx_url_default = st.secrets["DATA_XLSX_URL"]
 
 with st.sidebar:
     st.header("Source")
-    xlsx_path_str = st.text_input("Workbook path", value="data/current.xlsx")
+    xlsx_url = st.text_input("DATA_XLSX_URL", value=xlsx_url_default)
     min_text_cells_val = st.number_input(
         "Min text cells threshold",
         min_value=0,
@@ -19,18 +22,16 @@ with st.sidebar:
     )
 
 st.markdown("### Action")
-load_clicked = st.button("Load workbook", type="primary")
+load_clicked = st.button("Load workbook from release URL", type="primary")
 
 if load_clicked:
-    xlsx_path = Path(xlsx_path_str)
-
-    if not xlsx_path.exists():
-        st.error("File not found at " + str(xlsx_path))
+    if xlsx_url is None or str(xlsx_url).strip() == "":
+        st.error("DATA_XLSX_URL is empty. Add it in Streamlit Secrets or paste it here.")
         st.stop()
 
-    with st.spinner("Loading workbook and extracting tables"):
-        tables, meta_df, all_sheets = load_workbook_tables(
-            str(xlsx_path),
+    with st.spinner("Downloading and loading workbook from " + str(xlsx_url)):
+        tables, meta_df, all_sheets = load_workbook_tables_from_url(
+            str(xlsx_url),
             selected_sheets=[],
             min_text_cells=int(min_text_cells_val),
         )
@@ -38,21 +39,21 @@ if load_clicked:
     st.session_state["tables"] = tables
     st.session_state["tables_meta"] = meta_df
     st.session_state["tables_all_sheets"] = all_sheets
-    st.session_state["workbook_path"] = str(xlsx_path)
+    st.session_state["workbook_source_url"] = str(xlsx_url)
 
-    st.success("Loaded workbook and saved cleaned tables to session_state as tables")
+    st.success("Loaded workbook from release URL and saved tables to session_state['tables'].")
 
 st.markdown("### Current in-memory status")
 
 tables_existing = st.session_state.get("tables")
 meta_existing = st.session_state.get("tables_meta")
 
-if tables_existing is None:
-    st.info("No tables in memory yet. Click Load workbook.")
-else:
-    st.write("Workbook path")
-    st.write(st.session_state.get("workbook_path"))
+st.write("Workbook source url")
+st.write(st.session_state.get("workbook_source_url"))
 
+if tables_existing is None:
+    st.info("No tables in memory yet. Click Load workbook from release URL.")
+else:
     st.write("Number of tables")
     st.write(len(tables_existing))
 
