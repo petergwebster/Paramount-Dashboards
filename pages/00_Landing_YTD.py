@@ -28,7 +28,7 @@ def read_landing_df():
         if col_name in df_val.columns:
             df_val[col_name] = pd.to_numeric(df_val[col_name], errors="coerce")
         else:
-            df_val[col_name] = np.
+            df_val[col_name] = None
 
     return df_val
 
