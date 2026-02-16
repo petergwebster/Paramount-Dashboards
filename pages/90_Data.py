@@ -130,18 +130,13 @@ def _build_landing_vs_ly_df(workbook_path_obj):
     exclude_set = set([x.lower() for x in EXCLUDE_DIVISIONS])
 
     def _block(df_in, div_col, ly_col, ty_col, out_ly_name, out_ty_name):
-        keep_cols = [div_col, ly_col, ty_col]
-        keep_cols = [c for c in keep_cols if c in df_in.columns]
-        slim = df_in[keep_cols].copy()
-
+        slim = df_in[[div_col, ly_col, ty_col]].copy()
         slim["Location"] = slim[div_col].apply(_base_division_name).apply(_clean_loc)
         slim = slim[slim[div_col].apply(_is_total_row)].copy()
         slim = slim.dropna(subset=["Location"]).copy()
         slim = slim[~slim["Location"].astype(str).str.strip().str.lower().isin(exclude_set)].copy()
-
         slim[out_ly_name] = pd.to_numeric(slim[ly_col], errors="coerce")
         slim[out_ty_name] = pd.to_numeric(slim[ty_col], errors="coerce")
-
         return slim[["Location", out_ly_name, out_ty_name]].copy()
 
     written_df = _block(
@@ -153,20 +148,18 @@ def _build_landing_vs_ly_df(workbook_path_obj):
         "Written Current",
     )
 
-    produced_div_col = "Divisions.1" if "Divisions.1" in df_val.columns else "Divisions"
     produced_df = _block(
         df_val,
-        produced_div_col,
+        "Divisions.1" if "Divisions.1" in df_val.columns else "Divisions",
         "2024 Income Produced",
         "2025 Income Produced",
         "Produced LY",
         "Produced Current",
     )
 
-    invoiced_div_col = "Divisions.2" if "Divisions.2" in df_val.columns else "Divisions"
     invoiced_df = _block(
         df_val,
-        invoiced_div_col,
+        "Divisions.2" if "Divisions.2" in df_val.columns else "Divisions",
         "2024 Net Income Invoiced",
         "2025 Net Income Invoiced",
         "Invoiced LY",
@@ -176,12 +169,15 @@ def _build_landing_vs_ly_df(workbook_path_obj):
     out_df = written_df.merge(produced_df, on="Location", how="outer").merge(invoiced_df, on="Location", how="outer")
     out_df = out_df.dropna(subset=["Location"]).copy()
 
-    out_df["__sort"] = out_df["Location"].astype(str).str.strip().str.lower().apply(
-        lambda x: 9999 if x == "grand total" else 0
-    )
+    out_df["__sort"] = out_df["Location"].astype(str).str.strip().str.lower().apply(lambda x: 9999 if x == "grand total" else 0)
     out_df = out_df.sort_values(["__sort", "Location"]).drop(columns=["__sort"]).reset_index(drop=True)
 
     return out_df
+
+# NOTE
+# The functions below are placeholders.
+# If your existing pages/90_Data.py already has correct implementations for these,
+# keep yours and only replace _build_landing_vs_ly_df above.
 
 def _build_landing_plan_df(workbook_path_obj):
     sheet_name = "YTD Plan vs Act"
