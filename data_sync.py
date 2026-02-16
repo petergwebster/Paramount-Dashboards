@@ -1,55 +1,35 @@
 from pathlib import Path
 import time
-
 import requests
 
-try:
-    import streamlit as st
-except Exception:
-    class _StubStreamlit:
-        def __getattr__(self, name):
-            def _noop(*args, **kwargs):
-                return None
-            return _noop
-    st = _StubStreamlit()
+import streamlit as st
 
-# Local destination for the workbook
 DEST_PATH = Path("data/current.xlsx")
 
-
-def _download_if_needed(url: str, dest: Path, ttl_seconds: int = 300) -> Path:
-    """
-    Download the Excel workbook from `url` to `dest` if:
-      - dest does not exist, or
-      - dest is older than `ttl_seconds`.
-
-    Returns the Path to the local file.
-    """
-    dest.parent.mkdir(parents=True, exist_ok=True)
-
-    needs_download = True
-    if dest.exists():
-        age = time.time() - dest.stat().st_mtime
-        if age < ttl_seconds:
-            needs_download = False
-
-    if not needs_download:
-        return dest
-
-    resp = requests.get(url)
+def _download(url, dest_path):
+    dest_path.parent.mkdir(parents=True, exist_ok=True)
+    resp = requests.get(url, timeout=60)
     resp.raise_for_status()
-    dest.write_bytes(resp.content)
-    return dest
+    dest_path.write_bytes(resp.content)
+    return dest_path
 
-
-def ensure_latest_workbook(ttl_seconds: int = 300) -> Path:
+def ensure_latest_workbook(ttl_seconds=300):
     """
-    Read the DATA_XLSX_URL from st.secrets, download if needed,
-    and return the local path to the workbook.
-    """
-    try:
-        url = st.secrets["DATA_XLSX_URL"]
-    except Exception as e:
-        raise RuntimeError("Missing DATA_XLSX_URL in Streamlit secrets") from e
+    Uses Streamlit secrets:
+      DATA_XLSX_URL = "https://....dashboard.xlsx"
 
-    return _download_if_needed(url, DEST_PATH, ttl_seconds=ttl_seconds)
+    Downloads to:
+      data/current.xlsx
+
+    Returns a local Path.
+    """
+    url = st.secrets.get("DATA_XLSX_URL", None)
+    if url is None or str(url).strip() == "":
+        raise RuntimeError("Missing DATA_XLSX_URL in Streamlit secrets")
+
+    if DEST_PATH.exists():
+        age_seconds = time.time() - DEST_PATH.stat().st_mtime
+        if age_seconds < ttl_seconds:
+            return DEST_PATH
+
+    return _download(url, DEST_PATH)
