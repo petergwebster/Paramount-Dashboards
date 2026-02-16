@@ -8,23 +8,19 @@ from data_loader import load_workbook_tables, DEFAULT_SHEET_WHITELIST
 st.set_page_config(page_title="Data", layout="wide")
 st.title("Data")
 
-workbook_path_val = ensure_latest_workbook()
-if isinstance(workbook_path_val, str):
-    workbook_path = Path(workbook_path_val)
-else:
-    workbook_path = workbook_path_val
-
-if workbook_path is None or not Path(workbook_path).exists():
-    st.error("Workbook not found. ensure_latest_workbook() returned: " + str(workbook_path))
-    st.stop()
-
+workbook_path = ensure_latest_workbook()
 workbook_path = Path(workbook_path)
+
+if not workbook_path.exists():
+    st.error("Workbook not found at " + str(workbook_path))
+    st.stop()
 
 mod_ts = pd.to_datetime(workbook_path.stat().st_mtime, unit="s")
 file_size_mb = round(workbook_path.stat().st_size / (1024 * 1024), 2)
 
 st.caption("Workbook source")
 st.code("DATA_XLSX_URL (Streamlit secrets) -> downloaded to: " + str(workbook_path))
+
 cols_info = st.columns(2)
 with cols_info[0]:
     st.caption("Last modified")
@@ -35,6 +31,7 @@ with cols_info[1]:
 
 st.divider()
 
+# Names-only call: fast + safe (because we patched data_loader.py)
 _, _, all_sheets = load_workbook_tables(str(workbook_path), selected_sheets=[])
 
 default_selected = [s for s in DEFAULT_SHEET_WHITELIST if s in all_sheets]
@@ -66,11 +63,9 @@ if st.button("Load and preview selected tabs", type="primary"):
     for sn in selected_sheets:
         key = "sheet::" + sn
         if key not in tables:
-            with st.expander(sn, expanded=False):
-                st.warning("No table loaded for this sheet.")
+            st.warning("No table loaded for " + sn)
             continue
 
         df_prev = tables[key]
-        exp_label = sn + "  (" + str(df_prev.shape[0]) + " rows, " + str(df_prev.shape[1]) + " cols)"
-        with st.expander(exp_label, expanded=False):
+        with st.expander(sn + " (" + str(df_prev.shape[0]) + " rows, " + str(df_prev.shape[1]) + " cols)", expanded=False):
             st.dataframe(df_prev.head(50), use_container_width=True)
