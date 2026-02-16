@@ -1,24 +1,11 @@
-import streamlit as st
-from pathlib import Path
+import traceback
 
-st.set_page_config(page_title="Debug", layout="wide")
-st.title("Debug")
+st.subheader("Compile check: pages/00_Landing_YTD.py")
 
-target_path = Path("pages/00_Landing_YTD.py")
-st.write("Reading file")
-st.code(str(target_path))
-
-if not target_path.exists():
-    st.error("File not found")
-    st.stop()
-
-code_text = target_path.read_text(errors="ignore")
-
-st.subheader("First 120 lines of pages/00_Landing_YTD.py")
-lines = code_text.splitlines()
-preview = "\n".join([str(i + 1).rjust(4) + "  " + lines[i] for i in range(min(120, len(lines)))])
-st.code(preview, language="python")
-
-st.subheader("Search for the broken token")
-st.write("Contains `np.`")
-st.write("np." in code_text)
+try:
+    code_text = Path("pages/00_Landing_YTD.py").read_text(errors="ignore")
+    compile(code_text, "pages/00_Landing_YTD.py", "exec")
+    st.success("Compiled OK")
+except Exception as e:
+    st.error("Compile failed")
+    st.code(traceback.format_exc())
