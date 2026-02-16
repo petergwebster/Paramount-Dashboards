@@ -19,6 +19,7 @@ REQUIRED_SHEETS = [
 
 FORBIDDEN_SHEETS = ["Sheet1"]
 
+
 def _looks_like_xlsx(path_val):
     try:
         with zipfile.ZipFile(path_val, "r") as zf:
@@ -27,9 +28,11 @@ def _looks_like_xlsx(path_val):
     except Exception:
         return False
 
+
 def _sheet_names(path_val):
     xl_obj = pd.ExcelFile(str(path_val))
     return xl_obj.sheet_names
+
 
 def _enforce_workbook_contract(path_val, url_for_error=""):
     sheet_names = _sheet_names(path_val)
@@ -48,13 +51,17 @@ def _enforce_workbook_contract(path_val, url_for_error=""):
             + str(sheet_names)
         )
 
+
 def ensure_latest_workbook(ttl_seconds=0, min_size_bytes=5_000_000):
     """
     Downloads the Excel workbook from st.secrets["DATA_XLSX_URL"] into data/current.xlsx
 
     Hard-coded contract:
     - must include REQUIRED_SHEETS
-    - must not include Sheet1
+    - must not include FORBIDDEN_SHEETS
+
+    ttl_seconds default 0 so you always refresh while debugging.
+    min_size_bytes default 5MB so we fail fast if we accidentally download HTML/test data.
     """
     url = st.secrets.get("DATA_XLSX_URL", "")
     if str(url).strip() == "":
@@ -72,6 +79,7 @@ def ensure_latest_workbook(ttl_seconds=0, min_size_bytes=5_000_000):
 
     resp = requests.get(url, timeout=180, allow_redirects=True)
     resp.raise_for_status()
+
     content_bytes = resp.content
     byte_len = len(content_bytes)
 
