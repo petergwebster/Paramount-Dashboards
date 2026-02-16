@@ -69,12 +69,11 @@ def ensure_latest_workbook(ttl_seconds=0, min_size_bytes=5_000_000):
         if age_seconds < ttl_seconds:
             if not _looks_like_xlsx(DEST_PATH):
                 raise RuntimeError("Cached file does not look like a valid XLSX at " + str(DEST_PATH))
-            _enforce_contract(DEST_PATH, "cached")
+            _enforce_contract(DEST_PATH, url_val="cached")
             return DEST_PATH
 
-    resp = requests.get(str(url_val), timeout=180, allow_redirects=True)
+    resp = requests.get(url_val, timeout=180, allow_redirects=True)
     resp.raise_for_status()
-
     content_bytes = resp.content
     byte_len = len(content_bytes)
 
@@ -97,5 +96,5 @@ def ensure_latest_workbook(ttl_seconds=0, min_size_bytes=5_000_000):
             + str(url_val)
         )
 
-    _enforce_contract(DEST_PATH, url_val)
+    _enforce_contract(DEST_PATH, url_val=url_val)
     return DEST_PATH
