@@ -27,6 +27,6 @@ for c in num_cols:
     if c in df_val.columns:
         df_val[c] = pd.to_numeric(df_val[c], errors="coerce")
     else:
-        df_val[c] = np.
+        df_val[c] = None
 
 st.dataframe(df_val, width="stretch")
