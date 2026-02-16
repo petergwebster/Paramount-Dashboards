@@ -98,12 +98,31 @@ def _find_col(df_val, candidates):
 
 
 def _coerce_numeric(df_val, col_name):
-    if col_name is None:
+    if df_val is None or col_name is None:
         return df_val
     if col_name not in df_val.columns:
         return df_val
     df_val[col_name] = pd.to_numeric(df_val[col_name], errors="coerce")
     return df_val
+
+
+def _canonical_location(loc_val):
+    if pd.isna(loc_val):
+        return None
+    loc_str = str(loc_val).strip()
+    if loc_str == "":
+        return None
+
+    loc_low = re.sub(r"\s+", " ", loc_str.lower()).strip()
+
+    if "brooklyn" in loc_low:
+        return "Brooklyn"
+    if "passaic" in loc_low:
+        return "Passaic"
+    if ("grand" in loc_low and "total" in loc_low) or loc_low in ["grandtotal", "total", "overall", "company total", "all"]:
+        return "Grand Total"
+
+    return loc_str
 
 
 def _build_landing_plan_df(workbook_path_obj):
@@ -117,46 +136,42 @@ def _build_landing_plan_df(workbook_path_obj):
         loc_col = "Location"
 
     rename_map = {}
-    for src_list, dst in [
-        (["Yards Produced", "Produced Yards", "Yards - Produced"], "Yards Produced"),
-        (["Yards Planned", "Planned Yards", "Yards - Plan", "Yards Plan"], "Yards Planned"),
-        (["Income Produced", "Produced Income", "Income - Produced"], "Income Produced"),
-        (["Income Planned", "Planned Income", "Income - Plan", "Income Plan"], "Income Planned"),
-        (["Net Yards Invoiced", "Invoiced Net Yards", "Net Yards - Invoiced"], "Net Yards Invoiced"),
-        (["Net Income Invoiced", "Invoiced Net Income", "Net Income - Invoiced"], "Net Income Invoiced"),
-    ]:
+
+    candidates_to_dst = [
+        (["Yards Produced", "Produced Yards", "Yards Prod", "Prod Yards"], "Yards Produced"),
+        (["Yards Planned", "Planned Yards", "Yards Plan", "Plan Yards"], "Yards Planned"),
+        (["Income Produced", "Produced Income", "Income Prod", "Produced $"], "Income Produced"),
+        (["Income Planned", "Planned Income", "Income Plan", "Plan $"], "Income Planned"),
+        (["Net Yards Invoiced", "Invoiced Net Yards", "Net Yds Invoiced"], "Net Yards Invoiced"),
+        (["Net Income Invoiced", "Invoiced Net Income", "Net $ Invoiced"], "Net Income Invoiced"),
+    ]
+
+    for src_list, dst in candidates_to_dst:
         found = _find_col(df_val, src_list)
         if found is not None:
             rename_map[found] = dst
 
     df_val = df_val.rename(columns=rename_map)
 
-    for num_col in [
+    df_val["Location"] = df_val[loc_col].apply(_canonical_location)
+    df_val = df_val.dropna(subset=["Location"])
+
+    numeric_cols = [
         "Yards Produced",
         "Yards Planned",
         "Income Produced",
         "Income Planned",
         "Net Yards Invoiced",
         "Net Income Invoiced",
-    ]:
-        df_val = _coerce_numeric(df_val, num_col)
+    ]
+    for col_val in numeric_cols:
+        df_val = _coerce_numeric(df_val, col_val)
 
-    keep_cols = ["Location"]
-    for col_name in [
-        "Yards Produced",
-        "Yards Planned",
-        "Income Produced",
-        "Income Planned",
-        "Net Yards Invoiced",
-        "Net Income Invoiced",
-    ]:
-        if col_name in df_val.columns:
-            keep_cols.append(col_name)
-
+    keep_cols = ["Location"] + [c for c in numeric_cols if c in df_val.columns]
     df_out = df_val[keep_cols].copy()
+
     df_out["Location"] = df_out["Location"].astype(str).str.strip()
     df_out = df_out[df_out["Location"].str.len() > 0]
-    df_out = df_out.dropna(how="all")
 
     return df_out
 
@@ -172,46 +187,39 @@ def _build_landing_ly_df(workbook_path_obj):
         loc_col = "Location"
 
     rename_map = {}
-    for src_list, dst in [
-        (["Written Current", "Written CY", "Written"], "Written Current"),
+
+    candidates_to_dst = [
+        (["Written Current", "Written", "Written CY", "Written TY"], "Written Current"),
         (["Written LY", "Written Last Year"], "Written LY"),
-        (["Produced Current", "Produced CY", "Produced"], "Produced Current"),
+        (["Produced Current", "Produced", "Produced CY", "Produced TY"], "Produced Current"),
         (["Produced LY", "Produced Last Year"], "Produced LY"),
-        (["Invoiced Current", "Invoiced CY", "Invoiced"], "Invoiced Current"),
+        (["Invoiced Current", "Invoiced", "Invoiced CY", "Invoiced TY"], "Invoiced Current"),
         (["Invoiced LY", "Invoiced Last Year"], "Invoiced LY"),
-    ]:
+    ]
+
+    for src_list, dst in candidates_to_dst:
         found = _find_col(df_val, src_list)
         if found is not None:
             rename_map[found] = dst
 
     df_val = df_val.rename(columns=rename_map)
 
-    for num_col in [
-        "Written Current",
-        "Written LY",
-        "Produced Current",
-        "Produced LY",
-        "Invoiced Current",
-        "Invoiced LY",
-    ]:
-        df_val = _coerce_numeric(df_val, num_col)
+    df_val["Location"] = df_val[loc_col].apply(_canonical_location)
+    df_val = df_val.dropna(subset=["Location"])
 
-    keep_cols = ["Location"]
-    for col_name in [
-        "Written Current",
-        "Written LY",
-        "Produced Current",
-        "Produced LY",
-        "Invoiced Current",
-        "Invoiced LY",
-    ]:
-        if col_name in df_val.columns:
-            keep_cols.append(col_name)
+    numeric_cols = [
+        "Written Current", "Written LY",
+        "Produced Current", "Produced LY",
+        "Invoiced Current", "Invoiced LY",
+    ]
+    for col_val in numeric_cols:
+        df_val = _coerce_numeric(df_val, col_val)
 
+    keep_cols = ["Location"] + [c for c in numeric_cols if c in df_val.columns]
     df_out = df_val[keep_cols].copy()
+
     df_out["Location"] = df_out["Location"].astype(str).str.strip()
     df_out = df_out[df_out["Location"].str.len() > 0]
-    df_out = df_out.dropna(how="all")
 
     return df_out
 
@@ -230,13 +238,10 @@ with st.expander("Workbook source", expanded=False):
     url_val = st.secrets.get("DATA_XLSX_URL", "")
     st.write("DATA_XLSX_URL")
     st.code(str(url_val))
-
     workbook_path = ensure_latest_workbook(ttl_seconds=0)
     workbook_path_obj = Path(str(workbook_path))
-
     st.write("Local path")
     st.code(str(workbook_path_obj))
-
     if workbook_path_obj.exists():
         size_mb = workbook_path_obj.stat().st_size / (1024.0 * 1024.0)
         mtime = dt.datetime.fromtimestamp(workbook_path_obj.stat().st_mtime)
@@ -245,13 +250,11 @@ with st.expander("Workbook source", expanded=False):
         st.write("Size MB")
         st.code(str(round(size_mb, 1)))
 
-
 workbook_path = ensure_latest_workbook(ttl_seconds=0)
 workbook_path_obj = Path(str(workbook_path))
 
 xl_obj = pd.ExcelFile(str(workbook_path_obj))
 all_sheet_names = xl_obj.sheet_names
-
 allowed_present = [s for s in all_sheet_names if s in ALLOWED_SHEETS]
 allowed_missing = [s for s in ALLOWED_SHEETS if s not in all_sheet_names]
 
@@ -260,17 +263,13 @@ with st.expander("Sheet visibility (debug)", expanded=False):
     st.write(all_sheet_names)
     st.write("Sheets exposed in UI")
     st.write(allowed_present)
-
     if len(allowed_missing) > 0:
         st.error("Workbook is missing required sheets: " + str(allowed_missing))
         st.stop()
 
-
 st.header("Landing data build")
 
-st.caption("This generates the two parquet files that the Executive → Landing - YTD page reads.")
-
-c1, c2, c3 = st.columns([1.3, 1.0, 2.7])
+c1, c2, c3 = st.columns([1.2, 1.0, 3.0])
 with c1:
     build_btn = st.button("Build Landing parquet files", type="primary")
 with c2:
@@ -292,6 +291,12 @@ if build_btn:
     st.write(PLAN_OUT_PATH + " exists: " + str(os.path.exists(PLAN_OUT_PATH)))
     st.write(LY_OUT_PATH + " exists: " + str(os.path.exists(LY_OUT_PATH)))
 
+    st.subheader("Locations written (sanity check)")
+    if "Location" in plan_out.columns:
+        st.write(sorted(plan_out["Location"].astype(str).str.strip().unique().tolist()))
+    if "Location" in ly_out.columns:
+        st.write(sorted(ly_out["Location"].astype(str).str.strip().unique().tolist()))
+
     st.subheader("Plan parquet preview")
     st.dataframe(plan_out.head(25), use_container_width=True)
 
@@ -299,7 +304,6 @@ if build_btn:
     st.dataframe(ly_out.head(25), use_container_width=True)
 
     st.rerun()
-
 
 st.divider()
 st.header("Load data")
@@ -340,5 +344,6 @@ else:
             st.dataframe(preview_raw, use_container_width=True)
 
         df_sheet = _read_sheet_cached(str(workbook_path_obj), sheet_val, header_row_idx)
+
         st.caption("Preview (cleaned)")
         st.dataframe(df_sheet.head(int(max_rows)), use_container_width=True)
