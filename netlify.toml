@@ -1,3 +1,4 @@
+# Paramount Prints Dashboard
 [build]
   edge_functions = "netlify/edge-functions"
 
