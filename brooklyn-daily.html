@@ -754,15 +754,15 @@ new Chart(wipCtx,{type:'bar',data:{
     {label:'Remaining WIP',data:[29510,23180,27520,18510,23480,46600,46601],backgroundColor:'rgba(88,166,255,.25)',borderRadius:2,barPercentage:.5},
     {label:'Goal',data:[100000,100000,100000,100000,100000,100000,100000],type:'line',borderColor:'rgba(63,185,80,.5)',borderDash:[4,4],borderWidth:1.5,pointRadius:0,fill:false},
   ]
-},{options:{
+},options:{
   responsive:true,maintainAspectRatio:true,
   plugins:{
     legend:{labels:{color:'#8b949e',font:{size:10},boxWidth:10,padding:10}},
-    tooltip:{backgroundColor:'#1c2330',borderColor:'#2d3748',borderWidth:1,titleColor:'#e6edf3',bodyColor:'#8b949e',padding:8,callbacks:{label:ctx=>` ${ctx.dataset.label}: ${ctx.raw.toLocaleString()} yds`}}
+    tooltip:{backgroundColor:'#1c2330',borderColor:'#2d3748',borderWidth:1,titleColor:'#e6edf3',bodyColor:'#8b949e',padding:8,callbacks:{label:function(ctx){return ' '+ctx.dataset.label+': '+ctx.raw.toLocaleString()+' yds';}}}
   },
   scales:{
     x:{grid:{color:'rgba(45,55,72,.5)'},ticks:{color:'#8b949e',font:{size:10}},stacked:true},
-    y:{grid:{color:'rgba(45,55,72,.5)'},ticks:{color:'#8b949e',font:{size:10},callback:v=>v>=1000?Math.round(v/1000)+'K':v},stacked:true}
+    y:{grid:{color:'rgba(45,55,72,.5)'},ticks:{color:'#8b949e',font:{size:10},callback:function(v){return v>=1000?Math.round(v/1000)+'K':v;}},stacked:true}
   }
 }});
 
