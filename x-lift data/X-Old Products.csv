@@ -1,0 +1,634 @@
+ITEM_SKU,LINE_DESCRIPTION,COLOR,PRODUCT_TYPE,FINISHED_WIDTH,FINISHED_HEIGHT,PRINTED_WIDTH,PRINTED_HEIGHT,PRODUCT_SIZE,PANEL_COUNT,PRODUCT_NAME,MATERIAL,UOM,HISTORICAL_YIELD,MATERIAL_COST,UNIT_PRICE,QTY,PRODUCT_DESCRIPTION,STATUS,NUMBER_UP,CUT_OPTION,SPECIAL_DETAILS,FORMAT,PATTERN_WIDTH,PATTERN_HEIGHT,BOLT_SIZE,ORDER_TYPE,NUMBER_OF_COLORS,STORAGE_TYPE,Source
+1/10/2025P,1 Color 10-25 Yards Printed,,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+1/101-200P,1 Color 101-200 Yards Printed,,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+1/201-500P,1 Color 200-500 Yards Printed,,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+1/26/1950P,1 Color 26-50 Yards Printed,,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+10/10/2025P,10 Colors 10-25 Yards Printed,,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+10/200-500P,10 Colors 200-500 Yds Min 10 Yards Print,,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+10/26/1950P,10 Colors 26-50 Yds Min 10 Yards Printed,,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+10/51-100P,10 Colors 51-100 Yds Min 10 Yards Printe,,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+11/10/2025P,11 Colors 10-25 Yards Printed,,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+11/100-200P,11 Colors 100-200 Yds Min 10 Yards Print,,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+11/200-500P,11 Colors 200-500 Yds Min 10 Yards Print,,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+11/26/1950P,11 Colors 26-50 Yds Min 10 Yards Printed,,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+11/51-100P,11 Colors 51-100 Yds Min 10 Yards Printe,,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+12/10/2025P,12 Colors 10-25 Yards Printed,,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+13/51-100P,13 Colors 51-100 Yds Min 10 Yards Printe,,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+14/100-200P,14 Colors 100-200 Yds Min 10 Yards Print,,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+14/10-25P,14 Colors 10-25 Yards Printed,,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+14/26-50P,14 Colors 26-50 Yds Min 10 Yards Printed,,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+14/51-100P,14 Colors 51-100 Yds Min 10 Yards Printe,,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+178490P,COPP COLOR: BLACK,,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+178491P,COPP COLOR: NATURAL,,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+2/10/2025P,2 Colors 10-25 Yards Printed,,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+2/100-200P,2 Colors 100-200 Yds Min 10 Yards Printe,,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+2/51-100P,2 Colors 51-100 Yds Min 10 Yards Printed,,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+2/BMP,2 Colors Below Minimum,,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+3/100-200P,3 Colors 100-200 Yds Min 10 Yards Printe,,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+3/26/1950P,3 Colors 26-50 Yds Min 10 Yards Printed,,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+3/51-100P,3 Colors 51-100 Yds Min 10 Yards Printed,,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+3/BMP,3 Colors Below Minimum,,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+4/10/2025P,4 Colors 10-25 Yards Printed,,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+4/100-200P,4 Colors 100-200 Yds Min 10 Yards Printe,,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+4/51-100P,4 Colors 51-100 Yds Min 10 Yards Printed,,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+5/10/2025P,5 Colors 10-25 Yards Printed,,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+5/100-200P,5 Colors 100-200 Yds Min 10 Yards Printe,,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+5/26/1950P,5 Colors 26-50 Yds Min 10 Yards Printed,,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+5/51-100P,5 Colors 51-100 Yds Min 10 Yards Printed,,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+6/10/2025P,6 Colors 10-25 Yards Printed,,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+6/100-200P,6 Colors 100-200 Yds Min 10 Yards Printe,,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+6/26/1950P,6 Colors 26-50 Yds Min 10 Yards Printed,,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+6/51-100P,6 Colors 51-100 Yds Min 10 Yards Printed,,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+61004P,MEADOW - WALL (HAZE),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+61005P,MEADOW - WALLPAPER (PEAT),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+7/10/2025P,7 Colors 10-25 Yards Printed,,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+7/26/1950P,7 Colors 26-50 Yds Min 10 Yards Printed,,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+7/51-100P,7 Colors 51-100 Yds Min 10 Yards Printed,,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+79770.0739999999P,ASHANTI TAN,,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+79770.641P,ASHANTI ORANGE,,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+8/10/2025P,8 Colors 10-25 Yards Printed,,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+8/100-200P,8 Colors 100-200 Yds Min 10 Yards Printe,,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+8/26/1950P,8 Colors 26-50 Yds Min 10 Yards Printed,,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+8/51-100P,8 Colors 51-100 Yds Min 10 Yards Printed,,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+8013142.11P,WOOD/11/BIRCH,,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+8013142.15P,WOOD: RIVER,,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+8013142.16P,WOOD: TAN,,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+8013142.19P,WOOD: CARDINAL,,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+8013142.29999999P,WOOD: LEAF,,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+8013142.5P,WOOD: INDIGO,,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+8013142.67999999P,WOOD: BARK,,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+9/10/2025P,9 Colors 10-25 Yards Printed,,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+9/26/1950P,9 Colors 26-50 Yds Min 10 Yards Printed,,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+A435-0003P,A435 OATMEAL-0003 PFP,,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+ADL1P,ARDLEY - FABRIC (PINK/ROSE),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+ADL3P,ARDLEY - FABRIC (GREEN/SAGE),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+ADL4P,ARDLEY - FABRIC (COASTAL),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+ADL5P,ARDLEY - FABRIC (SEPIA),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+AF3P,ALFORD STRIPE - FABRIC (PEONY),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+AFT27P,AFTON - FABRIC (SUEDE),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+AFT5A1P,AFTON FABRIC OUTDOOR (FORGET ME NOT),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+AFT5P,AFTON - FABRIC (FORGET ME NOT),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+AFT8A1P,AFTON - FABRIC OUTDOOR (TIDAL),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+AFT8P,AFTON - FABRIC (TIDAL),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+AFT9P,AFTON - FABRIC (HAZE),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+AG1023208A1P,ARGUS - FABRIC OUTDOOR (SLATE GREEN),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+AG1023208A4P,ARGUS - FABRIC OUTDOOR (SLATE GREEN),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+AG1023208P,ARGUS - FABRIC (SLATE GREEN),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+AG1023217P,ARGUS - FABRIC (UMBER),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+AG1023281P,ARGUS - FABRIC (TOAST),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+AG1023382P,ARGUS - FABRIC (SKY),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+AN21P,ANGELINA - FABRIC (MALVA),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+AN28P,ANGELINA - FABRIC (CREMA),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+AN31P,ANGELINA - FABRIC (BALLET),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+AN32P,ANGELINA - FABRIC (POWDER),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+AN33P,ANGELINA - FABRIC (HEATHERED GRAY),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+AN34P,ANGELINA - FABRIC (OAT),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+AN35A1P,ANGELINA - FABRIC OUTDOOR (SEAGLASS),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+AN35-CP,ANGELINA - FABRIC (CUSTOM WEDGEWOOD),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+AN35P,ANGELINA - FABRIC (SEAGLASS),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+AN36P,ANGELINA - FABRIC (WEDGEWOOD),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+ANK1P,ANKARA - FABRIC (WEDGEWOOD),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+ANK35-CP,ANKARA - FABRIC (SHADOW ON CUSTOM),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+ANK4P,ANKARA - FABRIC (OAT),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+ANK5-CP,ANKARA - FABRIC (BALLET ON CUSTOM),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+ANK5P,ANKARA (FABRIC) -  BALLET,,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+BA1P,BASWA - FABRIC (FOG),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+BA2P,BASWA - FABRIC (CELESTIAL),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+BA3P,BASWA - FABRIC (TUMBLEWEED),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+BA4P,BASWA - FABRIC (MOOD),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+BA5P,BASWA - FABRIOC (SAFFRON),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+BAR3P,BARGELLO - FABRIC (BLUE),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+BAR5P,BARGELLO - FABRIC (TURQUOISE),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+BAR6P,BARGELLO - FABRIC (ACORN),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+BAR7A1P,BARGELLO - FABRIC OUTDOOR (BAY CREAM),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+BAR7P,BARGELLO - FABRIC (BAY/CREAM),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+BAR8A3P,BARGELLO -FABRIC OUTDOOR(CHARCOAL/CREAM),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+BAR8P,BARGELLO - FABRIC (CHARCOAL/CREAM),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+BF1P,BOXLEAF - FABRIC (BISQUE),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+BF3P,BOXLEAF - FABRIC (FIDDLEHEAD),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+BF4A1P,BOXLEAF - OUTDOOR (LAGOON),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+BNA20A2P,BINA - FABRIC OUTDOOR A2,,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+BNA20P,BINA - FABRIC (INDIGO/OYSTER),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+BNA40P,BINA - FABRIC (CAMEL/OYSTER),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+BNA51P,BINA - FABRIC (OTTER/SAND),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+BNA61P,BINA - FABRIC (PAPRIKA/SAND),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+BR1003408P,BARRINGTON STRIPE - FABRIC (SLATE GREEN),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+BR1003410P,BARRINGTON STRIPE - FABRIC (INK/CREAM),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+BR1003416P,BARRINGTON STRIPE- FABRIC(HARVEST CREAM),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+BSR1P,BATES STRIPE - FABRIC (PINK/ROSE),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+BSR2P,BATES STRIPE - FABRIC (BLUE/GREEN),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+BSR4P,BATES STRIPE - FABIRC (COASTAL),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+BT30P,BROMPTON - FABRIC (WEDGEWOOD),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+BT31P,BROMPTON - FABRIC (GULL),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+BT32P,BROMPTON - FABRIC (POWDER),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+BT33A1P,BROMPTON - FABRIC OUTDOOR (BLOSSOM),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+BT33P,BROMPTON - FABIR C(BLOSSOM),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+BT35P,BROMPTON - FABRIC (BUTTERCUP),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+BT36P,BROMPTON - FABRIC (HARBOR),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+CH1008116P,CHESAPEKE - FABRIC (HARVEST),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+CHM1P,CHAMBA - FABRIC (CHOCOLATE),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+CHM2P,CHAMBA - FABRIC (POOL),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+CHM4P,CHAMBA - FABRIC (RUST),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+CHM6P,CHAMBA - FABRIC (MALT),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+CHM8P,CHAMBA - FABRIC (CORN),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+CHP10A1-CP,CHESAPEAKE - FABRIC OUTDOOR (ORIENTAL B),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+CHP11P,CHESAPEAKE - FABRIC (DAFFODIL),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+CHP1P,CHESAPEAKE - FABRIC (POWDER),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+CHP2P,CHESAPEAKE - FABRIC (ASH),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+CHP3P,CHESAPEAKE - FABRIC (HEATHERED GRAY ),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+CHP4P,CHESAPEAKE - FABRIC (POWDER),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+CP1006303P,CAMPBELL - FABRIC (HYDRANGEA/HEMP),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+CP1006307P,CAMPBELL - FABRIC (CINNABAR),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+CP1006316P,CAMPBELL - FABRIC (HARVEST/HEMP),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+CP1006320P,KEY BISCAYNE - FABRIC (CHOCOLATE/HEMP),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+CP27P,CAMPBELL STRIPE - FABRIC (TAUPE),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+CP3P,CAMPBELL - FABRIC (POWDER),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+CRW27P,COWRIE SHELLS - FABRIC (TAUPE),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+CS1007303P,CANVAS STRIPE - FABRIC (HYDRANGEA),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+CS1007307P,CANVAS STRIPE - FABRIC (CINNABAR),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+CS1007308P,CANVAS STRIPE - FABRIC (SLATE GREEN),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+CS1007316P,CANVAS STRIPE - FABRIC (HARVEST),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+CS1007321P,CANVAS STRIPE - FABRIC (SPROUT),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+CST12A1P,CELESTINE - FABRIC OUTD. (NOCTURNE),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+CST12P,CELESTINE - FABRIC (NOCTURNE),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+CST16P,CELESTINE - FABRIC (BOUDOIR),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+CST17P,CELESTINE - FABRIC (AMETHYST),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+CST1A1P,CELESTINE - FABRIC OUTDOOR (WEDGEWOOD),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+CST24-CP,CELESTINE - FABRIC (CUSTOM BROWN/TAN),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+CST24P,CELESTINE - FABRIC (CASHMERE),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+CST32A2P,CELESTINE -OUTDOOR( MILL POND - A2),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+CST32P,CELESTINE - FABRIC (MILL POND),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+CST39P,CELESTINE - FABRIC (CORAL REEF),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+CTW1P,CHATSWORTH - FABRIC (SPRUCE),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+CTW2P,CHATSWORTH - FABRIC (PEAT),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+CTW4P,CHATSWORTH - FABRIC (SORBET),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+CW1P,CREWELWORDK - FABRIC (NATURAL),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+CW5P,CREWELWORK - FABRIC (TURQUOISE),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+CW6P,CREWELWORK - FABRIC (ACRON),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+CWR17P,COWRIE SHELLS - FABRIC (LILAC),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+CWR27P,COWRIE SHELLS - FABRIC (TAUPE),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+CWR39A1P,COWRIE SHELLS - OUTDOOR FABRIC (CORAL),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+CWR39P,COWRIE SHELLS - FABRIC (CORAL),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+CWR41A1P,COWRIE SHELLS - KELP (OUTDOOR),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+CWR41A4P,COWRIE SHELLS - OUTDOOR CUSTOM (KELP),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+CWR41P,COWRIE SHELLS - FABRIC (KELP),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+CWR42P,COWRIE SHELLS - FABRIC (NAVY),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+CWR71P,COWRIE SHELLS - FABRIC (SONIC BLUE),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+CWR72P,COWRIE SHELLS - FABRIC (AQUA),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+DAR-CP,DARTA - FABRIC CUSTOM (PLUM),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+DBL30P,DOUBLE DOTTY - FABRIC (BALTIC),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+DBL31P,DOUBLE DOTTY - FABRIC (CHERRY),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+DBL32P,DOUBLE DOTTY - FABRIC (DUNE),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+DBL33P,DOUBLE DOTTY - FABRIC (CARBON),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+DEL20P,DELTA LINEN - FABRIC (THATCH),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+DOT1-CP,CUSTOM DOT - FABRIC (NAVY),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+DT1021670P,DORSET - FABRIC (FOG),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+DT1021672A1P,DORSET - FABRIC OUTDOOR (BLUSH),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+DT1021672P,DORSET - FABRIC (BLUSH),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+DW1009102A1P,DOGWOOD - FABRTIC OUTDOOR (PEAR),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+DW1009113P,DOGWOOD - FABRIC (MARSH),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+DW1009114P,DOGWOOD - FABRIC (DRAB),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+DW1009114RA1P,DOGWOOD - FABRIC OUTD. (DRAB),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+DW1009116P,DOGWOOD - FABRIC (HARVEST),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+DW1009123A1P,DOGWOOD - FABRIC OUTDOOR (CORAL),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+DW1009123P,DOGWOOD - FABRIC (CORAL),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+ELL1P,ELLSWORTH - FABRIC (BALLET),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+ELL2A1P,ELLSWORTH - FABRIC OUTDOOR (CAPRI BLUE),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+ELL3P,ELLSWORTH - FABRIC (STONE),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+ELL4A1P,ELLSWORTH - OUTDOOR (COASTAL),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+ELL4P,ELLSWORTH - FABRIC (COASTAL),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+ELL5P,ELLSWORTH - FABRIC (ELDERBERRY),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+ELL6P,ELLSWORTH - FABRC (CINDER),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+FH1005103P,FIDDLEHEAD - FABRIC (HYDRANGEA),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+FH1005104P,FIDDLEHEAD - FABRIC (BAYBERRY),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+FH1005116P,FIDDLEHEAD - FABRIC (HARVEST),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+FH1005123P,FIDDLEHEAD - FABRIC (CORAL),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+FH1005175P,FIDDLEHEAD - FABRIC (OCEAN),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+FH1005207P,FIDDLEHEAD FABRIC (CINNABAR/TAUPE),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+FH1005208P,FIDDLEHEAD - FABRIC (SLATE GREEN/TAUPE),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+FH1005210P,FIDDLEHEAD - FABRIC (INK/TAUPE),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+FH1005220P,FIDDLEHEAD -  FABRIC (CHOCOLATE/TAUPE),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+FSH25P,OFF-SHOOT - FABRIC (PARAKEET),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+GRD26P,GRIDLOCK - FABRIC (GLACIER),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+GRD27P,GRIDLOCK - FABRIC (SONIC BLUE),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+GSL1001204a1P,GRAND SHANGRILA-FABRIC OUTDOOR(BAYBERRY),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+HLV10P,HILLEVI - FABRIC (CLAY/CREAM),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+HLV1A1P,HILLEVI - OUTDOOR FABRIC (GREEN),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+HLV1P,HILLEVI -- FABRIC (GREEN),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+HLV2P,HILLEVI - FABRIC (YELLOW),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+HLV31P,HILLEVI - FABRIC (CHERRY),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+HLV32-CP,HILLEVI-FABRIC2 (CHOCOLATE BROWN),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+HLV32P,HILLEVI - FABRIC (DUNE),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+HLV33P,HILLEVI - FABRIC (CARBON),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+HLV3A1P,HILLEVI - FABRIC OUTDOOR (AQUA),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+HLV3P,HILLEVI - FABRIC (AQUA),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+HLV4P,HILLEVI - FABRIC (BUFF),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+HLV5P,HILLEVI - FABRIC (RED),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+HLV6A1P,HILLEVI - FABRIC OUTDOOR (BLUE),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+HLV6P,HILLEVI - FABRIC (BLUE),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+HUD1P,HUDSON - FABRIC (WEDGEWOOD),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+HUD2A1P,HUDSON - FABRIC OUTDOOR (SEAGLASS),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+HUD3P,HUDSON - FABRIC (HEATHERED GRAY),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+HUD6P,HUDSON - FABRIC (MULBERRY),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+HUD8A1P,HUDSON - FABRIC OUTD (MIDNIGHT),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+IGM20A1-CP,INDIAN GAMEBOARD - FABRIC OUTDOOR(GREEN),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+IGM20A1P,INDIAN GAMEBOARD - OUTDOOR (INDIGO/OYST),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+IGM40P,INDIAN GAMEBOARD - FABRIC (CAMEL/OYSTER),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+IND27A1P,INDIENNES - FABRIC OUTD (INDIGO/LT BLUE),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+IND27-CP,INDIENNES - FABRIC (CUSTOM BLUE),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+IND27P,INDIENNES - FABRIC (INDIGO/LT BLUE),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+IND52A1P,INDIENNES - FABRIC OUTDOOR (OTTER/INDIGO,,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+IND52P,INDIENNES - FABRIC (OTTER/INDIGO/SAND),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+IND56P,INDIENNES - FABRIC (OTTER/PAPRIKA/SAND),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+IND65P,INDIENNES - FABRIC (PAPRIKA/SAND),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+IND73P,INDIENNES - FABRIC (LT BLUE/LAGOON),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+INV12P,INVERNESS - FABRIC (NOCTURNE),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+INV20P,INVERNESS - FABRIC (MESA),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+INV29A1P,INVERNESS - FABRIC OUTDOOR (FROST),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+INV2A1P,INVERNESS - OUTDOOR (ADMIRAL BLUE),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+INV2P,INVERNESS - FABRIC (ADMIRAL BLUE),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+INV33P,INVERNESS - FABRIC (ARROWHEAD),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+JAN29A1P,JANESH - FABRIC OUTDOOR (INDIGO/WHITE),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+JP11A1P,JAIPUR - FABRIC OUTDOOR (ATLANTIC),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+JP11P,JAIPUR - FABRIC (ATLANTIC),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+JP12P,JAIPUR - FABRIC (BERRY),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+JP13A1P,JAIPUR - OUTDOOR FABRIC (PAPAYA),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+JP13P,JAIPUR  - FABRIC (PAPAYA),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+JP14P,JAIPUR - FABRIC (ANCHO),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+JP15P,JAIPUR - FABRIC (CAPRI BLUE),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+JP16P,JAIPUR - FABRIC (OCHRE),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+JP1P,JAIPUR - FABRIC (PUMPKIN/CHILI),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+JP2P,JAIPUR - FABRIC (OCEAN/OLIVE),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+JP4P,JAIPUR - FABRIC (PERSIMMON),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+JP-CP,JAIPUR - FABRIC (AQUA/METALLIC),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+JYA20A1P,JAYA - FABRIC OUTDOOR (INDGO/OYSTER),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+KB6P,KEY BISCAYNE - FABRIC (LIME),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+KB7A1P,KEY BISCAYNE - FABRIC OUTDOOR (IVORY),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+KB7P,KEY BISCAYNE - FABRIC (IVORY),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+KL10P,KALAHARI (FABRIC)- CHESTNUT,,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+KL11P,KALAHARI - FABRIC (FOG),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+KL14P,KALAHARI - FABRIC (BAMBOO),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+KL15P,KALAHARI - FABRIC (MINK),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+KL5P,kALAHARI - FABRIC (MALT),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+KLI10P,KALI - FABRIC (BISQUE),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+KLI1-CP,KALI - CUSTOM - FABRIC (OTTER/SAND),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+KLI1P,KALI - FABRIC (CHOCOLATE),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+KLI4-CP,KALI - FABRIC (CUSTOM COLOR),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+KLI8P,KALI - FABRIC (CORN),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+KLM10P,KALIMBA - FABRIC (ICE BLUE),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+KLM11P,KALIMBA - FABRIC (INDIGO),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+KLM17P,KALIMBA - FABRIC (AMETHYST),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+KLM22P,KALIMBA - FABRIC (SNAPDRAGON),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+KLM24P,KALIMBA - FABRIC (CASHMERE),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+KLM3P,KALIMBA - FABRIC (BAHAMA),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+KLM6P,KALIMBA - FABRIC (GENETIAN),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+KOR1P,KORI - FABRIC (GREEN),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+KOR2P,KORI - FABRIC (YELLOW),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+KOR3P,KORI - FABRIC (AQUA),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+KOR4P,KORI - FABRIC (BUFF),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+KOR5A1P,KORI - OUTDOOR FABRIC (RED),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+KOR6A1P,KORI - FABRIC OUTDOOR (BLUE),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+KOR6P,KORI - FABRIC (BLUE),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+KU1P,KUSUM - FABRIC (ELI BLUE),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+KU4A1P,KUSUM - FABRIC OUTDOOR (MASCARA),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+KU4P,KUSUM - FABRIC (MASCARA),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+LA5P,LAUNDERED LINEN - FABRIC (PEONY),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+LB15A1P,LIBBY'S STRIPE - FABRIC OUTDOOR(DANAUBE),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+LB9P,LIBBY'S STRIPE - FABRIC (BLUE),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+LBC17P,LAUREN CHECK - FABRIC (AMETHYST),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+LD25-CP,LEOPARDO - FABRIC (WEDGEWOOD/PERIWINKLE),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+LD25P,LIDO - (WEDGEWOOD/PERIWINKLE),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+LMA11P,LUMA - FABRIC (INDIGO),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+LMA67P,LUMA - FABRIC (HEATHERED GRAY),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+LMA76P,LUMA - FABRIC (OLIVE),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+LMA78A1P,LUMA - FABRIC OUTDOOR (FLAME),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+LMA9A1P,LUMA - FABRIC OUTDOOR (AVOCADO),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+LMA9A4P,LUMA - FABRIC OUTDOOR (AVOCADO),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+LPD11P,LEOPARDO - FABRIC (POWDER),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+LPD12P,LEOPARDO - FABRIC (HEATHERED GRAY),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+LPD13P,LEOPARDO - FABRIC (WEDGEWOOD),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+LPD23P,LEOPARDO - FABRIC (MIDNIGHT/SMOKE),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+LPD24P,LEOPARDO - FABRIC (GUMBALL),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+LPD25P,LEOPARDO - FABRIC (PARAKEET),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+LPD26A1P,LEOPARDO - FABRIC (GLACIER) OUTDOOR,,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+LPD26P,LEOPARDO - FABRIC (GLACIER),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+LPD27P,LEOPARDO - FABRIC (SONIC BLUE),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+LYR03P,LABYRINTH - FABRIC (BAHAMA),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+LYR11P,LABYRINTH - FABRIC (INDIGO),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+LYR13P,LABYRINTH - FABRC (SKYLIGHT),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+LYR16P,LABYRINTH - FABRIC (BOUDOIR),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+LYR17P,LABYRINTH - FABRIC (AMETHYST),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+LYR18P,LABYRINTH - FABRIC (MISCHIEF),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+MG1010111P,MARGI - FABRIC (OLIVINE),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+MG1010116P,MARGI - FABRIC (HARVEST),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+MQ30P,MIQUETTE - FABRIC (FERN),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+MSK1P,MOSAIK - FABRIC (GREEN),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+MSK2A1P,MOSAIK - FABRIC OUTDOOR (YELLOW),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+MZ11P,MOZIA - FABRIC (MALVA),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+MZ12P,MOZIA - FABRIC (GIALLO),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+MZ2P,MOZIA - FABRIC (CELESTIAL),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+PCH20P,PICCHA - FABRIC (INDIGO/OYSTER),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+SC39A1P,SCONSET - FABRIC OUTDOOR (TANGERINE),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+SD5A1P,SPATTER DASH - FABRIC OUTDOOR (MULTI),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+SL1001102-CP,SHANGRI-LA -FABRIC (CUSTOM GREEN),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+SL1001123-CP,SHANGRI-LA - FABRIC (CUSTOM COLOR),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+SL1001123P,SHANGRI-LA - FABRIC (CORAL),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+SRP3A1P,SARPA - FABRIC OUTDOOR (PLUM),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+STR40A1P,SINTRA - FABRIC OUTDOOR (CAMEL/OYSTER),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+STR51A1P,SINTRA - FABRIC OUTDOOR (OTTER/SAND),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+TLM6A1P,TULUM - FABRIC OUTDOOR (PARAKEET),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+TP3P,TAPA - FABRIC (LAPIS),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+TRW40A1P,TROTWOOD - FABRIC OUTDOOR (DUSK),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+TRW4-CP,TROTWOOD - FABRIC (BEACON HILL CUSTOM),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+TU1011400P,TUPELO - FABRIC (CREAM/HEMP),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+TUL37A1P,TULSI - FABRIC OUTDOOR (LAGOON LT BLUE),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+TWY38P,TWIGGY - FABRIC (CARROT),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+ZA30P,ZANZIBAR - FABRIC (BALTIC),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+ZB5P,ZEBRA - FABRIC (BAMBOO),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+9605,MONTCLAIR STRIE - WALLPAPER (SAGE),,Paper,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+72001,OLANA - WALL (CHAMPAGNE/SILVER),,Paper,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+72002,OLANA - WALLPAPER (CHAMPAGNE/MOSS),,Paper,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+85050,PINTADE - WALL (SILVER/WHITE),,Paper,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+22004P,Wallpaper - Wall2 Silver/White,,Paper,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+2501-01P,Ashlar: Sandstone,,Paper,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+2501-04P,Ashlar: Coral,,Paper,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+32001P,CALVIN & LEWIS - WALL,,Paper,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+32002P,CALVIN & LEWIS - WALL (POPPY),,Paper,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+4803P,BUZZ - WALLPAPER (BEIGE/CREAM),,Paper,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+4805P,BUZZ - WALL (SUNFLOWER),,Paper,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+5003340P,TWIGGY COLOR: SILVER,,Paper,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+5003344P,TWIGGY COLOR: SKY,,Paper,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+5003345P,TWIGGY (GREEN),,Paper,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+5005880P,QUEEN OF SPAIN COLOR: WARM SILVER,,Paper,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+5005881P,QUEEN OF SPAIN COLOR: BLACK,,Paper,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+5005882P,QUEEN OF SPAIN COLOR: SKY,,Paper,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+5007150P,GARDEN OF PERSIA MINERAL,,Paper,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+5007151P,GARDEN OF PERSIA PETAL,,Paper,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+5007152P,GARDEN OF PERSIA QUARTZ,,Paper,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+5008291P,Twiggy Sisal Color: Fog,,Paper,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+5008292P,TWIGGY SISAL COLOR: SKY,,Paper,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+5008940P,Twiggy Paperweave Color: Sky,,Paper,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+5009070P,ABSTRATTO COLOR: STONE,,Paper,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+5009071P,ABSTRATTO COLOR: BLACK & COBALT,,Paper,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+5009130P,CLOUD TOILE GOLD,,Paper,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+5009131P,CLOUD TOILE QUARTZ,,Paper,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+5009132P,CLOUD TOILE MINERAL,,Paper,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+5009150P,Plumes: Champagne,,Paper,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+5009290P,EMPEROR'S VINE: PEACOCK,,Paper,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+5009291P,EMPEROR'S VINE: AUBERGINE,,Paper,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+5010601P,MAGICAL MING DRAGON: YELLOW,,Paper,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+5010602P,MAGICAL MING DRAGON: BROWN,,Paper,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+5010780P,JOAN COLOR: YELLOW,,Paper,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+5010781P,JOAN COLOR: PINK,,Paper,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+5014730P,NATALIEÆS LIBRARY Color: CELADON,,Paper,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+5014731P,NATALIEÆS LIBRARY Color: MOCHA,,Paper,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+61001P,MEADOW - WALL (PORTOBELLO),,Paper,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+69539.97P,Staccato: Black on Vinyl,,Paper,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+69551-074P,Ashanti On Paper,,Paper,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+69551-279P,Ashanti On Paper,,Paper,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+69551-641P,Ashanti On Paper,,Paper,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+69551-874P,Ashanti On Paper,,Paper,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+69565-107P,Isla  Morada Stripe On Vinyl,,Paper,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+7003P,MILKY WAY - WALL (GOLD/CACTUS),,Paper,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+72001P,OLANA - WALL (CHAMPAGNE/SILVER),,Paper,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+72002P,OLANA - WALLPAPER (CHAMPAGNE/MOSS),,Paper,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+8403P,TRENTINO - WALL (IVORY),,Paper,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+85050P,PINTADE - WALL (SILVER/WHITE),,Paper,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+9605P,MONTCLAIR STRIE - WALLPAPER (SAGE),,Paper,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+9610P,MONTCLAIR STRIE - WALL (PORTOBELLO),,Paper,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+9611P,MONTCLAIR STRIE - WP (INK),,Paper,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+9612-CP,MONTCLAIR STRIE - WALLPAPER(CUSTOM BLUE),,Paper,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+BA6P,BASWA - FABRIC (BAMBOO),,Paper,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+W1/100-199P,Wall Paper 1 Color Min 6 Rolls 100-199,,Paper,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+W1/12-24P,Wall Paper 1 Color Min 6 Rolls 12-24,,Paper,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+W1/24-48P,Wall Paper 1 Color Min 6 Rolls 24-48,,Paper,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+W1/48-96P,Wall Paper 1 Color Min 6 Rolls 48-29,,Paper,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+W1/50-99P,Wall Paper 1 Color Min 6 Rolls 50-99,,Paper,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+W1/6-12P,Wall Paper 1 Color Min 6 Rolls 6-12,,Paper,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+W1/6-49P,Wall Paper 1 Color Min 6 Rolls 6-49,,Paper,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+W1/96-144P,Wall Paper 1 Color Min 6 Rolls 96-144,,Paper,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+W1/BMP,Wall Paper 1 Color Below Minimum,,Paper,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+W2/100-199P,Wall Paper 2 Color Min 6 Rolls 100-199,,Paper,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+W2/12-24P,Wall Paper 1 Color Min 6 Rolls 12-24,,Paper,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+W2/24-48P,Wall Paper 2 Color Min 6 Rolls 24-48,,Paper,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+W2/48-96P,Wall Paper 2 Color Min 6 Rolls 48-29,,Paper,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+W2/50-99P,Wall Paper 2 Color Min 6 Rolls 50-99,,Paper,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+W2/6-12P,Wall Paper 2 Color Min 6 Rolls 6-12,,Paper,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+W2/6-49P,Wall Paper 2 Color Min 6 Rolls 6-49,,Paper,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+W2/96-144P,Wall Paper 2 Color Min 6 Rolls 96-144,,Paper,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+W3/100-199P,Wall Paper 3 Color Min 6 Rolls 100-199,,Paper,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+W3/24-48P,Wall Paper 3 Color Min 6 Rolls 24-48,,Paper,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+W3/48-96P,Wall Paper 3 Color Min 6 Rolls 48-29,,Paper,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+W3/50-99P,Wall Paper 3 Color Min 6 Rolls 50-99,,Paper,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+W3/6-49P,Wall Paper 3 Color Min 6 Rolls 6-49,,Paper,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+W3/96-144P,Wall Paper 3 Color Min 6 Rolls 96-144,,Paper,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+W3/BMP,Wall Paper 3 Color Below Minimum,,Paper,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+W3404.15P,BAMBUFRET*SLATE,,Paper,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+W3404.23P,BAMBUFRET*CELERY,,Paper,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+W3404.416P,BAMBUFRET * SAND,,Paper,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+W4/100-199P,Wall Paper 4 Color Min 6 Rolls 100-199,,Paper,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+W4/144-PlusP,Wall Paper 4 Color Min 6 Rolls 144+,,Paper,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+W4/24-48P,Wall Paper 4 Color Min 6 Rolls 24-48,,Paper,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+W4/48-96P,Wall Paper 4 Color Min 6 Rolls 48-29,,Paper,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+W4/50-99P,Wall Paper 4 Color Min 6 Rolls 50-99,,Paper,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+W4/6-12P,Wall Paper 4 Color Min 6 Rolls 6-12,,Paper,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+W4/6-49P,Wall Paper 4 Color Min 6 Rolls 6-49,,Paper,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+W5/100-199P,Wall Paper 5 Color Min 6 Rolls 100-199,,Paper,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+W5/24-48P,Wall Paper 5 Color Min 6 Rolls 24-48,,Paper,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+W5/48-96P,Wall Paper 5 Color Min 6 Rolls 48-29,,Paper,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+W5/50-99P,Wall Paper 5 Color Min 6 Rolls 50-99,,Paper,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+W5/6-12P,Wall Paper 5 Color Min 6 Rolls 6-12,,Paper,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+W5/6-49P,Wall Paper 5 Color Min 6 Rolls 6-49,,Paper,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+W6/100-199P,Wall Paper 6 Color Min 6 Rolls 100-199,,Paper,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+W6/24-48P,Wall Paper 6 Color Min 6 Rolls 24-48,,Paper,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+W6/48-96P,Wall Paper 6 Color Min 6 Rolls 48-29,,Paper,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+W7/24-48P,Wall Paper 7 Color Min 8 Rolls 24-48,,Paper,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+W7/48-96P,Wall Paper 7 Color Min 8 Rolls 48-29,,Paper,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+W7/6-49P,Wall Paper 7 Color Min 8 Rolls 6-49,,Paper,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+W8/24-48P,Wall Paper 8 Color Min 10 Rolls 24-48,,Paper,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+W8/48-96P,Wall Paper 8 Color Min 10 Rolls 48-29,,Paper,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+4803,BUZZ - WALLPAPER (BEIGE/CREAM),,Paper,,,,,,,,"	--> Select Material",,,,,,,,,,,,,,,Screen Print,,,Everest
+4805,BUZZ - WALL (SUNFLOWER),,Paper,,,,,,,,"	--> Select Material",,,,,,,,,,,,,,,Screen Print,,,Everest
+7003,MILKY WAY - WALL (GOLD/CACTUS),,Paper,,,,,,,,"	--> Select Material",,,,,,,,,,,,,,,Screen Print,,,Everest
+8403,TRENTINO - WALL (IVORY),,Paper,,,,,,,,"	--> Select Material",,,,,,,,,,,,,,,Screen Print,,,Everest
+9610,MONTCLAIR STRIE - WALL (PORTOBELLO),,Paper,,,,,,,,"	--> Select Material",,,,,,,,,,,,,,,Screen Print,,,Everest
+9611,MONTCLAIR STRIE - WP (INK),,Paper,,,,,,,,"	--> Select Material",,,,,,,,,,,,,,,Screen Print,,,Everest
+22004,Wallpaper - Wall2 Silver/White,,Paper,,,,,,,,"	--> Select Material",,,,,,,,,,,,,,,Screen Print,,,Everest
+32001,CALVIN & LEWIS - WALL,,Paper,,,,,,,,"	--> Select Material",,,,,,,,,,,,,,,Screen Print,,,Everest
+32002,CALVIN & LEWIS - WALL (POPPY),,Paper,,,,,,,,"	--> Select Material",,,,,,,,,,,,,,,Screen Print,,,Everest
+70013,KINOMI - WALL (MIDNIGHT),,Paper,,,,,,,,"	--> Select Material",,,,,,,,,,,,,,,Screen Print,,,Everest
+CST-06W,Castilia (Wedgewood Blue),,Paper,,,,,,,,"	--> Select Material",,,,,,,,,,,,,,,Screen Print,,,Everest
+20289-04P,Greco: Ivory/Sky,,Grass,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+20343-03P,Venini:White / Oyster,,Grass,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+5006050P,Acanthus Stripe (Shadow),,Grass,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+5006051P,Acanthus Stripe Filigree,,Grass,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+5006052P,Acanthus Stripe Fog & Chalk,,Grass,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+5006053P,Acanthus Stripe Seaglass and Chalk,,Grass,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+5006054P,Acanthus Stripe Tumeric,,Grass,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+5006055P,Acanthus Stripe (Haze),,Grass,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+5006056P,Acanthus Stripe: Chambray,,Grass,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+5006061P,Cirrus Clouds Blanched,,Grass,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+5006062P,Cirrus Clouds Fog & Chalk,,Grass,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+5006063P,Cirrus Clouds Plume,,Grass,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+5006070P,Feather Bloom Dove,,Grass,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+5006071P,Feather Bloom Two Blues,,Grass,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+5006072P,Feather Bloom Emerald & Ore,,Grass,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+5006073P,Feather Bloom Golden Plum,,Grass,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+5006074P,FEATHER BLOOM: ONYX & GOLD,,Grass,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+5006075P,FEATHER BLOOM: VENETIAN PINK,,Grass,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+5006076P,FEATHER BLOOM: FUCHSIA & JET,,Grass,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+5006077P,FEATHER BLOOM: SUN & FOG,,Grass,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+5006078P,Feather Bloom: Wisteria,,Grass,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+5006080P,Flame Zippity Doo Dah,,Grass,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+5006081P,Flame Waltz,,Grass,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+5006082P,Flame Cha Cha,,Grass,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+5006090P,Hothouse Flowers Sisal Fog & Chalk,,Grass,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+5006091P,Hothouse Flowers Sisal Haze & Chalk,,Grass,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+5006092P,Hothouse Flowers Seaglass & Chalk,,Grass,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+5006130P,Ripple Filigree,,Grass,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+5006131P,Ripple Grass,,Grass,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+5006132P,Ripple Zebra,,Grass,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+5006133P,Ripple Fog & Chalk,,Grass,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+5008220P,Zebra Palm: Gold on Ivory,,Grass,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+5008221P,Zebra Palm Green on Ivory,,Grass,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+5008222P,Zebra Palm: Black on Ivory,,Grass,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+5008283P,WOODLAND SILHOUETTE SISAL COLOR MOCHA,,Grass,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+5008290P,TWIGGY SISAL COLOR: GOLD ON IVORY,,Grass,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+5008293P,TWIGGY SISAL (INDIGO),,Grass,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+5008295P,TWIGGY SISAL: CHARCOAL,,Grass,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+5008322P,BRIGHTON SISAL COLOR: SAGE,,Grass,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+5008350P,Imperial Trellis Ivory,,Grass,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+5008351P,Imperial Trellis Sand,,Grass,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+5008352P,Imperial Trellis: Sky,,Grass,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+5008750P,MORI SISAL (POCELAIN),,Grass,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+5008890P,OCTAVIA PAPERWEAVE MARINE,,Grass,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+5008930P,OCTAVIA SISAL: GOLD & JET,,Grass,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+5008931P,OCTAVIA SISAL TURQUOISE & PALM,,Grass,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+5008932P,OCTAVIA SISAL PEACOCK,,Grass,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+5008933P,OCTAVIA SISAL NAVY,,Grass,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+5008934P,OCTAVIA SISAL JADE,,Grass,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+5008935P,OCTAVIA SISAL CINNABAR,,Grass,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+5008941P,TWIGGY PAPERWEAVEl LEAF,,Grass,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+5008942P,TWIGGY PAPERWEAVE COLOR: BLACK,,Grass,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+5008980P,OCTAVIA SHIMMER: QUARTZ,,Grass,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+5009280P,AGRA SISAL COLOR: SKY,,Grass,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+5009400P,AGRA SHIMMER COLOR:MOONSTONE,,Grass,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+5009480P,Flower Shock: Peony,,Grass,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+5009481P,Flower Shock: Haze,,Grass,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+5009780P,CHRYSANTHEMUM SISAL COLOR: SKY,,Grass,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+5009781P,CHRYSANTHEMUM SISAL COLOR: BLUSH,,Grass,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+5009782P,CHRYSANTHEMUM SISAL COLOR: GOLD,,Grass,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+5009790P,CHRYSANTHEMUM SHIMMER COLOR: MOONSTONE,,Grass,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+5010100P,MODERN TRELLIS SISAL: SKY,,Grass,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+5010530P,REGALIA SISAL COLOR: BLUE,,Grass,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+5010531P,REGALIA SISAL COLOR: IVORY ON NATURAL,,Grass,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+5010532P,REGALIA SISAL IVORY ON SHIMMER,,Grass,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+5012300P,WOODLAND LEOPARD SISAL COLOR: SEAGLASS,,Grass,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+5012301P,WOODLAND LEOPARD SISAL COLOR: WATERBLUE,,Grass,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+5012302P,WOODLAND LEOPARD SISAL: PETAL,,Grass,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+5012303P,WOODLND LEOPARD SISAL: OATMEAL,,Grass,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+5012442P,JOSHUA TREE SISAL: MINERAL,,Grass,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+5013110P,KATA PAPERWEAVE (NATURAL),,Grass,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+5014540P,SAMSUN SISAL: COLOR NATURAL,,Grass,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+5016630P,RAZE SISAL COLOR: MAIZE,,Grass,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+5016752P,CHECKERED STRIPE (PEACOCK),,Grass,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+GC1/13-24P,GRASS CLOTH  1 COLOR 13-24 ROLLS,,Grass,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+GC1/25-48P,GRASS CLOTH 1 COLOR 25-48 ROLLS,,Grass,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+GC2/25-48P,GRASS CLOTH 2 COLOR 25-48 RLS,,Grass,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+GC2/49PLUSP,GRASS CLOTH 2 COLOR 21+ ROLLS,,Grass,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+GC2/6-12P,GRASS CLOTH 2 COLOR 6-12 ROLLS,,Grass,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+GT3970TP,GT3970T,,Grass,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+SG2215P,Regular Waeve Sisal,,Grass,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+BoxP,Box Charge,,Shipping Fees,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+DSP,DROP SHIP CHARGE,,Shipping Fees,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+HLP,Packing Charges,,Packing Charge,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+MISCP,Misc,,Packing Charge,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+ScreenP,New Pattern Screens,,Screen,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+SHP,UPS SHIPPING,,Shipping Fees,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+STRIKEFABRICP,Strike Off Fabric,,Strike-off,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+STRIKEFABRICPLUP,Strike Off Additional Color,,Strike-off,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+STRIKEGRASSP,Strike Off GrassCloth,,Strike-off,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+STRIKEPLUSP,Strike Off Wall Paper Additional Color,,Strike-off,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+STRIKEWALLP,Strike Off Wall Paper,,Strike-off,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+SUF/1-2P,Set-Up Fees 1-2 Colors Under 50,,Set-up Fee,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+SUF/3-4P,Set-Up Fees 3-4 Colors Under 50,,Set-up Fee,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+SUF/5-7P,Set-Up Fees 5-7 Colors Under 50,,Set-up Fee,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+SUF/8-10P,Set-Up Fees 8-10 Colors Under 50,,Set-up Fee,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+SUW/1-2P,Set-Up Fees 1-2 Rolls Under 50,,Set-up Fee,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+SUW/3-4P,Set-Up Fees 3-4 Rolls Under 50,,Set-up Fee,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+SUW/5-7P,Set-Up Fees 5-7 Rolls Under 50,,Set-up Fee,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+TubesP,Fabric Shipping Tubes,,Shipping Fees,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,,,Everest
+70001,KINOMI - WP (BEIGE / GRAY),,Paper,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,5,,Everest
+70002,KINOMI - WALLPAPER (BLUE/GREEN),,Paper,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,5,,Everest
+1/51-100P,1 Color 51-100 Yards Printed,,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,1,,Everest
+1/BMP,1 Color Below Minimum,,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,1,,Everest
+2/26/1950P,2 Colors 26-50 Yds Min 10 Yards Printed,,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,2,,Everest
+3/10/2025P,3 Colors 10-25 Yards Printed,,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,3,,Everest
+4/26/1950P,4 Colors 26-50 Yds Min 10 Yards Printed,,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,4,,Everest
+70001P,KINOMI - WP (BEIGE / GRAY),,Paper,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,5,,Everest
+70002P,KINOMI - WALLPAPER (BLUE/GREEN),,Paper,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,5,,Everest
+70013P,KINOMI - WALL (MIDNIGHT),,Paper,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,5,,Everest
+GC/6-12P,GRASS CLOTH 6-12 RLS,,Grass,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,1,,Everest
+KM1P,KINOMI - FABRIC (BARK/BLACK/FLAX),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,4,,Everest
+KM4P,KINOMI - FABRIC (ALMOND/TEAL/TAN),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,4,,Everest
+KM7P,KINOMI - FABRIC (TEAL/CRAN/FOG),,Fabric,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,4,,Everest
+W3/12-24P,Wall Paper 3 Color Min 6 Rolls 12-24,,Paper,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,3,,Everest
+W3/6-12P,Wall Paper 3 Color Min 6 Rolls 6-12,,Paper,,,,,,,,"	--> Select Material",,,,,,,A,,,,,,,,Screen Print,3,,Everest
+5008210,Ottoman Flower: Fog,,Grass,,,,,,,,SCH5004713 Water Blue,YD,,,,,,A,,,,,,,8,Screen Print,1,,Everest
+5008211,Ottoman Flower: Mineral,,Grass,,,,,,,,SCH5004713 Water Blue,YD,,,,,,A,,,,,,,8,Screen Print,1,,Everest
+1/29/2024P,JANESH - FABRIC (INDIGO/WHITE),,Fabric,,,,,,,,FASANO BURLAP,,,,,,,A,,,,,,,,Screen Print,1,,Everest
+303810S-01WSUNP,ENCHANTED GARDEN BAMBOO (MULTI PINKS G),,Fabric,,,,,,,,QUAA435Oyster,,,,,,,A,,,,,,,,Screen Print,3,,Everest
+307200W-50AWPP,PALM GARDEN (WINDSOR BLUE),,Paper,,,,,,,,"QUACPG7113 30"" 500Y",,,,,,,A,,,,,,,,Screen Print,4,,Everest
+4100-10WLP,LYSETTE (FRENCH BLUE),,Fabric,,,,,,,,QUA376W,,,,,,,A,,,,,,,,Screen Print,1,,Everest
+5008210P,Ottoman Flower: Fog,,Grass,,,,,,,,SCH5004713 Water Blue,YD,,,,,,A,,,,,,,8,Screen Print,1,,Everest
+5008211P,Ottoman Flower: Mineral,,Grass,,,,,,,,SCH5004713 Water Blue,YD,,,,,,A,,,,,,,8,Screen Print,1,,Everest
+5008212P,Ottoman Flower: Peacock,,Grass,,,,,,,,SCH5004713 Water Blue,YD,,,,,,A,,,,,,,8,Screen Print,1,,Everest
+6930W-02P,Lulu Stripe (Aqua) DO NOT USE 11.27.23,,Fabric,,,,,,,,QUA376W,,,,,,,A,,,,,,,,Screen Print,1,,Everest
+A435-0021P,FABRIC GROUND (OYSTER),,Grounds,,,,,,,,PARA435Oyster,,,,,,,A,,,,,,,,Screen Print,,,Everest
+AN31-CP,ANGELINA - FABRIC (CUSTOM ORANGE),,Fabric,,,,,,,,FASANO 2PLY,,,,,,,A,,,,,,,,Screen Print,5,,Everest
+BLIN16.001P,BATIK DUSK (1 COLOR TEMPLE OYSTER),,Fabric,,,,,,,,WTGTemple Oyster,,,,,,,A,,,,,,,,Screen Print,1,,Everest
+BM-6724P,1 Mil Smooth Bright Silver Mylar,,Grounds,,,,,,,,BM-6724,,,,,,,A,,,,,,,,Screen Print,,,Everest
+BM-6725P,1 Mil Smooth Bright Gold Mylar,,Grounds,,,,,,,,PARBM-6725 Gold,,,,,,,A,,,,,,,,Screen Print,,,Everest
+BR1003508P,BARRINGTON STRIPE - FABRIC (SLATE GREEN),,Fabric,,,,,,,,FASANO HEMP,,,,,,,A,,,,,,,,Screen Print,5,,Everest
+BR1003513P,BARRINGTON STRIPE - FABRIC (FOG/DOVE),,Fabric,,,,,,,,FASANO HEMP,,,,,,,A,,,,,,,,Screen Print,,,Everest
+BR-69551.874.0P,ASHANTI: BROWN,,Paper,,,,,,,,"PARCPG7100 30"" 500Y",,,,,,,A,,,,,,,,Screen Print,1,,Everest
+CHRL_MNTP,"CHRYSANTHEMUM LARGE ""MINT""",,Fabric,,,,,,,,PARP139 Oyster,,,,,,,A,,,,,,,,Screen Print,4,,Everest
+CPG-7100_30P,WHITE PAPER,,Grounds,,,,,,,,"PARCPG7100 30"" 500Y",,,,,,,A,,,,,,,,Screen Print,,,Everest
+CPG-7100-36P,WIDE,,Grounds,,,,,,,,"PARCPG7100 40"" 250Y",,,,,,,A,,,,,,,,Screen Print,,,Everest
+CPG-7100P,White,,Grounds,,,,,,,,CPG-7100,,,,,,,A,,,,,,,,Screen Print,,,Everest
+CPG-7101P,Off White Paper,,Grounds,,,,,,,,CPG-7101,,,,,,,A,,,,,,,,Screen Print,,,Everest
+CPG-7113P,Almost White Paper,,Grounds,,,,,,,,"PARCPG7113 30"" 500Y",,,,,,,A,,,,,,,,Screen Print,,,Everest
+CPG-7600P,Silver,,Grounds,,,,,,,,CPG-7600,,,,,,,A,,,,,,,,Screen Print,,,Everest
+CPG-7611P,Gold Metallic,,Grounds,,,,,,,,"PARCPG7611 30"" Silver",,,,,,,A,,,,,,,,Screen Print,,,Everest
+ELL2P,ELLSWORTH - FABRIC (CAPRI BLUE),,Fabric,,,,,,,,FASANO PUNTO,,,,,,,A,,,,,,,,Screen Print,2,,Everest
+HBD1018TP,SISAL - PURE WHITE (GARDENIA),,Grounds,,,,,,,,HBD1018T,,,,,,,A,,,,,,,,Screen Print,,,Everest
+INS_01P,INSECTS (SILVER),,Paper,,,,,,,,"PARCPG7100 30"" 500Y",,,,,,,A,,,,,,,,Screen Print,3,,Everest
+INV29P,INVERNESS - FABRIC (FROST),,Fabric,,,,,,,,FASANO BOCONO,,,,,,,A,,,,,,,,Screen Print,3,,Everest
+KB14P,KEY BISCAYNE - FABRIC (BLUE),,Fabric,,,,,,,,FASANO 336,,,,,,,A,,,,,,,,Screen Print,4,,Everest
+KEELP,KEEL: LINEN ITEM OP/1136428,,Grounds,,,,,,,,KEEL,,,,,,,A,,,,,,,,Screen Print,,,Everest
+KLI4P,KALI (RUST),,Fabric,,,,,,,,FASANO 336,,,,,,,A,,,,,,,,Screen Print,2,,Everest
+KLI9P,KALI - FABRIC (CYAN),,Fabric,,,,,,,,FASANO 336,,,,,,,A,,,,,,,,Screen Print,2,,Everest
+KM2P,KINOMI (MUSTRD BITTERSWEET IVORY),,Fabric,,,,,,,,FASANO PUNTO,,,,,,,A,,,,,,,,Screen Print,4,,Everest
+KOR5P,KORI - FABRIC (RED),,Fabric,,,,,,,,FASANO PUNTO,,,,,,,A,,,,,,,,Screen Print,2,,Everest
+P073-0003_PFPP,P073 OATMEAL-0003 PFP-142 R05,,Grounds,,,,,,,,P073-0003_PFP,,,,,,,A,,,,,,,,Screen Print,,,Everest
+P336P,P336 oyster-0021 PFP 142 R05,,Grounds,,,,,,,,PARP336Oyster,,,,,,,A,,,,,,,,Screen Print,,,Everest
+PS102P,SISAL (PURE WHITE),,Grounds,,,,,,,,PS102,,,,,,,A,,,,,,,,Screen Print,,,Everest
+VKB30P,VRISKA BLOCK (FABRIC) LAGOON/OYSTER,,Fabric,,,,,,,,VKB30,,,,,,,A,,,,,,,,Screen Print,,,Everest
+5013240,Indali,,Regular,,,,,,,,"BNYNeuKaliss 60"" 315Y",,,,,,,,,,,,,,,Digital,,,Odoo
+5013241,Indali,,Regular,,,,,,,,"BNYNeuKaliss 60"" 315Y",,,,,,,,,,,,,,,Digital,,,Odoo
+5013242,Indali,,Regular,,,,,,,,"BNYNeuKaliss 60"" 315Y",,,,,,,,,,,,,,,Digital,,,Odoo
+5013240W,Indali,,Regular,,,,,,,,"BNYNeuKaliss 60"" 315Y",,,,,,,,,,,,,,,Digital,,,Odoo
+5013242W,Indali,,Regular,,,,,,,,"BNYNeuKaliss 60"" 315Y",,,,,,,,,,,,,,,Digital,,,Odoo
+5014230X,Basile Trellis,,Regular,,,,,,,,"BNYNeuKaliss 60"" 315Y",,,,,,,,,,,,,,,Digital,,,Odoo
+ENG5013663MS,White Lotus Eng. Memos,,Regular,,,,,,,,"BNYNeuKaliss 60"" 315Y",,,,,,,,,,,,,,,Digital,,,Odoo
+FREIGHT,,,Regular,,,,,,,,,,,,,,,,,,,,,,,Digital,,,Odoo
+SLF-LIL-CO,,,Regular,,,,,,,,,,,,,,,,,,,,,,,Digital,,,Odoo
+69539.97,Staccato: Black on Vinyl,,Paper,,,,,,,,"PAROM07 30"" 250Y",,,,,,,,,,,,,,,Screen Print,,,Everest
+79770.073999999993,ASHANTI TAN,,Fabric,,,,,,,,KRVA308,,,,,,,,,,,,,,,Screen Print,,,Everest
+79770.641000000003,ASHANTI ORANGE,,Fabric,,,,,,,,KRVA308,,,,,,,,,,,,,,,Screen Print,,,Everest
+8013142.1100000003,WOOD/11/BIRCH,,Fabric,,,,,,,,KRVA435Oyster,,,,,,,,,,,,,,,Screen Print,,,Everest
+8013142.1500000004,WOOD: RIVER,,Fabric,,,,,,,,KRVA435Oyster,,,,,,,,,,,,,,,Screen Print,,,Everest
+8013142.1600000001,WOOD: TAN,,Fabric,,,,,,,,KRVA435Oyster,,,,,,,,,,,,,,,Screen Print,,,Everest
+8013142.1900000004,WOOD: CARDINAL,,Fabric,,,,,,,,KRVA435Oyster,,,,,,,,,,,,,,,Screen Print,,,Everest
+8013142.2999999998,WOOD: LEAF,,Fabric,,,,,,,,KRVA435Oyster,,,,,,,,,,,,,,,Screen Print,,,Everest
+8013142.6799999997,WOOD: BARK,,Fabric,,,,,,,,KRVA435Oyster,,,,,,,,,,,,,,,Screen Print,,,Everest
