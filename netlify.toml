@@ -1,0 +1,10 @@
+[build]
+  edge_functions = "netlify/edge-functions"
+
+[[edge_functions]]
+  function = "monday"
+  path = "/api/monday"
+
+[[edge_functions]]
+  function = "lift"
+  path = "/api/lift"
