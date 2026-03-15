@@ -611,7 +611,7 @@ async function loadOnHandYards(){
 // ── MONDAY BNY PRE-PROD: live from API
 async function loadMondayBNY(){
   const BOARD_ID='3855381957';
-  const query=`{boards(ids:[${BOARD_ID}]){groups{id title items_page(limit:500){items{id name group{title} column_values{id text value}}}}}}`;
+  const query=`{boards(ids:[${BOARD_ID}]){groups{id title items(limit:500){id name column_values{id text value}}}}}`;
   try {
     const res=await fetch('/api/monday',{
       method:'POST',
@@ -624,7 +624,7 @@ async function loadMondayBNY(){
     if(!board) throw new Error('No board data');
 
     const items=board.groups.flatMap(g=>
-      (g.items_page?.items||[]).map(item=>({
+      (g.items||[]).map(item=>({
         name:item.name,
         group:g.title,
         status:item.column_values.find(c=>c.id==='status')?.text||
