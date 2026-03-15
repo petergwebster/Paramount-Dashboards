@@ -1,0 +1,867 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Paramount Prints — Executive Cockpit</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink:     #0f0e0c;
+  --ink2:    #3d3a33;
+  --muted:   #8a8478;
+  --rule:    #ddd8cf;
+  --bg:      #f8f5f0;
+  --bg2:     #f0ece5;
+  --surface: #ffffff;
+  --gold:    #b8860b;
+  --gold-lt: #fdf6e3;
+  --dig:     #1a3d6b;
+  --dig-lt:  #e8eef7;
+  --sp:      #6b1a1a;
+  --sp-lt:   #f7e8e8;
+  --green:   #1a5c35;
+  --green-lt:#e8f5ee;
+  --red:     #c0392b;
+  --amber:   #92600a;
+  --font-hd: 'Libre Baskerville', Georgia, serif;
+  --font-bd: 'DM Sans', sans-serif;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:var(--font-bd);background:var(--bg);color:var(--ink);min-height:100vh;font-size:13px}
+
+/* ── MASTHEAD ── */
+.masthead{background:var(--ink);color:var(--bg);padding:0;display:grid;grid-template-columns:1fr auto;align-items:stretch}
+.masthead-left{padding:20px 32px;border-right:1px solid rgba(248,245,240,.1)}
+.masthead-logo{font-family:var(--font-hd);font-size:22px;font-weight:700;letter-spacing:-.3px;line-height:1}
+.masthead-logo span{color:#c8a96e}
+.masthead-sub{font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:rgba(248,245,240,.4);margin-top:5px}
+.masthead-right{display:flex;align-items:center;gap:0}
+.refresh-zone{padding:20px 28px;border-left:1px solid rgba(248,245,240,.1);display:flex;flex-direction:column;gap:8px;min-width:200px}
+.refresh-label{font-size:9px;letter-spacing:.15em;text-transform:uppercase;color:rgba(248,245,240,.4)}
+.refresh-btn{font-family:var(--font-bd);font-size:11px;padding:7px 14px;border-radius:3px;cursor:pointer;transition:all .15s;display:flex;align-items:center;gap:7px;white-space:nowrap;border:1px solid}
+.refresh-btn.ops{border-color:rgba(26,61,107,.6);background:rgba(26,61,107,.3);color:#9bb8e8}
+.refresh-btn.ops:hover{background:rgba(26,61,107,.5)}
+.refresh-btn.fin{border-color:rgba(184,134,11,.5);background:rgba(184,134,11,.2);color:#c8a96e}
+.refresh-btn.fin:hover{background:rgba(184,134,11,.35)}
+.data-status{padding:20px 24px;display:flex;flex-direction:column;gap:6px;justify-content:center}
+.status-item{font-size:10px;display:flex;align-items:center;gap:6px;color:rgba(248,245,240,.5)}
+.status-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+.status-dot.live{background:#4fcd8a;animation:pulse 2s infinite}
+.status-dot.manual{background:#c8a96e}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
+input[type=file]{display:none}
+
+/* ── SECTION TABS ── */
+.tabs{background:var(--surface);border-bottom:2px solid var(--rule);padding:0 32px;display:flex;gap:0;overflow-x:auto}
+.tab{font-family:var(--font-bd);font-size:12px;font-weight:500;padding:14px 20px;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-2px;color:var(--muted);white-space:nowrap;transition:all .15s;letter-spacing:.02em}
+.tab:hover{color:var(--ink)}
+.tab.active{color:var(--ink);border-bottom-color:var(--ink)}
+
+/* ── CONTENT ── */
+.content{padding:24px 32px;max-width:1400px;margin:0 auto}
+.view{display:none}
+.view.active{display:block}
+
+/* ── KPI ROW ── */
+.kpi-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px;margin-bottom:20px}
+.kpi{background:var(--surface);border:1px solid var(--rule);border-radius:4px;padding:16px 18px;position:relative;overflow:hidden}
+.kpi-bar{position:absolute;left:0;top:0;bottom:0;width:3px}
+.kpi-lbl{font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:8px}
+.kpi-val{font-family:var(--font-hd);font-size:clamp(20px,2.2vw,28px);font-weight:700;line-height:1;letter-spacing:-.5px}
+.kpi-foot{margin-top:8px;font-size:11px;color:var(--ink2);display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.delta{font-size:10px;font-weight:600;padding:1px 7px;border-radius:2px}
+.delta.pos{background:var(--green-lt);color:var(--green)}
+.delta.neg{background:#fcecea;color:var(--red)}
+.delta.neu{background:var(--bg2);color:var(--muted)}
+.delta.warn{background:var(--gold-lt);color:var(--amber)}
+
+/* ── GRID ── */
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}
+.g3{display:grid;grid-template-columns:2fr 1fr;gap:16px;margin-bottom:16px}
+.g32{display:grid;grid-template-columns:3fr 2fr;gap:16px;margin-bottom:16px}
+.gfull{margin-bottom:16px}
+
+/* ── PANELS ── */
+.panel{background:var(--surface);border:1px solid var(--rule);border-radius:4px;padding:20px}
+.panel-hdr{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:4px;gap:12px;flex-wrap:wrap}
+.panel-title{font-family:var(--font-hd);font-size:14px;font-weight:700;letter-spacing:-.2px}
+.panel-sub{font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:14px}
+canvas{max-height:220px}
+
+/* ── MINI TABS ── */
+.mtabs{display:flex;gap:2px}
+.mtab{font-family:var(--font-bd);font-size:10px;padding:4px 10px;border-radius:3px;border:1px solid var(--rule);background:transparent;color:var(--muted);cursor:pointer;transition:all .12s}
+.mtab.on{background:var(--ink);border-color:var(--ink);color:#fff}
+.mtab:hover:not(.on){color:var(--ink)}
+
+/* ── TABLES ── */
+.dt{width:100%;border-collapse:collapse}
+.dt th{font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);padding:7px 10px;border-bottom:2px solid var(--rule);text-align:right;font-weight:600;white-space:nowrap}
+.dt th:first-child{text-align:left}
+.dt td{font-size:12px;padding:8px 10px;border-bottom:1px solid var(--bg2);text-align:right;color:var(--ink)}
+.dt td:first-child{text-align:left}
+.dt tr:last-child td{border-bottom:none}
+.dt tr:hover td{background:var(--bg2)}
+.dt tfoot td{font-weight:600;border-top:2px solid var(--rule);border-bottom:none;background:var(--bg2)}
+.pos-cell{color:var(--green);font-weight:600}
+.neg-cell{color:var(--red);font-weight:600}
+.warn-cell{color:var(--amber);font-weight:600}
+
+/* ── TRAFFIC LIGHT ── */
+.tl{display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;border-radius:50%;font-size:9px;font-weight:700;color:#fff;flex-shrink:0}
+.tl.green{background:var(--green)}
+.tl.yellow{background:#e6a817}
+.tl.red{background:var(--red)}
+
+/* ── EBITDA BRIDGE ── */
+.bridge{display:flex;flex-direction:column;gap:8px;padding:4px 0}
+.bridge-row{display:flex;align-items:center;gap:10px}
+.bridge-lbl{font-size:11px;color:var(--ink2);width:140px;flex-shrink:0}
+.bridge-bar-wrap{flex:1;position:relative;height:20px}
+.bridge-track{position:absolute;left:0;right:0;top:50%;transform:translateY(-50%);height:4px;background:var(--bg2);border-radius:2px}
+.bridge-fill{position:absolute;top:50%;transform:translateY(-50%);height:14px;border-radius:2px;transition:width .8s ease}
+.bridge-val{font-size:11px;font-weight:600;width:80px;text-align:right;flex-shrink:0}
+
+/* ── SECTION DIVIDER ── */
+.sect{font-family:var(--font-hd);font-size:13px;font-weight:700;color:var(--ink);padding:18px 0 10px;border-top:1px solid var(--rule);margin-top:4px;display:flex;align-items:center;gap:12px}
+.sect-badge{font-family:var(--font-bd);font-size:9px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;padding:3px 10px;border-radius:2px}
+.sect-badge.dig{background:var(--dig-lt);color:var(--dig)}
+.sect-badge.sp{background:var(--sp-lt);color:var(--sp)}
+.sect-badge.con{background:var(--bg2);color:var(--muted)}
+
+/* ── NOTE BAR ── */
+.note-bar{background:var(--gold-lt);border:1px solid #e8d49a;border-radius:4px;padding:10px 14px;font-size:11px;color:var(--amber);margin-bottom:16px;display:flex;align-items:flex-start;gap:8px}
+.note-bar strong{color:var(--amber)}
+
+@media(max-width:900px){.g2,.g3,.g32{grid-template-columns:1fr}.kpi-row{grid-template-columns:1fr 1fr}.masthead{grid-template-columns:1fr}.masthead-right{flex-direction:column;gap:0}}
+</style>
+</head>
+<body>
+
+<!-- ══ MASTHEAD ══ -->
+<div class="masthead">
+  <div class="masthead-left">
+    <div class="masthead-logo">Paramount <span>Prints</span></div>
+    <div class="masthead-sub">Executive Cockpit &nbsp;·&nbsp; 609 · 610 · 612</div>
+  </div>
+  <div class="masthead-right">
+    <div class="data-status">
+      <div class="status-item"><div class="status-dot live"></div>X-LIFT Operations · Mar 14, 2026</div>
+      <div class="status-item"><div class="status-dot manual"></div>Vena Financials · Jan 2026</div>
+    </div>
+    <div class="refresh-zone">
+      <div class="refresh-label">Refresh Data</div>
+      <label class="refresh-btn ops" for="ops-file">
+        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+        Operations (X-LIFT CSV)
+      </label>
+      <label class="refresh-btn fin" for="fin-file">
+        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+        Financials (Vena XLSX)
+      </label>
+      <input type="file" id="ops-file" accept=".csv" onchange="handleOps(this)">
+      <input type="file" id="fin-file" accept=".xlsx" onchange="handleFin(this)">
+    </div>
+  </div>
+</div>
+
+<!-- ══ TABS ══ -->
+<div class="tabs">
+  <div class="tab active" onclick="showView('consolidated',this)">Consolidated P&L</div>
+  <div class="tab" onclick="showView('digital',this)">Digital · 609</div>
+  <div class="tab" onclick="showView('sp',this)">Screen Print · 610</div>
+  <div class="tab" onclick="showView('ops',this)">Production KPIs</div>
+  <div class="tab" onclick="showView('pipeline',this)">WIP Pipeline</div>
+  <div class="tab" onclick="showView('inventory',this)">Inventory</div>
+</div>
+
+<div class="content">
+
+<!-- ════════════════════════════════ -->
+<!-- VIEW: CONSOLIDATED P&L          -->
+<!-- ════════════════════════════════ -->
+<div class="view active" id="view-consolidated">
+  <div class="note-bar">
+    <strong>Note:</strong> Financials from Vena (Jan 2026 actuals). OpEx captured at month-end via FSCO/GP — not available in real-time. LIFT production data current as of Mar 14.
+  </div>
+
+  <div class="kpi-row">
+    <div class="kpi">
+      <div class="kpi-bar" style="background:var(--ink)"></div>
+      <div class="kpi-lbl">Jan Revenue (Actual)</div>
+      <div class="kpi-val">$937K</div>
+      <div class="kpi-foot"><span class="delta neg">–$110K vs Plan</span><span style="color:var(--muted)">Plan $1,047K</span></div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-bar" style="background:var(--red)"></div>
+      <div class="kpi-lbl">Jan COGS (Actual)</div>
+      <div class="kpi-val">$964K</div>
+      <div class="kpi-foot"><span class="delta neg">–$116K vs Plan</span><span style="color:var(--muted)">Plan $848K</span></div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-bar" style="background:var(--red)"></div>
+      <div class="kpi-lbl">Jan EBITDA (Actual)</div>
+      <div class="kpi-val" style="color:var(--red)">–$26.5K</div>
+      <div class="kpi-foot"><span class="delta neg">–$226K vs Plan</span><span style="color:var(--muted)">Plan +$200K</span></div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-bar" style="background:var(--amber)"></div>
+      <div class="kpi-lbl">Jan EBITDA Adj.</div>
+      <div class="kpi-val" style="color:var(--green)">+$188K</div>
+      <div class="kpi-foot"><span class="delta warn">Excl. PW error</span><span style="color:var(--muted)">20% margin</span></div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-bar" style="background:var(--dig)"></div>
+      <div class="kpi-lbl">Digital EBITDA</div>
+      <div class="kpi-val" style="color:var(--green)">+$254K</div>
+      <div class="kpi-foot"><span class="delta pos">+$42K vs Plan</span><span style="color:var(--muted)">48% margin</span></div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-bar" style="background:var(--sp)"></div>
+      <div class="kpi-lbl">SP EBITDA (Adj.)</div>
+      <div class="kpi-val" style="color:var(--amber)">+$18K</div>
+      <div class="kpi-foot"><span class="delta warn">4.5% margin</span><span style="color:var(--muted)">Plan 12.7%</span></div>
+    </div>
+  </div>
+
+  <div class="g2">
+    <div class="panel">
+      <div class="panel-hdr">
+        <div><div class="panel-title">Monthly Revenue — 609 + 610 + 612</div><div class="panel-sub">Actual vs Plan · 2025–2026</div></div>
+        <div class="mtabs">
+          <button class="mtab on" onclick="switchConRev('rev',this)">Revenue</button>
+          <button class="mtab" onclick="switchConRev('ebitda',this)">EBITDA</button>
+          <button class="mtab" onclick="switchConRev('cogs',this)">COGS</button>
+        </div>
+      </div>
+      <canvas id="conRevChart"></canvas>
+    </div>
+    <div class="panel">
+      <div class="panel-title">January P&L Summary</div>
+      <div class="panel-sub">609 + 610 + 612 consolidated</div>
+      <table class="dt">
+        <thead><tr><th>Line Item</th><th>Actual</th><th>Plan</th><th>Var $</th><th>Var %</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Revenue</strong></td><td>$937K</td><td>$1,047K</td><td class="neg-cell">–$110K</td><td class="neg-cell">–10.5%</td></tr>
+          <tr><td style="padding-left:16px;color:var(--muted)">609 Digital</td><td>$529K</td><td>$532K</td><td class="neg-cell">–$2K</td><td class="neg-cell">–0.4%</td></tr>
+          <tr><td style="padding-left:16px;color:var(--muted)">610 Screen Print</td><td>$408K</td><td>$516K</td><td class="neg-cell">–$108K</td><td class="neg-cell">–20.9%</td></tr>
+          <tr><td><strong>COGS</strong></td><td>$964K</td><td>$848K</td><td class="neg-cell">–$116K</td><td class="neg-cell">–13.7%</td></tr>
+          <tr><td style="padding-left:16px;color:var(--muted)">609 Digital</td><td>$275K</td><td>$319K</td><td class="pos-cell">+$44K</td><td class="pos-cell">+13.7%</td></tr>
+          <tr><td style="padding-left:16px;color:var(--muted)">610 Screen Print</td><td>$604K</td><td>$451K</td><td class="neg-cell">–$153K</td><td class="neg-cell">–34.0%</td></tr>
+          <tr><td style="padding-left:16px;color:var(--muted)">  Adjusted (ex-PW)</td><td>$390K</td><td>$451K</td><td class="pos-cell">+$61K</td><td class="pos-cell">+13.5%</td></tr>
+          <tr><td><strong>EBITDA</strong></td><td class="neg-cell">–$26K</td><td>+$200K</td><td class="neg-cell">–$226K</td><td class="neg-cell">–113%</td></tr>
+          <tr><td><strong>EBITDA (Adj.)</strong></td><td class="pos-cell">+$188K</td><td>+$200K</td><td class="warn-cell">–$12K</td><td class="warn-cell">–6%</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="g2">
+    <div class="panel">
+      <div class="panel-title">2025 Full Year · Revenue Trend</div>
+      <div class="panel-sub">Monthly actuals · 609 + 610</div>
+      <canvas id="fy25Chart"></canvas>
+    </div>
+    <div class="panel">
+      <div class="panel-title">2026 YTD vs Plan</div>
+      <div class="panel-sub">Jan 2026 — both divisions</div>
+      <div style="margin-top:8px">
+        <div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px">Revenue</div>
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <div style="display:flex;align-items:center;gap:10px">
+            <span style="font-size:11px;color:var(--ink2);width:100px">609 Digital</span>
+            <div style="flex:1;height:16px;background:var(--bg2);border-radius:3px;overflow:hidden;position:relative">
+              <div style="height:100%;width:99.6%;background:var(--dig);border-radius:3px"></div>
+            </div>
+            <span style="font-size:11px;font-weight:600;width:50px">99.6%</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:10px">
+            <span style="font-size:11px;color:var(--ink2);width:100px">610 SP</span>
+            <div style="flex:1;height:16px;background:var(--bg2);border-radius:3px;overflow:hidden">
+              <div style="height:100%;width:79%;background:var(--sp);border-radius:3px"></div>
+            </div>
+            <span style="font-size:11px;font-weight:600;width:50px">79.0%</span>
+          </div>
+        </div>
+      </div>
+      <div style="margin-top:18px;padding-top:14px;border-top:1px solid var(--rule)">
+        <div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px">COGS vs Plan</div>
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <div style="display:flex;align-items:center;gap:10px">
+            <span style="font-size:11px;color:var(--ink2);width:100px">609 Digital</span>
+            <div style="flex:1;height:16px;background:var(--bg2);border-radius:3px;overflow:hidden">
+              <div style="height:100%;width:86%;background:var(--green);border-radius:3px"></div>
+            </div>
+            <span style="font-size:11px;font-weight:600;color:var(--green);width:50px">86% ✓</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:10px">
+            <span style="font-size:11px;color:var(--ink2);width:100px">610 SP</span>
+            <div style="flex:1;height:16px;background:var(--bg2);border-radius:3px;overflow:hidden">
+              <div style="height:100%;width:100%;background:var(--red);border-radius:3px"></div>
+            </div>
+            <span style="font-size:11px;font-weight:600;color:var(--red);width:50px">134% ✗</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:10px">
+            <span style="font-size:11px;color:var(--ink2);width:100px">610 Adj.</span>
+            <div style="flex:1;height:16px;background:var(--bg2);border-radius:3px;overflow:hidden">
+              <div style="height:100%;width:87%;background:var(--amber);border-radius:3px"></div>
+            </div>
+            <span style="font-size:11px;font-weight:600;color:var(--amber);width:50px">87% ~</span>
+          </div>
+        </div>
+      </div>
+      <div style="margin-top:14px;padding-top:12px;border-top:1px solid var(--rule);font-size:11px;color:var(--muted);line-height:1.8">
+        <strong style="color:var(--green)">609 on track.</strong> Revenue –$2K vs plan, COGS $44K better.<br>
+        <strong style="color:var(--red)">610 SP revenue miss</strong> –$108K. Two short weeks + timing on PW grounds.<br>
+        <strong style="color:var(--amber)">610 adj. EBITDA $18K (4.5%)</strong> vs plan $65K on an adjusted basis.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════ -->
+<!-- VIEW: DIGITAL 609               -->
+<!-- ════════════════════════════════ -->
+<div class="view" id="view-digital">
+  <div class="kpi-row">
+    <div class="kpi"><div class="kpi-bar" style="background:var(--dig)"></div><div class="kpi-lbl">Jan Revenue</div><div class="kpi-val">$529K</div><div class="kpi-foot"><span class="delta neg">–$2K vs Plan</span></div></div>
+    <div class="kpi"><div class="kpi-bar" style="background:var(--green)"></div><div class="kpi-lbl">Jan COGS</div><div class="kpi-val">$275K</div><div class="kpi-foot"><span class="delta pos">+$44K vs Plan</span><span style="color:var(--muted)">Plan $319K</span></div></div>
+    <div class="kpi"><div class="kpi-bar" style="background:var(--green)"></div><div class="kpi-lbl">Jan EBITDA</div><div class="kpi-val" style="color:var(--green)">$254K</div><div class="kpi-foot"><span class="delta pos">48% margin</span><span style="color:var(--muted)">Plan 40%</span></div></div>
+    <div class="kpi"><div class="kpi-bar" style="background:var(--dig)"></div><div class="kpi-lbl">Invoiced Yards</div><div class="kpi-val">50,645</div><div class="kpi-foot"><span class="delta pos">Target 48,000</span></div></div>
+    <div class="kpi"><div class="kpi-bar" style="background:var(--green)"></div><div class="kpi-lbl">COGS / Yd</div><div class="kpi-val">$5.43</div><div class="kpi-foot"><span class="delta pos">–$1.22 vs Plan</span><span style="color:var(--muted)">Plan $6.65</span></div></div>
+    <div class="kpi"><div class="kpi-bar" style="background:var(--amber)"></div><div class="kpi-lbl">2026 Plan (Full Yr)</div><div class="kpi-val">$6.91M</div><div class="kpi-foot"><span class="delta warn">+45% vs 2025</span></div></div>
+  </div>
+
+  <div class="g2">
+    <div class="panel">
+      <div class="panel-hdr">
+        <div><div class="panel-title">Digital Revenue — Monthly</div><div class="panel-sub">Actual vs Plan · 2025 + 2026</div></div>
+        <div class="mtabs">
+          <button class="mtab on" onclick="switchDig('rev',this)">Revenue</button>
+          <button class="mtab" onclick="switchDig('ebitda',this)">EBITDA</button>
+          <button class="mtab" onclick="switchDig('cogs',this)">COGS</button>
+        </div>
+      </div>
+      <canvas id="digMonthChart"></canvas>
+    </div>
+    <div class="panel">
+      <div class="panel-title">COGS Breakdown — Jan 2026</div>
+      <div class="panel-sub">Per invoiced yard (50,645 yds)</div>
+      <table class="dt" style="margin-top:8px">
+        <thead><tr><th>Category</th><th>Actual $</th><th>Plan $</th><th>Act $/Yd</th><th>Plan $/Yd</th></tr></thead>
+        <tbody>
+          <tr><td>Material</td><td>$144,106</td><td>$189,711</td><td class="pos-cell">$0.90</td><td>$3.95</td></tr>
+          <tr><td>Labor</td><td>$64,826</td><td>$74,257</td><td class="pos-cell">$1.28</td><td>$1.55</td></tr>
+          <tr><td>WIP / Held</td><td>$66,201</td><td>—</td><td>$1.31</td><td>—</td></tr>
+          <tr><td>Other OpEx</td><td>$98,608</td><td>$49,845</td><td class="neg-cell">$1.95</td><td>$1.04</td></tr>
+        </tbody>
+        <tfoot><tr><td><strong>Total</strong></td><td><strong>$275,240</strong></td><td>$319,089</td><td class="pos-cell"><strong>$5.43</strong></td><td>$6.65</td></tr></tfoot>
+      </table>
+      <div style="margin-top:14px;padding:10px 12px;background:var(--dig-lt);border-radius:3px;font-size:11px;color:var(--dig);line-height:1.8">
+        <strong>Ink up ~$15K/mo</strong> from Paramount machines now in operation — reflected in Material + Other.<br>
+        <strong>Distribution up</strong> due to expanded production volume — expected.
+      </div>
+    </div>
+  </div>
+
+  <div class="panel gfull">
+    <div class="panel-hdr">
+      <div><div class="panel-title">Schumacher vs 3rd Party — Jan 2026</div><div class="panel-sub">Revenue split by client type</div></div>
+    </div>
+    <table class="dt">
+      <thead><tr><th>Category</th><th>Schu (Hub)</th><th>3rd Party</th><th>Total</th></tr></thead>
+      <tbody>
+        <tr><td>Yards Written</td><td>47,923</td><td>1,200</td><td>49,123</td></tr>
+        <tr><td>Yards Produced</td><td>47,925</td><td>1,260</td><td>49,185</td></tr>
+        <tr><td>Production Waste</td><td>2,461</td><td>40</td><td class="warn-cell">2,501 (5.1%)</td></tr>
+        <tr><td>Held to Invoice</td><td>15,392</td><td>0</td><td class="warn-cell">15,392</td></tr>
+        <tr><td>Net Yards Invoiced</td><td>48,795</td><td>1,850</td><td>50,645</td></tr>
+        <tr><td>Net Revenue Invoiced</td><td>$509,234</td><td>$19,366</td><td>$529,234</td></tr>
+        <tr><td>Total COGS</td><td>$263,633</td><td>$11,607</td><td>$275,240</td></tr>
+        <tr><td>Margin %</td><td class="pos-cell">48.2%</td><td class="pos-cell">40.1%</td><td class="pos-cell">48.0%</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ════════════════════════════════ -->
+<!-- VIEW: SCREEN PRINT 610          -->
+<!-- ════════════════════════════════ -->
+<div class="view" id="view-sp">
+  <div class="kpi-row">
+    <div class="kpi"><div class="kpi-bar" style="background:var(--sp)"></div><div class="kpi-lbl">Jan Revenue</div><div class="kpi-val">$408K</div><div class="kpi-foot"><span class="delta neg">–$108K vs Plan</span><span style="color:var(--muted)">Plan $516K</span></div></div>
+    <div class="kpi"><div class="kpi-bar" style="background:var(--red)"></div><div class="kpi-lbl">Jan COGS (Actual)</div><div class="kpi-val" style="color:var(--red)">$604K</div><div class="kpi-foot"><span class="delta neg">PW error +$214K</span></div></div>
+    <div class="kpi"><div class="kpi-bar" style="background:var(--amber)"></div><div class="kpi-lbl">Jan COGS (Adj.)</div><div class="kpi-val">$390K</div><div class="kpi-foot"><span class="delta warn">+$61K vs Plan</span></div></div>
+    <div class="kpi"><div class="kpi-bar" style="background:var(--red)"></div><div class="kpi-lbl">Jan EBITDA</div><div class="kpi-val" style="color:var(--red)">–$196K</div><div class="kpi-foot"><span class="delta neg">Adj. +$18K</span></div></div>
+    <div class="kpi"><div class="kpi-bar" style="background:var(--amber)"></div><div class="kpi-lbl">Color Yards Invoiced</div><div class="kpi-val">63,616</div><div class="kpi-foot"><span class="delta neg">Target 102K</span></div></div>
+    <div class="kpi"><div class="kpi-bar" style="background:var(--amber)"></div><div class="kpi-lbl">COGS / Color Yd (Adj.)</div><div class="kpi-val">$6.12</div><div class="kpi-foot"><span class="delta warn">Plan $13.25</span></div></div>
+  </div>
+
+  <div class="g2">
+    <div class="panel">
+      <div class="panel-hdr">
+        <div><div class="panel-title">Screen Print Revenue — Monthly</div><div class="panel-sub">Actual vs Plan · 2025 + 2026</div></div>
+        <div class="mtabs">
+          <button class="mtab on" onclick="switchSP('rev',this)">Revenue</button>
+          <button class="mtab" onclick="switchSP('ebitda',this)">EBITDA</button>
+          <button class="mtab" onclick="switchSP('cogs',this)">COGS</button>
+        </div>
+      </div>
+      <canvas id="spMonthChart"></canvas>
+    </div>
+    <div class="panel">
+      <div class="panel-title">COGS Breakdown — Jan 2026</div>
+      <div class="panel-sub">Per invoiced yard (25,931 yds) · Adjusted</div>
+      <table class="dt" style="margin-top:8px">
+        <thead><tr><th>Category</th><th>Adj. $</th><th>Plan $</th><th>Adj $/Yd</th><th>Plan $/Yd</th></tr></thead>
+        <tbody>
+          <tr><td>Material</td><td>$253,738</td><td>$212,614</td><td class="neg-cell">$9.79</td><td>$6.25</td></tr>
+          <tr><td>Labor</td><td>$165,235</td><td>$170,437</td><td class="pos-cell">$6.37</td><td>$5.01</td></tr>
+          <tr><td>WIP Adj.</td><td class="pos-cell">–$89,881</td><td>—</td><td class="pos-cell">–$3.47</td><td>—</td></tr>
+          <tr><td>Other OpEx</td><td>$60,457</td><td>$67,403</td><td class="pos-cell">$2.33</td><td>$1.98</td></tr>
+        </tbody>
+        <tfoot><tr><td><strong>Total (Adj.)</strong></td><td><strong>$389,549</strong></td><td>$450,453</td><td class="warn-cell"><strong>$15.02</strong></td><td>$13.25</td></tr></tfoot>
+      </table>
+      <div style="margin-top:12px;padding:10px 12px;background:var(--sp-lt);border-radius:3px;font-size:11px;color:var(--sp);line-height:1.8">
+        <strong>Revenue miss:</strong> 2 short production weeks + zero PW ground shipments (timing).<br>
+        <strong>Material over:</strong> High color-count orders + new grass cloth setup costs.<br>
+        <strong>Next month:</strong> 2nd shift launch for wallpaper · new grass cloth tables active.
+      </div>
+    </div>
+  </div>
+
+  <div class="panel gfull">
+    <div class="panel-hdr">
+      <div><div class="panel-title">Production KPIs — Jan 2026</div><div class="panel-sub">Yards, Color Yards, Waste by material type</div></div>
+    </div>
+    <table class="dt">
+      <thead><tr><th>Material</th><th>Prior Held</th><th>Produced Yds</th><th>Color Yds</th><th>Waste</th><th>Waste %</th><th>Target %</th><th>Invoiced Yds</th><th>Color Yds Inv.</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><strong>Grass Cloth</strong></td><td>4,535</td><td>11,300</td><td>23,919</td><td>832</td>
+          <td class="warn-cell">7.4%</td><td style="color:var(--muted)">4%</td><td>11,187</td><td>25,146</td>
+        </tr>
+        <tr>
+          <td><strong>Fabric</strong></td><td>1,078</td><td>4,910</td><td>11,343</td><td>294</td>
+          <td class="warn-cell">6.0%</td><td style="color:var(--muted)">8%</td><td>4,407</td><td>12,610</td>
+        </tr>
+        <tr>
+          <td><strong>Wallpaper</strong></td><td>6,782</td><td>10,525</td><td>37,609</td><td>1,689</td>
+          <td class="neg-cell">16.1%</td><td style="color:var(--muted)">20%</td><td>10,525</td><td>25,860</td>
+        </tr>
+      </tbody>
+      <tfoot>
+        <tr><td><strong>Total</strong></td><td>12,400</td><td>24,857</td><td>73,279</td><td class="warn-cell">2,851</td>
+        <td class="neg-cell">11.5%</td><td style="color:var(--muted)">4%</td><td>25,931</td><td>63,616</td></tr>
+      </tfoot>
+    </table>
+  </div>
+</div>
+
+<!-- ════════════════════════════════ -->
+<!-- VIEW: PRODUCTION KPIs           -->
+<!-- ════════════════════════════════ -->
+<div class="view" id="view-ops">
+  <div class="note-bar">
+    Production data from X-LIFT · current as of Mar 14, 2026. Waste % calculated from Data_Orders_All — Jan 2026.
+  </div>
+  <div class="kpi-row">
+    <div class="kpi"><div class="kpi-bar" style="background:var(--dig)"></div><div class="kpi-lbl">Digital Produced (Jan)</div><div class="kpi-val">49,185</div><div class="kpi-foot"><span class="delta pos">Target 48,000</span></div></div>
+    <div class="kpi"><div class="kpi-bar" style="background:var(--dig)"></div><div class="kpi-lbl">Digital Waste %</div><div class="kpi-val">5.1%</div><div class="kpi-foot"><span class="delta warn">Target &lt;5%</span></div></div>
+    <div class="kpi"><div class="kpi-bar" style="background:var(--sp)"></div><div class="kpi-lbl">SP Produced (Jan)</div><div class="kpi-val">24,857</div><div class="kpi-foot"><span class="delta neg">Target 34,000</span></div></div>
+    <div class="kpi"><div class="kpi-bar" style="background:var(--sp)"></div><div class="kpi-lbl">SP Color Yds (Jan)</div><div class="kpi-val">73,279</div><div class="kpi-foot"><span class="delta neg">Target 102,000</span></div></div>
+    <div class="kpi"><div class="kpi-bar" style="background:var(--amber)"></div><div class="kpi-lbl">SP Waste %</div><div class="kpi-val" style="color:var(--red)">11.5%</div><div class="kpi-foot"><span class="delta neg">Target 4%</span></div></div>
+    <div class="kpi"><div class="kpi-bar" style="background:var(--ink)"></div><div class="kpi-lbl">Total Held-to-Inv</div><div class="kpi-val">24,924</div><div class="kpi-foot"><span style="color:var(--muted)">Dig 15,392 + SP 9,532</span></div></div>
+  </div>
+
+  <div class="g2">
+    <div class="panel">
+      <div class="panel-title">Machine Capacity — Digital (Jan 2026)</div>
+      <div class="panel-sub">BNY 3600s vs Small machines · actual vs monthly max</div>
+      <table class="dt" style="margin-top:8px">
+        <thead><tr><th>Machine</th><th>Type</th><th>Location</th><th>Monthly Max</th><th>Jan Actual</th><th>Utilization</th></tr></thead>
+        <tbody id="machine-dig-tbody"></tbody>
+      </table>
+    </div>
+    <div class="panel">
+      <div class="panel-title">Machine Capacity — Screen Print</div>
+      <div class="panel-sub">Paramount machines · tables + 570s</div>
+      <table class="dt" style="margin-top:8px">
+        <thead><tr><th>Machine</th><th>Type</th><th>Monthly Max</th><th>Jan Actual</th><th>Util.</th></tr></thead>
+        <tbody id="machine-sp-tbody"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════ -->
+<!-- VIEW: WIP PIPELINE              -->
+<!-- ════════════════════════════════ -->
+<div class="view" id="view-pipeline">
+  <div class="kpi-row">
+    <div class="kpi"><div class="kpi-bar" style="background:var(--dig)"></div><div class="kpi-lbl">Digital WIP Total</div><div class="kpi-val">115,085</div><div class="kpi-foot"><span class="delta neg">Goal: &lt;100K yds</span></div></div>
+    <div class="kpi"><div class="kpi-bar" style="background:var(--red)"></div><div class="kpi-lbl">Digital Over Lead Time</div><div class="kpi-val">68,484</div><div class="kpi-foot"><span class="delta neg">59% of WIP</span></div></div>
+    <div class="kpi"><div class="kpi-bar" style="background:var(--sp)"></div><div class="kpi-lbl">SP WIP Total</div><div class="kpi-val">69,089</div><div class="kpi-foot"><span class="delta warn">vs Dec 71,857</span></div></div>
+    <div class="kpi"><div class="kpi-bar" style="background:var(--amber)"></div><div class="kpi-lbl">SP Over Lead Time</div><div class="kpi-val">34,949</div><div class="kpi-foot"><span class="delta warn">50% of WIP</span></div></div>
+    <div class="kpi"><div class="kpi-bar" style="background:var(--ink)"></div><div class="kpi-lbl">Total Active Pipeline</div><div class="kpi-val">$3.73M</div><div class="kpi-foot"><span style="color:var(--muted)">1,615 orders</span></div></div>
+  </div>
+
+  <div class="g2">
+    <div class="panel">
+      <div class="panel-title">Digital WIP — Category Breakdown</div>
+      <div class="panel-sub">Held-to-invoice target: &lt;12,000 yds · Target total WIP: &lt;100K</div>
+      <table class="dt" style="margin-top:8px">
+        <thead><tr><th>Category</th><th>Held-to-Inv</th><th>Target</th><th>Produced</th><th>Invoiced</th><th>Status</th></tr></thead>
+        <tbody>
+          <tr><td>Replen</td><td>14,689</td><td>&lt;7,350</td><td>41,260</td><td>41,949</td><td><span class="tl red">R</span></td></tr>
+          <tr><td>MTO</td><td>533</td><td>&lt;1,000</td><td>4,548</td><td>4,073</td><td><span class="tl green">G</span></td></tr>
+          <tr><td>Hospitality</td><td>80</td><td>&lt;500</td><td>582</td><td>1,032</td><td><span class="tl green">G</span></td></tr>
+          <tr><td>Memos</td><td>90</td><td>&lt;500</td><td>1,535</td><td>1,822</td><td><span class="tl green">G</span></td></tr>
+          <tr><td>3rd Party</td><td>0</td><td>&lt;500</td><td>1,260</td><td>1,870</td><td><span class="tl green">G</span></td></tr>
+        </tbody>
+        <tfoot><tr><td><strong>Total</strong></td><td class="warn-cell"><strong>15,392</strong></td><td>&lt;12,000</td><td>49,185</td><td>50,645</td><td><span class="tl red">R</span></td></tr></tfoot>
+      </table>
+    </div>
+    <div class="panel">
+      <div class="panel-title">Screen Print WIP — Material Breakdown</div>
+      <div class="panel-sub">Held-to-invoice target: &lt;8,500 yds</div>
+      <table class="dt" style="margin-top:8px">
+        <thead><tr><th>Material</th><th>Held-to-Inv</th><th>Aging &gt;6wk</th><th>No Ground</th><th>Status</th></tr></thead>
+        <tbody>
+          <tr><td>Grass Cloth</td><td>5,282</td><td>—</td><td>—</td><td><span class="tl red">R</span></td></tr>
+          <tr><td>Fabric</td><td>267</td><td>—</td><td>—</td><td><span class="tl green">G</span></td></tr>
+          <tr><td>Wallpaper</td><td>3,983</td><td>—</td><td>—</td><td><span class="tl yellow">Y</span></td></tr>
+        </tbody>
+        <tfoot><tr><td><strong>Total</strong></td><td class="warn-cell"><strong>9,532</strong></td><td>34,949</td><td>—</td><td><span class="tl red">R</span></td></tr></tfoot>
+      </table>
+      <div style="margin-top:12px;padding:10px 12px;background:var(--gold-lt);border-radius:3px;font-size:11px;color:var(--amber);line-height:1.8">
+        <strong>WIP improving:</strong> Dec total was 71,857 yds — Jan improved to 69,089 yds (–$2.8K).<br>
+        <strong>Paper/Grass aging</strong> most prominent. No Ground orders require monitoring.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════ -->
+<!-- VIEW: INVENTORY                 -->
+<!-- ════════════════════════════════ -->
+<div class="view" id="view-inventory">
+  <div class="kpi-row">
+    <div class="kpi"><div class="kpi-bar" style="background:var(--ink)"></div><div class="kpi-lbl">Total On-Hand Yards</div><div class="kpi-val">430,761</div><div class="kpi-foot"><span style="color:var(--muted)">All locations</span></div></div>
+    <div class="kpi"><div class="kpi-bar" style="background:var(--dig)"></div><div class="kpi-lbl">BNY On-Hand</div><div class="kpi-val">146,499</div><div class="kpi-foot"><span class="delta neu">34% of total</span></div></div>
+    <div class="kpi"><div class="kpi-bar" style="background:var(--sp)"></div><div class="kpi-lbl">Paramount On-Hand</div><div class="kpi-val">284,262</div><div class="kpi-foot"><span class="delta neu">66% of total</span></div></div>
+    <div class="kpi"><div class="kpi-bar" style="background:var(--red)"></div><div class="kpi-lbl">⚠ NK Closure</div><div class="kpi-val">Apr 1</div><div class="kpi-foot"><span class="delta neg">277K yds in transit</span></div></div>
+    <div class="kpi"><div class="kpi-bar" style="background:var(--amber)"></div><div class="kpi-lbl">Haruki Sisal Value</div><div class="kpi-val">$638K</div><div class="kpi-foot"><span class="delta warn">Largest position</span></div></div>
+  </div>
+
+  <div class="g2">
+    <div class="panel">
+      <div class="panel-title">Top 10 Materials by Inventory Value</div>
+      <div class="panel-sub">On-hand yards × cost per yard</div>
+      <table class="dt" style="margin-top:8px">
+        <thead><tr><th>Material Group</th><th>On-Hand Yds</th><th>$/Yd</th><th>Est. Value</th></tr></thead>
+        <tbody>
+          <tr><td>Haruki Sisal</td><td>107,000</td><td>$5.96</td><td class="warn-cell">$637,868</td></tr>
+          <tr><td>Neu Kaliss</td><td>98,511</td><td>$1.21</td><td>$119,203</td></tr>
+          <tr><td>Custom Coating</td><td>64,060</td><td>$1.23</td><td>$78,987</td></tr>
+          <tr><td>Ahlstrom</td><td>26,197</td><td>$2.10</td><td>$55,014</td></tr>
+          <tr><td>Agra AC</td><td>1,790</td><td>$20.59</td><td>$36,861</td></tr>
+          <tr><td>Shaded Silk</td><td>2,008</td><td>$17.42</td><td>$34,943</td></tr>
+          <tr><td>Griswold Sailcloth</td><td>4,120</td><td>$8.00</td><td>$32,960</td></tr>
+          <tr><td>PARMadden Oyster</td><td>2,912</td><td>$11.09</td><td>$32,259</td></tr>
+          <tr><td>London</td><td>2,694</td><td>$11.45</td><td>$30,869</td></tr>
+          <tr><td>PARComo Bleached</td><td>1,685</td><td>$14.65</td><td>$24,691</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="panel">
+      <div class="panel-title">NK Closure — Action Plan</div>
+      <div class="panel-sub">Neu Kaliss substrate transition</div>
+      <div style="display:flex;flex-direction:column;gap:12px;margin-top:8px">
+        <div style="padding:12px;background:var(--sp-lt);border-radius:3px;border-left:3px solid var(--red)">
+          <div style="font-size:11px;font-weight:600;color:var(--sp);margin-bottom:4px">⚠ NK Closure: April 1, 2026</div>
+          <div style="font-size:11px;color:var(--ink2);line-height:1.7">277,152 yards total in transit (4 containers).<br>Mid-Mar: 2 standard + 2 unconverted arriving.<br>Late Mar: 1–2 additional unconverted departing.</div>
+        </div>
+        <div style="padding:12px;background:var(--gold-lt);border-radius:3px;border-left:3px solid var(--amber)">
+          <div style="font-size:11px;font-weight:600;color:var(--amber);margin-bottom:4px">Converting Cost</div>
+          <div style="font-size:11px;color:var(--ink2);line-height:1.7">Peak Converting: $480/reel (2,887 yds).<br>≈$0.17/yd conversion surcharge on jumbo reels.</div>
+        </div>
+        <div style="padding:12px;background:var(--green-lt);border-radius:3px;border-left:3px solid var(--green)">
+          <div style="font-size:11px;font-weight:600;color:var(--green);margin-bottom:4px">Actions In Progress</div>
+          <div style="font-size:11px;color:var(--ink2);line-height:1.7">✓ Secured all available substrate<br>✓ 98,511 yds NK on-hand at BNY<br>→ Research slitters/rewinders<br>→ New supplier onboarding in progress</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div><!-- /content -->
+
+<script>
+// ═══════════════════════════════════════════
+// DATA — from Vena + X-LIFT
+// ═══════════════════════════════════════════
+const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+
+// Financial data (from Vena)
+const FIN = {
+  dig: {
+    act25: [182428,476822,355325,348680,289942,407473,359686,391949,494502,420193,469863,576215],
+    act26: [529234,0,0,0,0,0,0,0,0,0,0,0],
+    plan26:[531599,531599,664499,531599,531599,664499,531599,531599,664499,531599,531599,664499],
+    cogs_act25:[138633,302764,334060,284041,334670,261079,256584,233870,294157,275707,262167,312609],
+    cogs_act26:[275240,0,0,0,0,0,0,0,0,0,0,0],
+    cogs_plan26:[319089,319089,385082,319089,319089,385082,319089,319089,385082,319089,319089,385082],
+  },
+  sp: {
+    act25: [226548,239135,365757,190532,257757,328890,216366,370508,573923,312492,503161,642666],
+    act26: [407768,0,0,0,0,0,0,0,0,0,0,0],
+    plan26:[515804,515804,644755,515804,515804,644755,515804,515804,644755,515804,515804,644755],
+    cogs_act25:[240074,299890,278315,268286,276102,359124,297356,435776,634170,313558,487624,527801],
+    cogs_act26:[603549,0,0,0,0,0,0,0,0,0,0,0],
+    cogs_plan26:[450453,450453,544924,450453,450453,544924,451193,451193,545842,451193,451193,557842],
+  },
+  admin: {
+    cogs_act26:[84750,0,0,0,0,0,0,0,0,0,0,0],
+    cogs_plan26:[78395,78395,84069,78395,78395,84069,78395,78395,84069,78395,78395,84069],
+  }
+};
+
+// Consolidated
+function addArr(a,b){return a.map((v,i)=>v+(b[i]||0));}
+const CON = {
+  act25: addArr(FIN.dig.act25, FIN.sp.act25),
+  act26: addArr(FIN.dig.act26, FIN.sp.act26),
+  plan26: addArr(FIN.dig.plan26, FIN.sp.plan26),
+  cogs_act25: addArr(FIN.dig.cogs_act25, addArr(FIN.sp.cogs_act25, Array(12).fill(0))),
+  cogs_act26: addArr(FIN.dig.cogs_act26, addArr(FIN.sp.cogs_act26, FIN.admin.cogs_act26)),
+  cogs_plan26: addArr(FIN.dig.cogs_plan26, addArr(FIN.sp.cogs_plan26, FIN.admin.cogs_plan26)),
+};
+CON.ebitda_act25 = CON.act25.map((v,i)=>v-CON.cogs_act25[i]);
+CON.ebitda_act26 = CON.act26.map((v,i)=>v-CON.cogs_act26[i]);
+CON.ebitda_plan26 = CON.plan26.map((v,i)=>v-CON.cogs_plan26[i]);
+FIN.dig.ebitda_act25 = FIN.dig.act25.map((v,i)=>v-FIN.dig.cogs_act25[i]);
+FIN.dig.ebitda_act26 = FIN.dig.act26.map((v,i)=>v-FIN.dig.cogs_act26[i]);
+FIN.dig.ebitda_plan26 = FIN.dig.plan26.map((v,i)=>v-FIN.dig.cogs_plan26[i]);
+FIN.sp.ebitda_act25 = FIN.sp.act25.map((v,i)=>v-FIN.sp.cogs_act25[i]);
+FIN.sp.ebitda_act26 = FIN.sp.act26.map((v,i)=>v-FIN.sp.cogs_act26[i]);
+FIN.sp.ebitda_plan26 = FIN.sp.plan26.map((v,i)=>v-FIN.sp.cogs_plan26[i]);
+
+// Machine data for ops view
+const MACHINES = {
+  digital: [
+    {name:'Sasha',type:'3600',loc:'BNY',max:12000,jan:11782},
+    {name:'Glow',type:'3600',loc:'BNY',max:12000,jan:14938},
+    {name:'Trish',type:'3600',loc:'BNY',max:12000,jan:11643},
+    {name:'Bianca',type:'570',loc:'BNY',max:2500,jan:650},
+    {name:'LASH',type:'570',loc:'BNY',max:2500,jan:380},
+    {name:'Chyna',type:'570',loc:'BNY',max:2500,jan:121},
+    {name:'Rhonda',type:'570',loc:'BNY',max:2500,jan:0},
+    {name:'Dakota Kai',type:'570',loc:'Paramount',max:2500,jan:952},
+    {name:'Ruby',type:'800',loc:'Paramount',max:2500,jan:1632},
+    {name:'XIA',type:'570',loc:'Paramount',max:2500,jan:403},
+    {name:'Dementia',type:'570',loc:'Paramount',max:2500,jan:313},
+    {name:'EMBER',type:'570',loc:'Paramount',max:2500,jan:854},
+    {name:'Valhalla',type:'570',loc:'Paramount',max:2500,jan:547},
+    {name:'Ivy Nile',type:'570',loc:'Paramount',max:2500,jan:964},
+    {name:'Jacy Jayne',type:'570',loc:'Paramount',max:2500,jan:885},
+    {name:'Zoey',type:'570',loc:'Paramount',max:2500,jan:718},
+  ],
+  sp: [
+    {name:'Flr-2 Table-1',type:'Flr-2',max:1500,jan:800},
+    {name:'Flr-2 Table-2',type:'Flr-2',max:1500,jan:820},
+    {name:'Flr-2 Table-3',type:'Flr-2',max:1500,jan:700},
+    {name:'Flr-3 Table-1',type:'Flr-3',max:3600,jan:1200},
+    {name:'Flr-3 Table-2',type:'Flr-3',max:3600,jan:1100},
+    {name:'Flr-3 Table-3',type:'Flr-3',max:3600,jan:980},
+  ]
+};
+
+// ═══════════════════════════════════════════
+// CHART SETUP
+// ═══════════════════════════════════════════
+const BASE = {
+  responsive:true, maintainAspectRatio:true,
+  plugins:{
+    legend:{labels:{color:'#8a8478',font:{family:"'DM Sans'",size:10},boxWidth:10,padding:12}},
+    tooltip:{backgroundColor:'#fff',borderColor:'#ddd8cf',borderWidth:1,titleColor:'#0f0e0c',bodyColor:'#3d3a33',padding:10}
+  },
+  scales:{
+    x:{grid:{color:'rgba(221,216,207,.4)'},ticks:{color:'#8a8478',font:{family:"'DM Sans'",size:10}}},
+    y:{grid:{color:'rgba(221,216,207,.4)'},ticks:{color:'#8a8478',font:{family:"'DM Sans'",size:10},callback:v=>{if(Math.abs(v)>=1000000) return '$'+(v/1000000).toFixed(1)+'M'; if(Math.abs(v)>=1000) return '$'+Math.round(v/1000)+'K'; return '$'+v;}}}
+  }
+};
+
+function fmtK(v){const a=Math.abs(v),s=v>=0?'':'–'; if(a>=1000000) return s+'$'+(a/1000000).toFixed(2)+'M'; return s+'$'+Math.round(a/1000)+'K';}
+function nullAfter(arr,cutoff){return arr.map((v,i)=>i>=cutoff?null:v);}
+
+// Only Jan 2026 is actual; rest are plan
+const DIG_ACT26_REAL = nullAfter(FIN.dig.act26,1);
+const SP_ACT26_REAL  = nullAfter(FIN.sp.act26,1);
+const CON_ACT26_REAL = nullAfter(CON.act26,1);
+
+// ── CONSOLIDATED CHART
+let conChart;
+function buildConChart(metric){
+  const ctx = document.getElementById('conRevChart').getContext('2d');
+  if(conChart) conChart.destroy();
+  
+  let act25,act26,plan26;
+  if(metric==='rev'){act25=CON.act25;act26=CON_ACT26_REAL;plan26=CON.plan26;}
+  else if(metric==='ebitda'){act25=CON.ebitda_act25;act26=nullAfter(CON.ebitda_act26,1);plan26=CON.ebitda_plan26;}
+  else{act25=CON.cogs_act25;act26=nullAfter(CON.cogs_act26,1);plan26=CON.cogs_plan26;}
+  
+  const opts = JSON.parse(JSON.stringify(BASE));
+  opts.plugins.tooltip.callbacks = {label:ctx=>` ${ctx.dataset.label}: ${fmtK(ctx.raw)}`};
+  
+  conChart = new Chart(ctx,{type:'bar',data:{
+    labels:MONTHS,
+    datasets:[
+      {label:'2025 Actual',data:act25,backgroundColor:'rgba(15,14,12,.15)',borderRadius:2,barPercentage:.4},
+      {label:'2026 Actual',data:act26,backgroundColor:'rgba(15,14,12,.75)',borderRadius:2,barPercentage:.4},
+      {label:'2026 Plan',data:plan26,type:'line',borderColor:'#b8860b',borderDash:[4,4],borderWidth:1.5,pointRadius:2,fill:false,tension:.3,yAxisID:'y'},
+    ]
+  },options:opts});
+}
+
+// ── FY25 CHART
+function buildFY25Chart(){
+  const ctx = document.getElementById('fy25Chart').getContext('2d');
+  const opts = JSON.parse(JSON.stringify(BASE));
+  opts.plugins.tooltip.callbacks={label:ctx=>` ${ctx.dataset.label}: ${fmtK(ctx.raw)}`};
+  new Chart(ctx,{type:'bar',data:{
+    labels:MONTHS,
+    datasets:[
+      {label:'Digital 2025',data:FIN.dig.act25,backgroundColor:'rgba(26,61,107,.7)',borderRadius:2,barPercentage:.45},
+      {label:'SP 2025',data:FIN.sp.act25,backgroundColor:'rgba(107,26,26,.7)',borderRadius:2,barPercentage:.45},
+    ]
+  },options:opts});
+}
+
+// ── DIGITAL CHART
+let digChart;
+function buildDigChart(metric){
+  const ctx = document.getElementById('digMonthChart').getContext('2d');
+  if(digChart) digChart.destroy();
+  let act25,act26r,plan26;
+  if(metric==='rev'){act25=FIN.dig.act25;act26r=DIG_ACT26_REAL;plan26=FIN.dig.plan26;}
+  else if(metric==='ebitda'){act25=FIN.dig.ebitda_act25;act26r=nullAfter(FIN.dig.ebitda_act26,1);plan26=FIN.dig.ebitda_plan26;}
+  else{act25=FIN.dig.cogs_act25;act26r=nullAfter(FIN.dig.cogs_act26,1);plan26=FIN.dig.cogs_plan26;}
+  const opts=JSON.parse(JSON.stringify(BASE));
+  opts.plugins.tooltip.callbacks={label:ctx=>` ${ctx.dataset.label}: ${fmtK(ctx.raw)}`};
+  digChart=new Chart(ctx,{type:'bar',data:{labels:MONTHS,datasets:[
+    {label:'2025 Actual',data:act25,backgroundColor:'rgba(26,61,107,.2)',borderRadius:2,barPercentage:.4},
+    {label:'2026 Actual',data:act26r,backgroundColor:'rgba(26,61,107,.8)',borderRadius:2,barPercentage:.4},
+    {label:'2026 Plan',data:plan26,type:'line',borderColor:'#b8860b',borderDash:[4,4],borderWidth:1.5,pointRadius:2,fill:false,tension:.3},
+  ]},options:opts});
+}
+
+// ── SP CHART
+let spChart;
+function buildSPChart(metric){
+  const ctx = document.getElementById('spMonthChart').getContext('2d');
+  if(spChart) spChart.destroy();
+  let act25,act26r,plan26;
+  if(metric==='rev'){act25=FIN.sp.act25;act26r=SP_ACT26_REAL;plan26=FIN.sp.plan26;}
+  else if(metric==='ebitda'){act25=FIN.sp.ebitda_act25;act26r=nullAfter(FIN.sp.ebitda_act26,1);plan26=FIN.sp.ebitda_plan26;}
+  else{act25=FIN.sp.cogs_act25;act26r=nullAfter(FIN.sp.cogs_act26,1);plan26=FIN.sp.cogs_plan26;}
+  const opts=JSON.parse(JSON.stringify(BASE));
+  opts.plugins.tooltip.callbacks={label:ctx=>` ${ctx.dataset.label}: ${fmtK(ctx.raw)}`};
+  spChart=new Chart(ctx,{type:'bar',data:{labels:MONTHS,datasets:[
+    {label:'2025 Actual',data:act25,backgroundColor:'rgba(107,26,26,.2)',borderRadius:2,barPercentage:.4},
+    {label:'2026 Actual',data:act26r,backgroundColor:'rgba(107,26,26,.8)',borderRadius:2,barPercentage:.4},
+    {label:'2026 Plan',data:plan26,type:'line',borderColor:'#b8860b',borderDash:[4,4],borderWidth:1.5,pointRadius:2,fill:false,tension:.3},
+  ]},options:opts});
+}
+
+// ── MACHINE TABLES
+function buildMachineTables(){
+  const dig_tbody = document.getElementById('machine-dig-tbody');
+  MACHINES.digital.forEach(m=>{
+    const pct = m.max>0?Math.round(m.jan/m.max*100):0;
+    const cls = pct>=80?'pos-cell':pct>=40?'warn-cell':'neg-cell';
+    dig_tbody.innerHTML+=`<tr>
+      <td>${m.name}</td><td style="color:var(--muted)">${m.type}</td><td style="color:var(--muted)">${m.loc}</td>
+      <td>${m.max.toLocaleString()}</td><td>${m.jan.toLocaleString()}</td>
+      <td class="${cls}">${pct}%</td>
+    </tr>`;
+  });
+  const sp_tbody = document.getElementById('machine-sp-tbody');
+  MACHINES.sp.forEach(m=>{
+    const pct = m.max>0?Math.round(m.jan/m.max*100):0;
+    const cls = pct>=80?'pos-cell':pct>=40?'warn-cell':'neg-cell';
+    sp_tbody.innerHTML+=`<tr>
+      <td>${m.name}</td><td style="color:var(--muted)">${m.type}</td>
+      <td>${m.max.toLocaleString()}</td><td>${m.jan.toLocaleString()}</td>
+      <td class="${cls}">${pct}%</td>
+    </tr>`;
+  });
+}
+
+// ─────────────────────────
+// SWITCH HANDLERS
+// ─────────────────────────
+function switchConRev(m,btn){
+  document.querySelectorAll('#view-consolidated .mtab').forEach(t=>t.classList.remove('on'));
+  btn.classList.add('on');
+  buildConChart(m);
+}
+function switchDig(m,btn){
+  document.querySelectorAll('#view-digital .mtab').forEach(t=>t.classList.remove('on'));
+  btn.classList.add('on');
+  buildDigChart(m);
+}
+function switchSP(m,btn){
+  document.querySelectorAll('#view-sp .mtab').forEach(t=>t.classList.remove('on'));
+  btn.classList.add('on');
+  buildSPChart(m);
+}
+
+// ─────────────────────────
+// NAV
+// ─────────────────────────
+const built={};
+function showView(v,el){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  document.querySelectorAll('.view').forEach(d=>d.classList.remove('active'));
+  document.getElementById('view-'+v).classList.add('active');
+  if(!built[v]){ buildViewCharts(v); built[v]=true; }
+}
+
+function buildViewCharts(v){
+  if(v==='trend'||v==='digital') buildDigChart('rev');
+  if(v==='sp') buildSPChart('rev');
+  if(v==='ops') buildMachineTables();
+}
+
+// ─────────────────────────
+// FILE UPLOAD HANDLERS
+// ─────────────────────────
+function handleOps(input){
+  const f=input.files[0]; if(!f) return;
+  const bar=document.querySelector('.data-status .status-item:first-child');
+  bar.innerHTML=`<div class="status-dot live"></div>X-LIFT · ${f.name} loaded`;
+  const nb=document.querySelector('.note-bar');
+  if(nb) nb.innerHTML=`<strong>Updated:</strong> Operations data refreshed from ${f.name}. Financial data still from Jan 2026 Vena export.`;
+}
+function handleFin(input){
+  const f=input.files[0]; if(!f) return;
+  const bar=document.querySelector('.data-status .status-item:last-child');
+  bar.innerHTML=`<div class="status-dot manual"></div>Vena · ${f.name} loaded`;
+  const nb=document.querySelector('.note-bar');
+  if(nb) nb.innerHTML=`<strong>Updated:</strong> Financial data refreshed from ${f.name}. Charts will reflect new Vena data on next full reload.`;
+}
+
+// ─────────────────────────
+// INIT
+// ─────────────────────────
+buildConChart('rev');
+buildFY25Chart();
+built.consolidated=true;
+</script>
+</body>
+</html>

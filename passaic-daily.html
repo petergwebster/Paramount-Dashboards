@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Passaic · Screen Print · Daily Ops</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0d1117;--bg2:#161b22;--surface:#1c2330;--surface2:#21293a;
+  --border:#2d3748;--border2:#3d4f6a;
+  --text:#e6edf3;--text2:#8b949e;--muted:#4a5568;
+  --sp:#e05c5c;--sp-dim:rgba(224,92,92,.15);
+  --green:#3fb950;--green-dim:rgba(63,185,80,.15);
+  --amber:#d29922;--amber-dim:rgba(210,153,34,.15);
+  --blue:#58a6ff;--blue-dim:rgba(88,166,255,.12);
+  --fabric:#7c6af5;--grass:#2ea043;--paper:#e3a341;
+  --font:'DM Sans',sans-serif;--mono:'DM Mono',monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:100vh;font-size:13px}
+
+/* ── HEADER ── */
+.header{background:var(--bg2);border-bottom:1px solid var(--border);padding:0;display:grid;grid-template-columns:1fr auto}
+.header-left{padding:16px 24px;display:flex;align-items:center;gap:16px}
+.loc-badge{background:var(--sp-dim);border:1px solid var(--sp);color:var(--sp);font-size:10px;letter-spacing:.12em;text-transform:uppercase;padding:4px 12px;border-radius:3px;font-weight:600}
+.header-title{font-size:18px;font-weight:700;letter-spacing:-.3px}
+.header-title span{color:var(--sp)}
+.header-right{padding:14px 24px;display:flex;align-items:center;gap:20px;border-left:1px solid var(--border)}
+.clock{font-family:var(--mono);font-size:18px;color:var(--text);letter-spacing:.05em}
+.date-str{font-size:10px;color:var(--text2);text-align:right}
+.live-pill{display:flex;align-items:center;gap:6px;font-size:10px;color:var(--green);background:var(--green-dim);border:1px solid rgba(63,185,80,.3);padding:4px 10px;border-radius:20px}
+.pulse{width:6px;height:6px;border-radius:50%;background:var(--green);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(.8)}}
+
+/* ── PHASE PIPELINE ── */
+.pipeline{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border);margin:0}
+.phase{background:var(--bg2);padding:14px 20px}
+.phase-hdr{font-size:9px;letter-spacing:.15em;text-transform:uppercase;color:var(--text2);margin-bottom:10px;display:flex;align-items:center;gap:8px}
+.phase-dot{width:8px;height:8px;border-radius:50%}
+.steps-row{display:flex;gap:6px;flex-wrap:wrap}
+.step-chip{font-size:10px;padding:4px 10px;border-radius:3px;border:1px solid;cursor:default;transition:all .15s;white-space:nowrap}
+.step-chip.normal{border-color:var(--border2);color:var(--text2);background:var(--surface)}
+.step-chip.warn{border-color:rgba(210,153,34,.4);color:var(--amber);background:var(--amber-dim)}
+.step-chip.alert{border-color:rgba(224,92,92,.4);color:var(--sp);background:var(--sp-dim)}
+.step-chip.clear{border-color:rgba(63,185,80,.3);color:var(--green);background:var(--green-dim)}
+.step-count{font-weight:700;margin-right:4px}
+
+/* ── MAIN GRID ── */
+.main{padding:16px 20px;display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+
+/* ── KPI CARDS ── */
+.kcard{background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:14px 16px;position:relative;overflow:hidden}
+.kcard::before{content:'';position:absolute;top:0;left:0;right:0;height:2px}
+.kcard.sp::before{background:var(--sp)}
+.kcard.green::before{background:var(--green)}
+.kcard.amber::before{background:var(--amber)}
+.kcard.blue::before{background:var(--blue)}
+.kcard.fabric::before{background:var(--fabric)}
+.kcard.grass::before{background:var(--grass)}
+.kcard.paper::before{background:var(--paper)}
+.kcard-lbl{font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--text2);margin-bottom:8px}
+.kcard-val{font-family:var(--mono);font-size:clamp(18px,2vw,26px);font-weight:500;line-height:1;letter-spacing:-.5px}
+.kcard-foot{margin-top:8px;font-size:10px;color:var(--text2);display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.tag{font-size:9px;padding:2px 7px;border-radius:2px;font-weight:600}
+.tag.pos{background:var(--green-dim);color:var(--green);border:1px solid rgba(63,185,80,.3)}
+.tag.neg{background:var(--sp-dim);color:var(--sp);border:1px solid rgba(224,92,92,.3)}
+.tag.warn{background:var(--amber-dim);color:var(--amber);border:1px solid rgba(210,153,34,.3)}
+.tag.neu{background:var(--surface2);color:var(--text2);border:1px solid var(--border)}
+
+/* ── SECTION PANELS ── */
+.panels{padding:0 20px 20px;display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.panels.three{grid-template-columns:1fr 1fr 1fr}
+.panel{background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:16px}
+.panel-title{font-size:13px;font-weight:600;letter-spacing:-.2px;margin-bottom:3px}
+.panel-sub{font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--text2);margin-bottom:14px}
+
+/* ── MATERIAL PROGRESS ── */
+.mat-row{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.mat-icon{width:28px;height:28px;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0}
+.mat-info{flex:1}
+.mat-name{font-size:11px;font-weight:600;margin-bottom:4px}
+.mat-bar-wrap{display:flex;align-items:center;gap:8px}
+.mat-track{flex:1;height:6px;background:var(--bg);border-radius:3px;overflow:hidden}
+.mat-fill{height:100%;border-radius:3px;transition:width .8s ease}
+.mat-nums{font-family:var(--mono);font-size:10px;color:var(--text2);white-space:nowrap}
+
+/* ── STATUS FUNNEL ── */
+.funnel{display:flex;flex-direction:column;gap:6px}
+.funnel-row{display:grid;grid-template-columns:160px 1fr 80px 80px;align-items:center;gap:10px;padding:8px 10px;border-radius:4px;background:var(--bg2);border:1px solid var(--border)}
+.funnel-row:hover{border-color:var(--border2)}
+.funnel-status{font-size:11px;font-weight:500;display:flex;align-items:center;gap:8px}
+.f-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.funnel-bar-wrap{position:relative;height:8px;background:var(--bg);border-radius:4px;overflow:hidden}
+.funnel-bar{height:100%;border-radius:4px;transition:width .8s}
+.funnel-orders{font-family:var(--mono);font-size:11px;text-align:right}
+.funnel-yds{font-family:var(--mono);font-size:11px;color:var(--text2);text-align:right}
+.funnel-hdr{display:grid;grid-template-columns:160px 1fr 80px 80px;gap:10px;padding:4px 10px;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+
+/* ── WASTE TABLE ── */
+.waste-table{width:100%;border-collapse:collapse}
+.waste-table th{font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--text2);padding:6px 8px;border-bottom:1px solid var(--border);text-align:right;font-weight:500}
+.waste-table th:first-child{text-align:left}
+.waste-table td{font-family:var(--mono);font-size:11px;padding:8px 8px;border-bottom:1px solid var(--border);text-align:right;color:var(--text)}
+.waste-table td:first-child{text-align:left;font-family:var(--font)}
+.waste-table tr:last-child td{border-bottom:none}
+.over{color:var(--sp);font-weight:600}
+.under{color:var(--green)}
+.ontrack{color:var(--amber)}
+
+/* ── TEAM OWNER TAGS ── */
+.owner{font-size:9px;padding:2px 8px;border-radius:2px;background:var(--surface2);border:1px solid var(--border);color:var(--text2)}
+
+/* ── BACK LINK ── */
+.back{position:fixed;bottom:16px;right:20px;background:var(--surface);border:1px solid var(--border);color:var(--text2);font-size:11px;padding:8px 14px;border-radius:4px;text-decoration:none;display:flex;align-items:center;gap:6px;transition:all .15s;z-index:100}
+.back:hover{color:var(--text);border-color:var(--border2)}
+
+canvas{max-height:180px}
+@media(max-width:1024px){.main{grid-template-columns:repeat(2,1fr)}.panels,.panels.three{grid-template-columns:1fr}.pipeline{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<!-- ── HEADER ── -->
+<div class="header">
+  <div class="header-left">
+    <div class="loc-badge">610 · Passaic</div>
+    <div>
+      <div class="header-title">Screen Print <span>Daily Ops</span></div>
+      <div style="font-size:10px;color:var(--text2);margin-top:3px">Wendy Reger · Production Manager</div>
+    </div>
+  </div>
+  <div class="header-right">
+    <div>
+      <div class="clock" id="clock">--:--</div>
+      <div class="date-str" id="datestr">--</div>
+    </div>
+    <div class="live-pill"><div class="pulse"></div>X-LIFT Live</div>
+  </div>
+</div>
+
+<!-- ── LIFT STATUS PIPELINE ── -->
+<div class="pipeline">
+  <div class="phase">
+    <div class="phase-hdr"><div class="phase-dot" style="background:#58a6ff"></div>Pre-Production <span style="color:var(--muted)">Ariel · Marcos · Henry</span></div>
+    <div class="steps-row">
+      <div class="step-chip alert"><span class="step-count">228</span>Orders Unallocated</div>
+      <div class="step-chip alert"><span class="step-count">357</span>Waiting for Material</div>
+      <div class="step-chip warn"><span class="step-count">10</span>Waiting for Screen</div>
+      <div class="step-chip warn"><span class="step-count">10</span>Waiting for Sample</div>
+    </div>
+  </div>
+  <div class="phase">
+    <div class="phase-hdr"><div class="phase-dot" style="background:#d29922"></div>Production <span style="color:var(--muted)">Marcos · Wendy · Armando · Roberto</span></div>
+    <div class="steps-row">
+      <div class="step-chip warn"><span class="step-count">268</span>In Mixing Queue</div>
+      <div class="step-chip warn"><span class="step-count">12</span>Mixing</div>
+      <div class="step-chip warn"><span class="step-count">17</span>Strike Off</div>
+      <div class="step-chip warn"><span class="step-count">92</span>Waiting for Approval</div>
+      <div class="step-chip clear"><span class="step-count">84</span>Approved to Print</div>
+      <div class="step-chip clear"><span class="step-count">116</span>In Progress</div>
+    </div>
+  </div>
+  <div class="phase">
+    <div class="phase-hdr"><div class="phase-dot" style="background:#3fb950"></div>Post-Production <span style="color:var(--muted)">Rodney · Samuel · Jeremy</span></div>
+    <div class="steps-row">
+      <div class="step-chip normal"><span class="step-count">192</span>In Packing</div>
+      <div class="step-chip normal"><span class="step-count">84</span>Shipped</div>
+      <div class="step-chip normal"><span class="step-count">2</span>Ready to Ship</div>
+    </div>
+  </div>
+</div>
+
+<!-- ── KPI CARDS ── -->
+<div class="main">
+  <div class="kcard sp">
+    <div class="kcard-lbl">Yards Produced (Jan)</div>
+    <div class="kcard-val">24,857</div>
+    <div class="kcard-foot"><span class="tag neg">–9,143 vs target</span><span style="color:var(--muted)">Target 34,000</span></div>
+  </div>
+  <div class="kcard amber">
+    <div class="kcard-lbl">Color Yards (Jan)</div>
+    <div class="kcard-val">73,279</div>
+    <div class="kcard-foot"><span class="tag neg">–28,721 vs target</span><span style="color:var(--muted)">Target 102,000</span></div>
+  </div>
+  <div class="kcard sp">
+    <div class="kcard-lbl">Waste % (Jan)</div>
+    <div class="kcard-val" style="color:var(--sp)">11.5%</div>
+    <div class="kcard-foot"><span class="tag neg">2,851 yds wasted</span><span style="color:var(--muted)">Blended target 4%</span></div>
+  </div>
+  <div class="kcard amber">
+    <div class="kcard-lbl">Held-to-Invoice</div>
+    <div class="kcard-val">9,532</div>
+    <div class="kcard-foot"><span class="tag warn">vs target &lt;8,500</span><span style="color:var(--muted)">Prior: 12,400</span></div>
+  </div>
+  <div class="kcard amber">
+    <div class="kcard-lbl">WIP Total</div>
+    <div class="kcard-val">69,089</div>
+    <div class="kcard-foot"><span class="tag warn">50% over lead time</span><span style="color:var(--muted)">34,949 yds late</span></div>
+  </div>
+  <div class="kcard amber">
+    <div class="kcard-lbl">Mixing Queue Depth</div>
+    <div class="kcard-val">268</div>
+    <div class="kcard-foot"><span class="tag neu">orders pending mix</span><span style="color:var(--muted)">Owner: Marcos</span></div>
+  </div>
+  <div class="kcard green">
+    <div class="kcard-lbl">Labor / Color Yd</div>
+    <div class="kcard-val">$6.37</div>
+    <div class="kcard-foot"><span class="tag warn">+$1.36 vs plan</span><span style="color:var(--muted)">Plan $5.01</span></div>
+  </div>
+  <div class="kcard blue">
+    <div class="kcard-lbl">Invoiced Yards (Jan)</div>
+    <div class="kcard-val">25,931</div>
+    <div class="kcard-foot"><span class="tag neg">–8,069 vs target</span><span style="color:var(--muted)">Color: 63,616</span></div>
+  </div>
+</div>
+
+<!-- ── MATERIAL BREAKDOWN + FUNNEL ── -->
+<div class="panels">
+  <div class="panel">
+    <div class="panel-title">Production by Material — Jan 2026</div>
+    <div class="panel-sub">Yards · Color Yards · Waste %</div>
+    
+    <div class="mat-row">
+      <div class="mat-icon" style="background:var(--grass);color:#fff">GC</div>
+      <div class="mat-info">
+        <div class="mat-name" style="color:var(--grass)">Grass Cloth <span class="owner">Armando lead</span></div>
+        <div class="mat-bar-wrap">
+          <div class="mat-track"><div class="mat-fill" style="width:45%;background:var(--grass)"></div></div>
+          <div class="mat-nums">11,300 yds / 23,919 color yds</div>
+        </div>
+        <div style="font-size:10px;margin-top:4px;color:var(--muted)">
+          Waste: <span class="ontrack">7.4%</span> vs target 4% · Held: 5,282 yds
+        </div>
+      </div>
+    </div>
+
+    <div class="mat-row">
+      <div class="mat-icon" style="background:var(--fabric);color:#fff">FB</div>
+      <div class="mat-info">
+        <div class="mat-name" style="color:var(--fabric)">Fabric <span class="owner">Armando lead</span></div>
+        <div class="mat-bar-wrap">
+          <div class="mat-track"><div class="mat-fill" style="width:20%;background:var(--fabric)"></div></div>
+          <div class="mat-nums">4,910 yds / 11,343 color yds</div>
+        </div>
+        <div style="font-size:10px;margin-top:4px;color:var(--muted)">
+          Waste: <span class="under">6.0%</span> vs target 8% · Held: 267 yds ✓
+        </div>
+      </div>
+    </div>
+
+    <div class="mat-row">
+      <div class="mat-icon" style="background:var(--paper);color:#fff">WP</div>
+      <div class="mat-info">
+        <div class="mat-name" style="color:var(--paper)">Wallpaper <span class="owner">Roberto lead</span></div>
+        <div class="mat-bar-wrap">
+          <div class="mat-track"><div class="mat-fill" style="width:42%;background:var(--paper)"></div></div>
+          <div class="mat-nums">10,525 yds / 37,609 color yds</div>
+        </div>
+        <div style="font-size:10px;margin-top:4px;color:var(--muted)">
+          Waste: <span class="over">16.1%</span> vs target 20% · Held: 3,983 yds
+        </div>
+      </div>
+    </div>
+
+    <div style="margin-top:12px;padding:10px;background:var(--bg2);border-radius:4px;font-size:11px;color:var(--text2);line-height:1.8;border:1px solid var(--border)">
+      <strong style="color:var(--sp)">⚠ Wallpaper waste at 16%</strong> — primary driver of overall 11.5%.<br>
+      High color count orders: Yangtze River, Plumes et Rubans, Birds & Butterflies.<br>
+      <strong style="color:var(--amber)">Action:</strong> Separate ground waste from print waste for accurate tracking.
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-title">LIFT Status Funnel</div>
+    <div class="panel-sub">Active orders by step · current snapshot</div>
+    <div class="funnel-hdr">
+      <span>Status</span><span>Volume</span><span>Orders</span><span>Yards</span>
+    </div>
+    <div class="funnel" id="funnel-sp"></div>
+  </div>
+</div>
+
+<!-- ── WEEKLY DETAIL + WASTE DEEP DIVE ── -->
+<div class="panels three">
+  <div class="panel">
+    <div class="panel-title">Weekly Production — Jan 2026</div>
+    <div class="panel-sub">Color yards by week · target 25,500/wk</div>
+    <canvas id="weeklyChart"></canvas>
+    <div style="margin-top:10px;font-size:10px;color:var(--text2);line-height:1.8">
+      Wk1: 22,458 · Wk2: 24,106 · Wk3: 14,009 · Wk4: 12,706<br>
+      <span style="color:var(--sp)">Wk3+4 short due to PTO/illness and high complexity orders.</span>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-title">Waste Detail — Jan 2026</div>
+    <div class="panel-sub">By material vs weighted target</div>
+    <table class="waste-table">
+      <thead>
+        <tr><th>Material</th><th>Produced</th><th>Wasted</th><th>Actual %</th><th>Target</th><th>Status</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td style="color:var(--grass)">Grass Cloth</td>
+          <td>11,300</td><td>832</td>
+          <td class="ontrack">7.4%</td><td style="color:var(--muted)">4%</td>
+          <td><span class="tag warn">OVER</span></td>
+        </tr>
+        <tr>
+          <td style="color:var(--fabric)">Fabric</td>
+          <td>4,910</td><td>294</td>
+          <td class="under">6.0%</td><td style="color:var(--muted)">8%</td>
+          <td><span class="tag pos">OK</span></td>
+        </tr>
+        <tr>
+          <td style="color:var(--paper)">Wallpaper</td>
+          <td>10,525</td><td>1,689</td>
+          <td class="over">16.1%</td><td style="color:var(--muted)">20%</td>
+          <td><span class="tag warn">WATCH</span></td>
+        </tr>
+        <tr style="border-top:1px solid var(--border2)">
+          <td><strong>Total</strong></td>
+          <td>24,857</td><td class="over">2,851</td>
+          <td class="over">11.5%</td><td style="color:var(--muted)">4%</td>
+          <td><span class="tag neg">ALERT</span></td>
+        </tr>
+      </tbody>
+    </table>
+    <div style="margin-top:10px;font-size:10px;color:var(--text2)">
+      Post-prod waste: <strong>10 yds</strong> — negligible ✓<br>
+      Key action: Resurfacing 4 oldest wallpaper tables this quarter.
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-title">WIP Aging — by Material</div>
+    <div class="panel-sub">Yards over 6-week lead time</div>
+    <canvas id="wipChart"></canvas>
+    <div style="margin-top:10px;font-size:10px;color:var(--text2);line-height:1.8">
+      Total WIP: <strong>69,089 yds</strong> (Dec was 71,857 — improving ↓)<br>
+      <span style="color:var(--sp)">34,949 yds (50%) over lead time</span><br>
+      Paper + Grass aged WIP most prominent category.
+    </div>
+  </div>
+</div>
+
+<!-- ── TEAM QUICK REF ── -->
+<div style="padding:0 20px 20px">
+  <div class="panel">
+    <div class="panel-title">Team Quick Reference</div>
+    <div class="panel-sub">Owners by function · Jan 2026</div>
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:8px">
+      <div>
+        <div style="font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:var(--text2);margin-bottom:8px">Pre-Production</div>
+        <div style="font-size:11px;line-height:2;color:var(--text)">
+          <strong>Marcos Shehata</strong> — Lead<br>
+          <strong>Jesus / Roman / Jerome</strong> — Fabric+GC Mixers<br>
+          <strong>Sergio / Lou / Randy</strong> — WP Mixers<br>
+          <strong>Christian</strong> — SKO WP<br>
+          <strong>Nora</strong> — Senior Designer<br>
+          <strong>Yensi</strong> — Screen Engraving
+        </div>
+      </div>
+      <div>
+        <div style="font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:var(--text2);margin-bottom:8px">Fabric + GC Production</div>
+        <div style="font-size:11px;line-height:2;color:var(--text)">
+          <strong>Armando Acevedo</strong> — Floor Lead<br>
+          <strong>Salomon</strong> — Screen Runner<br>
+          Romer · Steven · Miguel P<br>
+          Jose · Junior · Romer<br>
+          Genaro · Lee · Rudy<br>
+          <span style="color:var(--text2)">2 fabric teams · 2 GC teams</span>
+        </div>
+      </div>
+      <div>
+        <div style="font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:var(--text2);margin-bottom:8px">Wallpaper Production</div>
+        <div style="font-size:11px;line-height:2;color:var(--text)">
+          <strong>Roberto Ortiz</strong> — Floor Lead<br>
+          <strong>Christian</strong> — SKO<br>
+          Humberto · Freddy · Felix<br>
+          Dan · Arroyo · Juan<br>
+          Santos · Miguel H · Kevin<br>
+          <span style="color:var(--text2)">2 Schu teams · 2 3P teams</span>
+        </div>
+      </div>
+      <div>
+        <div style="font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:var(--text2);margin-bottom:8px">Post-Production (Brynn)</div>
+        <div style="font-size:11px;line-height:2;color:var(--text)">
+          <strong>Rodney Bermudez</strong> — Shipping Lead<br>
+          <strong>Samuel Brito</strong> — QC/Inspection<br>
+          <strong>Jeremy Dominguez</strong> — Cutter<br>
+          <strong>Henry</strong> — Warehouse Lead<br>
+          Angel · Leslie — Warehouse<br>
+          <span style="color:var(--text2)">Thurs: Brynn reviews packing slips</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- MONDAY NEW GOODS SECTION -->
+<div style="padding:0 20px 20px">
+  <div class="panel" style="border-top:2px solid #7c6af5">
+    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:16px">
+      <div>
+        <div class="panel-title">New Goods &amp; Pre-Pre-Production Pipeline</div>
+        <div class="panel-sub">Monday.com · Marcos Shehata · Nora Truskey · Yensi Henriquez</div>
+      </div>
+      <div style="font-size:9px;padding:3px 10px;background:rgba(124,106,245,.15);border:1px solid rgba(124,106,245,.3);color:#bc8cff;border-radius:3px">
+        ⟳ Static · Mar 14 export &nbsp;·&nbsp; Live API: enable via Netlify env
+      </div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-bottom:16px">
+      <div style="background:var(--bg2);border:1px solid var(--border);padding:12px;border-radius:4px;border-top:2px solid #58a6ff">
+        <div style="font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:var(--text2);margin-bottom:6px">Studio In Progress</div>
+        <div style="font-family:var(--mono);font-size:22px">85</div>
+        <div style="font-size:10px;color:var(--text2);margin-top:3px">patterns in dev</div>
+      </div>
+      <div style="background:var(--bg2);border:1px solid var(--border);padding:12px;border-radius:4px;border-top:2px solid #d29922">
+        <div style="font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:var(--text2);margin-bottom:6px">Transitions</div>
+        <div style="font-family:var(--mono);font-size:22px">26</div>
+        <div style="font-size:10px;color:var(--text2);margin-top:3px">colorway changes</div>
+      </div>
+      <div style="background:var(--bg2);border:1px solid var(--border);padding:12px;border-radius:4px;border-top:2px solid #bc8cff">
+        <div style="font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:var(--text2);margin-bottom:6px">Re-Engravings</div>
+        <div style="font-family:var(--mono);font-size:22px">19</div>
+        <div style="font-size:10px;color:var(--text2);margin-top:3px">screens being recut</div>
+      </div>
+      <div style="background:var(--bg2);border:1px solid var(--border);padding:12px;border-radius:4px;border-top:2px solid #e05c5c">
+        <div style="font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:var(--text2);margin-bottom:6px">May Be Late</div>
+        <div style="font-family:var(--mono);font-size:22px;color:#e05c5c">7</div>
+        <div style="font-size:10px;color:var(--text2);margin-top:3px">need attention</div>
+      </div>
+      <div style="background:var(--bg2);border:1px solid var(--border);padding:12px;border-radius:4px;border-top:2px solid #3fb950">
+        <div style="font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:var(--text2);margin-bottom:6px">Approved Library</div>
+        <div style="font-family:var(--mono);font-size:22px;color:#3fb950">182</div>
+        <div style="font-size:10px;color:var(--text2);margin-top:3px">ready for production</div>
+      </div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px">
+      <div>
+        <div style="font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:#e05c5c;margin-bottom:8px">⚠ May Be Late</div>
+        <div id="passaic-late"></div>
+      </div>
+      <div>
+        <div style="font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:var(--text2);margin-bottom:8px">By Product Type</div>
+        <div id="passaic-types"></div>
+      </div>
+      <div>
+        <div style="font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:var(--text2);margin-bottom:8px">Re-Engraving Queue</div>
+        <div id="passaic-reeng"></div>
+      </div>
+    </div>
+
+    <div style="margin-top:14px;padding-top:12px;border-top:1px solid var(--border)">
+      <button onclick="var t=document.getElementById('p-full');t.style.display=t.style.display==='none'?'block':'none'"
+        style="font-size:10px;padding:5px 12px;background:var(--surface2);border:1px solid var(--border);color:var(--text2);border-radius:3px;cursor:pointer;margin-bottom:10px">
+        Show all Studio In Progress patterns ↓
+      </button>
+      <div id="p-full" style="display:none;overflow-x:auto">
+        <table style="width:100%;border-collapse:collapse">
+          <thead><tr style="border-bottom:1px solid var(--border2)">
+            <th style="text-align:left;padding:6px 8px;font-size:9px;text-transform:uppercase;color:var(--text2)">Pattern</th>
+            <th style="padding:6px 8px;font-size:9px;text-transform:uppercase;color:var(--text2)">Type</th>
+            <th style="padding:6px 8px;font-size:9px;text-transform:uppercase;color:var(--text2)">Customer</th>
+            <th style="padding:6px 8px;font-size:9px;text-transform:uppercase;color:var(--text2)">Approver</th>
+            <th style="text-align:center;padding:6px 8px;font-size:9px;text-transform:uppercase;color:var(--text2)">Acet.</th>
+            <th style="text-align:center;padding:6px 8px;font-size:9px;text-transform:uppercase;color:var(--text2)">Scrns</th>
+            <th style="padding:6px 8px;font-size:9px;text-transform:uppercase;color:var(--text2)">Status</th>
+            <th style="padding:6px 8px;font-size:9px;text-transform:uppercase;color:var(--text2)">Waiting On</th>
+          </tr></thead>
+          <tbody id="p-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  const DATA = [{"group": "Unknown", "name": "TIAH COVE sisal", "status": "May be late", "type": "GRASSCLOTH", "customer": "Schumacher NYC Studio", "waiting": "see updates", "acetates": "YES", "screens": "YES", "approver": "Megan Chaney", "notes": "SECOND ROUND OF S/O WAS SHIPPED 1/6", "launch": "December 2026", "trials_due": "2026-01-17 00:00:00"}, {"group": "Unknown", "name": "PEAS & DOTS", "status": "On time", "type": "GRASSCLOTH", "customer": "Schumacher NYC Studio", "waiting": "", "acetates": "YES", "screens": "YES", "approver": "Hilary", "notes": "Indigo,Oatmeal,Petal,Sge,Mineral", "launch": "December 2026", "trials_due": "2026-01-17 00:00:00"}, {"group": "Unknown", "name": "Entre-deux", "status": "On time", "type": "SILK STRIE", "customer": "Schumacher Paris Studio", "waiting": "ground Max Sesame and Silk Strie Parchment", "acetates": "YES", "screens": "YES", "approver": "Astrid Eilneau", "notes": "", "launch": "", "trials_due": ""}, {"group": "Unknown", "name": "Joshua Tree", "status": "On time", "type": "PAPERWEAVE", "customer": "", "waiting": "", "acetates": "YES", "screens": "YES", "approver": "Megan Chaney", "notes": "", "launch": "December 2026", "trials_due": "2026-01-17 00:00:00"}, {"group": "Unknown", "name": "Henrietta Vine", "status": "On time", "type": "FABRIC", "customer": "Schumacher NYC Studio", "waiting": "new screens", "acetates": "NO", "screens": "NO", "approver": "Tiiu", "notes": "", "launch": "", "trials_due": "2026-04-15 00:00:00"}, {"group": "Unknown", "name": "Palmetto Petite", "status": "On time", "type": "FABRIC", "customer": "Serena & Lily", "waiting": "", "acetates": "NO", "screens": "NO", "approver": "Kelsey", "notes": "", "launch": "", "trials_due": ""}, {"group": "Unknown", "name": "Florencott upholstery fabric", "status": "On time", "type": "FABRIC", "customer": "Serena & Lily", "waiting": "", "acetates": "NO", "screens": "NO", "approver": "Kelsey", "notes": "", "launch": "", "trials_due": ""}, {"group": "Unknown", "name": "Deconstructed Stripe", "status": "On time", "type": "FABRIC", "customer": "Schumacher NYC Studio", "waiting": "Awaiting Feedback", "acetates": "", "screens": "YES", "approver": "Megan Chaney", "notes": "S/O was shipped ,waiting feedback", "launch": "January 2027", "trials_due": "2026-02-14 00:00:00"}, {"group": "Unknown", "name": "MORPHE SILK HAND PRINT", "status": "On time", "type": "FABRIC", "customer": "Patterson Flynn", "waiting": "new screens", "acetates": "NO", "screens": "NO", "approver": "Julianna", "notes": "", "launch": "", "trials_due": ""}, {"group": "Unknown", "name": "Queen Of Spain (WC)", "status": "On time", "type": "WALLPAPER", "customer": "Schumacher NYC Studio", "waiting": "Color Pantone", "acetates": "", "screens": "", "approver": "Megan Chaney", "notes": "", "launch": "", "trials_due": "2026-07-01 00:00:00"}, {"group": "Unknown", "name": "Twiggy (Fabric)", "status": "On time", "type": "FABRIC", "customer": "Schumacher NYC Studio", "waiting": "Engraving Approval", "acetates": "NO", "screens": "NO", "approver": "Megan Chaney", "notes": "", "launch": "", "trials_due": ""}, {"group": "Unknown", "name": "Iconic Leopard", "status": "On time", "type": "FABRIC", "customer": "Schumacher NYC Studio", "waiting": "Color Pantone & Screen", "acetates": "", "screens": "", "approver": "Megan Chaney", "notes": "", "launch": "", "trials_due": "2026-07-01 00:00:00"}, {"group": "Unknown", "name": "Labyrinth", "status": "On time", "type": "FABRIC", "customer": "Schumacher NYC Studio", "waiting": "Color Pantone & Screen", "acetates": "", "screens": "", "approver": "Megan Chaney", "notes": "", "launch": "", "trials_due": "2026-07-01 00:00:00"}, {"group": "Unknown", "name": "Beatriz (Fabric)", "status": "On time", "type": "FABRIC", "customer": "Schumacher NYC Studio", "waiting": "Color Pantone & Screen", "acetates": "", "screens": "", "approver": "Megan Chaney", "notes": "", "launch": "", "trials_due": "2026-07-01 00:00:00"}, {"group": "Unknown", "name": "Beatriz (WC)", "status": "On time", "type": "WALLPAPER", "customer": "Schumacher NYC Studio", "waiting": "Color Pantone & Screen", "acetates": "", "screens": "", "approver": "Megan Chaney", "notes": "", "launch": "", "trials_due": "2026-07-01 00:00:00"}, {"group": "Unknown", "name": "Mohave", "status": "On time", "type": "FABRIC", "customer": "Schumacher NYC Studio", "waiting": "Files from client", "acetates": "", "screens": "", "approver": "Megan Chaney", "notes": "", "launch": "", "trials_due": "2026-07-01 00:00:00"}, {"group": "Unknown", "name": "Noland", "status": "On time", "type": "FABRIC", "customer": "Schumacher NYC Studio", "waiting": "Color Pantone & Screen", "acetates": "", "screens": "", "approver": "Megan Chaney", "notes": "", "launch": "", "trials_due": "2026-07-01 00:00:00"}, {"group": "Unknown", "name": "Desert Winds", "status": "On time", "type": "WALLPAPER", "customer": "Schumacher NYC Studio", "waiting": "Color Pantone & Screen", "acetates": "", "screens": "", "approver": "Megan Chaney", "notes": "", "launch": "", "trials_due": "2026-07-01 00:00:00"}, {"group": "Unknown", "name": "Kinabalu", "status": "On time", "type": "FABRIC", "customer": "Schumacher NYC Studio", "waiting": "Color Pantone", "acetates": "", "screens": "", "approver": "Megan Chaney", "notes": "", "launch": "", "trials_due": "2026-07-01 00:00:00"}, {"group": "Unknown", "name": "Cloud Toile", "status": "On time", "type": "FABRIC", "customer": "Schumacher NYC Studio", "waiting": "Color Pantone", "acetates": "", "screens": "", "approver": "Megan Chaney", "notes": "", "launch": "", "trials_due": "2026-07-01 00:00:00"}, {"group": "Unknown", "name": "Saint James", "status": "On time", "type": "WALLPAPER", "customer": "", "waiting": "", "acetates": "NO", "screens": "??", "approver": "", "notes": "", "launch": "", "trials_due": ""}, {"group": "Unknown", "name": "Queen Anne's Lace", "status": "On time", "type": "FABRIC", "customer": "Tillett", "waiting": "", "acetates": "", "screens": "", "approver": "Justice", "notes": "", "launch": "", "trials_due": ""}, {"group": "Unknown", "name": "MRS. HOWELL", "status": "On time", "type": "GRASSCLOTH", "customer": "Schumacher Transitions", "waiting": "", "acetates": "", "screens": "YES", "approver": "PPM", "notes": "", "launch": "", "trials_due": ""}, {"group": "Unknown", "name": "SEAHORSES", "status": "On time", "type": "FABRIC", "customer": "Tillett", "waiting": "", "acetates": "", "screens": "", "approver": "Justice", "notes": "", "launch": "", "trials_due": ""}, {"group": "Unknown", "name": "Scattered Dots", "status": "May be late", "type": "FABRIC", "customer": "Tillett", "waiting": "layout approval", "acetates": "", "screens": "", "approver": "Justice", "notes": "", "launch": "", "trials_due": ""}, {"group": "Unknown", "name": "DOT DASH SISAL", "status": "On time", "type": "GRASSCLOTH", "customer": "Tillett", "waiting": "", "acetates": "", "screens": "", "approver": "", "notes": "", "launch": "", "trials_due": ""}, {"group": "Unknown", "name": "Blenheim Sisal", "status": "On time", "type": "GRASSCLOTH", "customer": "Meg Braff", "waiting": "", "acetates": "YES", "screens": "EST 9/12", "approver": "", "notes": "Yenshi shooting screens by 9/12", "launch": "", "trials_due": ""}, {"group": "Unknown", "name": "MLB-PALMIER", "status": "On time", "type": "GRASSCLOTH", "customer": "Demi Davis", "waiting": "", "acetates": "", "screens": "", "approver": "", "notes": "", "launch": "", "trials_due": ""}, {"group": "Unknown", "name": "LARGE ROPE", "status": "On time", "type": "WALLPAPER", "customer": "Tillett", "waiting": "", "acetates": "YES", "screens": "YES", "approver": "Justice", "notes": "", "launch": "", "trials_due": ""}, {"group": "Unknown", "name": "Black Eyed Susans", "status": "On time", "type": "FABRIC", "customer": "Tillett", "waiting": "", "acetates": "", "screens": "", "approver": "Justice", "notes": "", "launch": "", "trials_due": ""}, {"group": "Unknown", "name": "Walnut", "status": "On time", "type": "FABRIC", "customer": "Tillett", "waiting": "", "acetates": "", "screens": "", "approver": "Justice", "notes": "", "launch": "", "trials_due": ""}, {"group": "Unknown", "name": "CHEVRON", "status": "On time", "type": "FABRIC", "customer": "Tillett", "waiting": "", "acetates": "YES", "screens": "YES", "approver": "Justice", "notes": "", "launch": "", "trials_due": ""}, {"group": "Unknown", "name": "ARBOR FOREST WALLPAPER", "status": "On time", "type": "WALLPAPER", "customer": "", "waiting": "", "acetates": "YES", "screens": "YES", "approver": "Julianna", "notes": "MORE S/O NEEDED", "launch": "", "trials_due": ""}, {"group": "Unknown", "name": "CUSTOM ACANTHUS STRIPE", "status": "On time", "type": "GRASSCLOTH", "customer": "Schumacher NYC Studio", "waiting": "", "acetates": "YES", "screens": "YES", "approver": "Molly Leonard", "notes": "", "launch": "", "trials_due": ""}, {"group": "Unknown", "name": "GIRAFFE", "status": "On time", "type": "FABRIC", "customer": "Tillett", "waiting": "", "acetates": "YES", "screens": "YES", "approver": "Justice", "notes": "", "launch": "", "trials_due": ""}, {"group": "Unknown", "name": "MOIRE WALLCOVERING", "status": "On time", "type": "WALLPAPER", "customer": "Schumacher NYC Studio", "waiting": "", "acetates": "YES", "screens": "YES", "approver": "Tiiu", "notes": "PRINT WITH SMALL SCALE DESIGN METLLICS", "launch": "", "trials_due": ""}, {"group": "Unknown", "name": "TILLET  ORCHIDS", "status": "On time", "type": "FABRIC", "customer": "Tillett", "waiting": "", "acetates": "YES", "screens": "YES", "approver": "Justice", "notes": "", "launch": "", "trials_due": ""}, {"group": "Unknown", "name": "PUZZLEFISH", "status": "On time", "type": "FABRIC", "customer": "Tillett", "waiting": "", "acetates": "NO", "screens": "NO", "approver": "Justice", "notes": "", "launch": "", "trials_due": ""}, {"group": "Unknown", "name": "Tai Tai (variation)", "status": "On time", "type": "FABRIC", "customer": "Tillett", "waiting": "", "acetates": "", "screens": "", "approver": "", "notes": "", "launch": "", "trials_due": ""}, {"group": "Unknown", "name": "Cornflower", "status": "On time", "type": "FABRIC", "customer": "Tillett", "waiting": "", "acetates": "", "screens": "", "approver": "", "notes": "", "launch": "", "trials_due": ""}, {"group": "Unknown", "name": "Entre-deux (WC)", "status": "", "type": "WALLPAPER", "customer": "Schumacher Paris Studio", "waiting": "new screens", "acetates": "", "screens": "", "approver": "Jacob Manon", "notes": "", "launch": "", "trials_due": ""}, {"group": "Unknown", "name": "Entre-deux (Fabric)", "status": "", "type": "FABRIC", "customer": "Schumacher Paris Studio", "waiting": "Files from client", "acetates": "", "screens": "", "approver": "Jacob Manon", "notes": "", "launch": "", "trials_due": ""}, {"group": "Unknown", "name": "Aludra", "status": "On time", "type": "FABRIC", "customer": "Tillett", "waiting": "", "acetates": "", "screens": "", "approver": "", "notes": "", "launch": "", "trials_due": ""}, {"group": "Unknown", "name": "Marigold", "status": "On time", "type": "FABRIC", "customer": "Tillett", "waiting": "", "acetates": "YES", "screens": "NO", "approver": "Justice", "notes": "", "launch": "", "trials_due": ""}, {"group": "Unknown", "name": "Caterpillar Leaf", "status": "On time", "type": "FABRIC", "customer": "Schumacher NYC Studio", "waiting": "", "acetates": "", "screens": "", "approver": "Tiiu", "notes": "dyed Thar ground from PK", "launch": "", "trials_due": ""}, {"group": "Unknown", "name": "BALI BASKET", "status": "On time", "type": "FABRIC", "customer": "Tillett", "waiting": "", "acetates": "YES", "screens": "YES", "approver": "Justice", "notes": "more change", "launch": "", "trials_due": ""}, {"group": "Unknown", "name": "CHERRY BLOSSOM TOILE", "status": "On time", "type": "FABRIC", "customer": "Tillett", "waiting": "", "acetates": "YES", "screens": "YES", "approver": "Justice", "notes": "", "launch": "", "trials_due": ""}, {"group": "Unknown", "name": "DOGWOOD WITH STRIPE", "status": "On time", "type": "FABRIC", "customer": "Tillett", "waiting": "", "acetates": "YES", "screens": "YES", "approver": "Justice", "notes": "", "launch": "", "trials_due": ""}, {"group": "Unknown", "name": "KINABALU", "status": "On time", "type": "FABRIC", "customer": "Schumacher Swift Launch", "waiting": "", "acetates": "YES", "screens": "YES", "approver": "", "notes": "", "launch": "April 2027", "trials_due": "2026-09-07 00:00:00"}, {"group": "Unknown", "name": "KINABALU", "status": "On time", "type": "GRASSCLOTH", "customer": "Schumacher Swift Launch", "waiting": "", "acetates": "YES", "screens": "YES", "approver": "", "notes": "", "launch": "April 2027", "trials_due": "2026-09-07 00:00:00"}, {"group": "Unknown", "name": "MINI STRIPE", "status": "On time", "type": "FABRIC", "customer": "Tillett", "waiting": "", "acetates": "YES", "screens": "YES", "approver": "Justice", "notes": "", "launch": "", "trials_due": ""}, {"group": "Unknown", "name": "MINI STRIPE", "status": "On time", "type": "FABRIC", "customer": "Tillett", "waiting": "", "acetates": "YES", "screens": "DRAG BOX", "approver": "Justice", "notes": "", "launch": "", "trials_due": ""}, {"group": "Unknown", "name": "SQUARES", "status": "On time", "type": "FABRIC", "customer": "Tillett", "waiting": "", "acetates": "YES", "screens": "YES", "approver": "Justice", "notes": "", "launch": "", "trials_due": ""}, {"group": "Unknown", "name": "MAD MEN STRIPE", "status": "On time", "type": "FABRIC", "customer": "Tillett", "waiting": "", "acetates": "YES", "screens": "DRAG BOX", "approver": "Justice", "notes": "", "launch": "", "trials_due": ""}, {"group": "Unknown", "name": "MULTI SQUARES", "status": "On time", "type": "", "customer": "", "waiting": "", "acetates": "", "screens": "", "approver": "", "notes": "", "launch": "", "trials_due": ""}, {"group": "Unknown", "name": "BEANS & BOPS", "status": "May be late", "type": "FABRIC", "customer": "Tillett", "waiting": "", "acetates": "YES", "screens": "YES", "approver": "Justice", "notes": "", "launch": "", "trials_due": ""}, {"group": "Unknown", "name": "Jellyfish", "status": "On time", "type": "BNY PRINT", "customer": "Carlton V", "waiting": "", "acetates": "", "screens": "", "approver": "", "notes": "", "launch": "", "trials_due": ""}, {"group": "Unknown", "name": "SEAHORSE", "status": "On time", "type": "WALLPAPER", "customer": "Tillett", "waiting": "layout approval", "acetates": "", "screens": "", "approver": "Justice", "notes": "", "launch": "", "trials_due": ""}, {"group": "Unknown", "name": "MSU Stairwell Donation", "status": "On time", "type": "WALLPAPER", "customer": "Special Orders", "waiting": "Awaiting Feedback", "acetates": "", "screens": "", "approver": "", "notes": "", "launch": "", "trials_due": ""}, {"group": "Unknown", "name": "WOODGRAIN", "status": "On time", "type": "FABRIC", "customer": "Tillett", "waiting": "", "acetates": "YES", "screens": "YES", "approver": "Justice", "notes": "", "launch": "", "trials_due": ""}, {"group": "Unknown", "name": "Monkey Madness Silhouette (revised blotch)", "status": "On time", "type": "FABRIC", "customer": "Schumacher NYC Studio", "waiting": "Engraving Approval", "acetates": "", "screens": "", "approver": "Megan Ciraolo", "notes": "", "launch": "", "trials_due": ""}, {"group": "Unknown", "name": "ARECA PALM", "status": "On time", "type": "FABRIC", "customer": "PATTERNSEED DESIGN STUDIO", "waiting": "", "acetates": "YES", "screens": "YES", "approver": "Meghan Moser", "notes": "Acetates printed / 8/28", "launch": "", "trials_due": ""}, {"group": "Unknown", "name": "CREPE MYRTLE", "status": "On time", "type": "FABRIC", "customer": "PATTERNSEED DESIGN STUDIO", "waiting": "Files from client", "acetates": "", "screens": "", "approver": "Meghan Moser", "notes": "", "launch": "", "trials_due": ""}, {"group": "Unknown", "name": "FLOWER BLOCK QUILT", "status": "On time", "type": "FABRIC", "customer": "PATTERNSEED DESIGN STUDIO", "waiting": "", "acetates": "", "screens": "", "approver": "Meghan Moser", "notes": "", "launch": "", "trials_due": ""}, {"group": "Unknown", "name": "GARDEN ROWS", "status": "On time", "type": "FABRIC", "customer": "PATTERNSEED DESIGN STUDIO", "waiting": "", "acetates": "YES", "screens": "NO", "approver": "Meghan Moser", "notes": "", "launch": "", "trials_due": ""}, {"group": "Unknown", "name": "Japanese Larch", "status": "On time", "type": "FABRIC", "customer": "PATTERNSEED DESIGN STUDIO", "waiting": "", "acetates": "NO", "screens": "NO", "approver": "Meghan Moser", "notes": "", "launch": "", "trials_due": ""}, {"group": "Unknown", "name": "TERRACOTTA", "status": "On time", "type": "FABRIC", "customer": "PATTERNSEED DESIGN STUDIO", "waiting": "", "acetates": "", "screens": "", "approver": "Meghan Moser", "notes": "", "launch": "", "trials_due": ""}, {"group": "Unknown", "name": "Metropolis", "status": "On time", "type": "FABRIC", "customer": "Patterson Flynn", "waiting": "", "acetates": "", "screens": "", "approver": "Julianna", "notes": "", "launch": "", "trials_due": ""}, {"group": "Unknown", "name": "Combed Stripe", "status": "On time", "type": "FABRIC", "customer": "Patterson Flynn", "waiting": "", "acetates": "", "screens": "", "approver": "Julianna", "notes": "", "launch": "", "trials_due": ""}, {"group": "Unknown", "name": "Deco Lines", "status": "On time", "type": "FABRIC", "customer": "Patterson Flynn", "waiting": "Files from client", "acetates": "", "screens": "", "approver": "Julianna", "notes": "", "launch": "", "trials_due": ""}, {"group": "Unknown", "name": "Golden Honeycomb", "status": "On time", "type": "FABRIC", "customer": "Patterson Flynn", "waiting": "", "acetates": "", "screens": "", "approver": "Julianna", "notes": "", "launch": "", "trials_due": ""}, {"group": "Unknown", "name": "One Line", "status": "On time", "type": "FABRIC", "customer": "Patterson Flynn", "waiting": "Files from client", "acetates": "", "screens": "", "approver": "Julianna", "notes": "", "launch": "", "trials_due": ""}, {"group": "Unknown", "name": "Square and Wave", "status": "On time", "type": "FABRIC", "customer": "Patterson Flynn", "waiting": "", "acetates": "", "screens": "", "approver": "Julianna", "notes": "", "launch": "", "trials_due": ""}, {"group": "Unknown", "name": "Picnic Check", "status": "On time", "type": "FABRIC", "customer": "Tillett", "waiting": "new screens", "acetates": "", "screens": "", "approver": "Justice", "notes": "", "launch": "", "trials_due": ""}, {"group": "Unknown", "name": "Seraphina Engineered Memos", "status": "On time", "type": "FABRIC", "customer": "Patterson Flynn", "waiting": "new screens", "acetates": "", "screens": "", "approver": "Julianna", "notes": "", "launch": "", "trials_due": ""}, {"group": "Unknown", "name": "SEAWEED", "status": "May be late", "type": "FABRIC", "customer": "Tillett", "waiting": "", "acetates": "", "screens": "", "approver": "Justice", "notes": "", "launch": "", "trials_due": ""}, {"group": "Unknown", "name": "SEASHELLS", "status": "On time", "type": "FABRIC", "customer": "Tillett", "waiting": "SCREENS", "acetates": "", "screens": "", "approver": "Justice", "notes": "", "launch": "", "trials_due": ""}, {"group": "Unknown", "name": "SCALLOP SHELL", "status": "On time", "type": "FABRIC", "customer": "Tillett", "waiting": "", "acetates": "NO", "screens": "NO", "approver": "Justice", "notes": "", "launch": "", "trials_due": ""}, {"group": "Unknown", "name": "Knit", "status": "On time", "type": "FABRIC", "customer": "Tillett", "waiting": "", "acetates": "", "screens": "", "approver": "Justice", "notes": "", "launch": "", "trials_due": ""}, {"group": "Unknown", "name": "Fish Scales", "status": "On time", "type": "FABRIC", "customer": "Tillett", "waiting": "", "acetates": "", "screens": "", "approver": "Justice", "notes": "", "launch": "", "trials_due": ""}, {"group": "Unknown", "name": "Aludra", "status": "On time", "type": "FABRIC", "customer": "Tillett", "waiting": "layout approval", "acetates": "", "screens": "", "approver": "Justice", "notes": "", "launch": "", "trials_due": ""}, {"group": "Unknown", "name": "Cornflower", "status": "On time", "type": "FABRIC", "customer": "Tillett", "waiting": "", "acetates": "", "screens": "", "approver": "Justice", "notes": "", "launch": "", "trials_due": ""}, {"group": "Unknown", "name": "Zizi Leopard", "status": "On time", "type": "FABRIC", "customer": "Quadrille", "waiting": "Files from client", "acetates": "", "screens": "", "approver": "Javier", "notes": "", "launch": "", "trials_due": ""}, {"group": "Unknown", "name": "Grateful Threads", "status": "On time", "type": "BNY PRINT", "customer": "Special Orders", "waiting": "Design approval", "acetates": "NO", "screens": "NO", "approver": "Caleb", "notes": "5 screen design, without blotch", "launch": "", "trials_due": ""}, {"group": "Unknown", "name": "Shell Grotto - Custom for Ravine Guest House Powder Room", "status": "On time", "type": "BNY PRINT", "customer": "Special Orders", "waiting": "Deposit BEFORE filework begins", "acetates": "", "screens": "", "approver": "Caleb", "notes": "", "launch": "", "trials_due": ""}, {"group": "TRANSITIONS", "name": "KATSUGI", "status": "On time", "type": "FABRIC", "customer": "Schumacher Transitions", "waiting": "", "acetates": "YES", "screens": "YES", "approver": "PPM", "notes": "", "launch": "", "trials_due": ""}, {"group": "TRANSITIONS", "name": "TROPICAL ISLE", "status": "May be late", "type": "WALLPAPER", "customer": "Schumacher Transitions", "waiting": "Caroline needs to come on site", "acetates": "", "screens": "YES", "approver": "PPM", "notes": "", "launch": "September 2026", "trials_due": "2025-10-18 00:00:00"}, {"group": "TRANSITIONS", "name": "GERANIUM", "status": "", "type": "WALLPAPER", "customer": "Tillett", "waiting": "layout approval", "acetates": "", "screens": "", "approver": "Justice", "notes": "", "launch": "", "trials_due": ""}, {"group": "TRANSITIONS", "name": "SHANTUNG SILHOUETTE", "status": "May be late", "type": "FABRIC", "customer": "Schumacher Transitions", "waiting": "new screens", "acetates": "", "screens": "", "approver": "PPM", "notes": "", "launch": "", "trials_due": ""}, {"group": "TRANSITIONS", "name": "HORIZON PAPERWEAVE", "status": "On time", "type": "PAPERWEAVE", "customer": "Schumacher Transitions", "waiting": "", "acetates": "", "screens": "YES", "approver": "PPM", "notes": "", "launch": "", "trials_due": ""}, {"group": "TRANSITIONS", "name": "Margie Floral", "status": "", "type": "FABRIC", "customer": "Schumacher Transitions", "waiting": "Standard & Screens", "acetates": "", "screens": "CHECK", "approver": "PPM", "notes": "", "launch": "", "trials_due": ""}, {"group": "TRANSITIONS", "name": "KATSUGI", "status": "On time", "type": "FABRIC", "customer": "Schumacher Transitions", "waiting": "", "acetates": "YES", "screens": "YES", "approver": "PPM", "notes": "", "launch": "", "trials_due": ""}, {"group": "TRANSITIONS", "name": "CHALFONT", "status": "On time", "type": "WALLPAPER", "customer": "Schumacher Transitions", "waiting": "", "acetates": "", "screens": "YES", "approver": "PPM", "notes": "", "launch": "", "trials_due": ""}, {"group": "TRANSITIONS", "name": "FLORAISON", "status": "May be late", "type": "WALLPAPER", "customer": "Schumacher Transitions", "waiting": "", "acetates": "", "screens": "YES", "approver": "PPM", "notes": "", "launch": "", "trials_due": ""}, {"group": "TRANSITIONS", "name": "Bespotted", "status": "On time", "type": "FABRIC", "customer": "Schumacher Transitions", "waiting": "", "acetates": "YES", "screens": "", "approver": "PPM", "notes": "1 YARD AND 3 COLOWAYS WERE SHIPPED", "launch": "", "trials_due": ""}, {"group": "TRANSITIONS", "name": "FLOWERET PAPERWEAVE", "status": "On time", "type": "PAPERWEAVE", "customer": "Schumacher Transitions", "waiting": "", "acetates": "", "screens": "YES", "approver": "PPM", "notes": "", "launch": "", "trials_due": ""}, {"group": "TRANSITIONS", "name": "FLOWERET PAPERWEAVE", "status": "On time", "type": "PAPERWEAVE", "customer": "Schumacher Transitions", "waiting": "", "acetates": "", "screens": "YES", "approver": "PPM", "notes": "", "launch": "", "trials_due": ""}, {"group": "TRANSITIONS", "name": "QUEEN OF SPAIN", "status": "On time", "type": "WALLPAPER", "customer": "Schumacher Transitions", "waiting": "", "acetates": "", "screens": "YES", "approver": "PPM", "notes": "", "launch": "", "trials_due": ""}, {"group": "TRANSITIONS", "name": "SNAKE CHARMER", "status": "On time", "type": "WALLPAPER", "customer": "Schumacher Transitions", "waiting": "", "acetates": "", "screens": "YES", "approver": "PPM", "notes": "", "launch": "", "trials_due": ""}, {"group": "TRANSITIONS", "name": "TAKI FLORAL", "status": "On time", "type": "WALLPAPER", "customer": "Schumacher Transitions", "waiting": "", "acetates": "", "screens": "YES", "approver": "PPM", "notes": "", "launch": "", "trials_due": ""}, {"group": "TRANSITIONS", "name": "UCCELLO SISAL", "status": "On time", "type": "GRASSCLOTH", "customer": "Schumacher Transitions", "waiting": "", "acetates": "YES", "screens": "YES", "approver": "PPM", "notes": "", "launch": "", "trials_due": ""}, {"group": "TRANSITIONS", "name": "UCCELLO SISAL", "status": "On time", "type": "GRASSCLOTH", "customer": "Schumacher Transitions", "waiting": "", "acetates": "YES", "screens": "YES", "approver": "PPM", "notes": "", "launch": "", "trials_due": ""}, {"group": "TRANSITIONS", "name": "SERALLO MOSAIC", "status": "", "type": "WALLPAPER", "customer": "Schumacher Transitions", "waiting": "", "acetates": "YES", "screens": "YES", "approver": "PPM", "notes": "", "launch": "", "trials_due": ""}, {"group": "TRANSITIONS", "name": "BIRCHES", "status": "", "type": "WALLPAPER", "customer": "Schumacher Transitions", "waiting": "", "acetates": "", "screens": "CHECK", "approver": "PPM", "notes": "", "launch": "", "trials_due": ""}, {"group": "TRANSITIONS", "name": "BIRCHES", "status": "", "type": "WALLPAPER", "customer": "Schumacher Transitions", "waiting": "", "acetates": "", "screens": "CHECK", "approver": "PPM", "notes": "", "launch": "", "trials_due": ""}, {"group": "TRANSITIONS", "name": "JONI CHINTZ", "status": "", "type": "FABRIC", "customer": "Schumacher Transitions", "waiting": "", "acetates": "", "screens": "CHECK", "approver": "PPM", "notes": "", "launch": "", "trials_due": ""}, {"group": "TRANSITIONS", "name": "BELLEZZA DAMASK", "status": "", "type": "GRASSCLOTH", "customer": "Schumacher Transitions", "waiting": "", "acetates": "", "screens": "", "approver": "PPM", "notes": "", "launch": "", "trials_due": ""}, {"group": "TRANSITIONS", "name": "ALGIERS SISAL", "status": "", "type": "GRASSCLOTH", "customer": "Schumacher Transitions", "waiting": "", "acetates": "", "screens": "CHECK", "approver": "PPM", "notes": "", "launch": "", "trials_due": ""}, {"group": "TRANSITIONS", "name": "HORIZON SISAL", "status": "", "type": "GRASSCLOTH", "customer": "Schumacher Transitions", "waiting": "", "acetates": "", "screens": "CHECK", "approver": "PPM", "notes": "", "launch": "", "trials_due": ""}, {"group": "TRANSITIONS", "name": "BIRCHES BLACK/WHITE", "status": "", "type": "WALLPAPER", "customer": "Schumacher Transitions", "waiting": "", "acetates": "", "screens": "CHECK", "approver": "PPM", "notes": "", "launch": "", "trials_due": ""}, {"group": "TRANSITIONS", "name": "BIRCHES TAN", "status": "", "type": "WALLPAPER", "customer": "Schumacher Transitions", "waiting": "", "acetates": "", "screens": "CHECK", "approver": "PPM", "notes": "", "launch": "", "trials_due": ""}, {"group": "APPROVED", "name": "Deconstructed Stripe", "status": "On time", "type": "FABRIC", "customer": "Schumacher Transitions", "waiting": "", "acetates": "YES", "screens": "YES", "approver": "PPM", "notes": "", "launch": "", "trials_due": ""}, {"group": "APPROVED", "name": "MORI", "status": "On time", "type": "FABRIC", "customer": "Schumacher Transitions", "waiting": "", "acetates": "YES", "screens": "YES", "approver": "PPM", "notes": "Ink mixing in progress week of 12/15", "launch": "", "trials_due": ""}, {"group": "APPROVED", "name": "ICONIC ZEBRA", "status": "On time", "type": "FABRIC", "customer": "Schumacher Transitions", "waiting": "", "acetates": "", "screens": "YES", "approver": "PPM", "notes": "", "launch": "", "trials_due": ""}, {"group": "APPROVED", "name": "PLUMES ET RUBANS", "status": "On time", "type": "WALLPAPER", "customer": "Schumacher Transitions", "waiting": "", "acetates": "YES", "screens": "YES", "approver": "PPM", "notes": "", "launch": "", "trials_due": ""}, {"group": "APPROVED", "name": "PARSONS STRIPE HAND PRINT", "status": "On time", "type": "FABRIC", "customer": "Schumacher NYC Studio", "waiting": "", "acetates": "YES", "screens": "YES", "approver": "Hilary", "notes": "NAVY & RED ARE APPROVED ON 11/13", "launch": "", "trials_due": ""}, {"group": "APPROVED", "name": "TROPICAL ISLE", "status": "On time", "type": "WALLPAPER", "customer": "Schumacher NYC Studio", "waiting": "", "acetates": "YES", "screens": "NO", "approver": "Natalie", "notes": "approved ON THU. 11/13", "launch": "", "trials_due": ""}, {"group": "APPROVED", "name": "BORNEO GRASSCLOTH", "status": "On time", "type": "GRASSCLOTH", "customer": "Schumacher Transitions", "waiting": "", "acetates": "", "screens": "YES", "approver": "PPM", "notes": "", "launch": "", "trials_due": ""}, {"group": "APPROVED", "name": "TEMPLE GARDEN ||", "status": "On time", "type": "FABRIC", "customer": "Schumacher Transitions", "waiting": "", "acetates": "YES", "screens": "YES", "approver": "PPM", "notes": "", "launch": "", "trials_due": ""}, {"group": "APPROVED", "name": "FLORAISON", "status": "On time", "type": "WALLPAPER", "customer": "Schumacher Transitions", "waiting": "", "acetates": "", "screens": "YES", "approver": "PPM", "notes": "approved S/O , waiting on ground for production", "launch": "", "trials_due": ""}, {"group": "APPROVED", "name": "BRUSHSTROKES", "status": "On time", "type": "FABRIC", "customer": "Schumacher Transitions", "waiting": "", "acetates": "YES", "screens": "YES", "approver": "PPM", "notes": "", "launch": "", "trials_due": ""}, {"group": "APPROVED", "name": "DORSET", "status": "On time", "type": "FABRIC", "customer": "Mally Skok", "waiting": "see updates", "acetates": "YES", "screens": "YES", "approver": "Mally Skok", "notes": "change the color of the green, sample with Nora", "launch": "", "trials_due": ""}, {"group": "APPROVED", "name": "Monkey Madness Silhouette", "status": "On time", "type": "GRASSCLOTH", "customer": "Schumacher NYC Studio", "waiting": "", "acetates": "YES", "screens": "YES", "approver": "Megan Ciraolo", "notes": "", "launch": "", "trials_due": ""}, {"group": "APPROVED", "name": "Monkey Madness Silhouette", "status": "On time", "type": "WALLPAPER", "customer": "Schumacher NYC Studio", "waiting": "", "acetates": "YES", "screens": "YES", "approver": "Megan Ciraolo", "notes": "ALL APPROVED BUT ONE WAITING FOR REVIEW", "launch": "", "trials_due": ""}, {"group": "APPROVED", "name": "Monkey Madness Silhouette", "status": "On time", "type": "FABRIC", "customer": "Schumacher NYC Studio", "waiting": "", "acetates": "YES", "screens": "YES", "approver": "Megan Ciraolo", "notes": "3 color ways approved for production", "launch": "", "trials_due": ""}, {"group": "APPROVED", "name": "VIEWS OF PARIS", "status": "On time", "type": "FABRIC", "customer": "Schumacher Transitions", "waiting": "", "acetates": "", "screens": "", "approver": "PPM", "notes": "", "launch": "", "trials_due": "2026-01-16 00:00:00"}, {"group": "APPROVED", "name": "Serallo Mosaic", "status": "On time", "type": "WALLPAPER", "customer": "Schumacher Transitions", "waiting": "", "acetates": "NO", "screens": "YES", "approver": "PPM", "notes": "", "launch": "", "trials_due": ""}, {"group": "APPROVED", "name": "HINATA ( JAPANESE TREE )", "status": "On time", "type": "WALLPAPER", "customer": "Schumacher NYC Studio", "waiting": "", "acetates": "YES", "screens": "YES", "approver": "", "notes": "", "launch": "", "trials_due": ""}, {"group": "APPROVED", "name": "Barton’s Eagle Wallpapaer", "status": "On time", "type": "WALLPAPER", "customer": "Schumacher NYC Studio", "waiting": "", "acetates": "YES", "screens": "NO", "approver": "Meghan Moser", "notes": "3 COLOR WAYS APPROVED", "launch": "", "trials_due": ""}, {"group": "APPROVED", "name": "Barton’s Eagle Fabric", "status": "On time", "type": "FABRIC", "customer": "Schumacher NYC Studio", "waiting": "", "acetates": "YES", "screens": "YES", "approver": "Meghan Moser", "notes": "2 color ways are approved , New S/O for the green color way will be sent", "launch": "", "trials_due": ""}, {"group": "APPROVED", "name": "Peony Silhouette - 27 WC CNV", "status": "On time", "type": "WALLPAPER", "customer": "Tillett", "waiting": "", "acetates": "YES", "screens": "YES", "approver": "Justice", "notes": "3 COLOR WAYS IN PROGRESS", "launch": "", "trials_due": ""}, {"group": "APPROVED", "name": "KHAN'S PARK", "status": "On time", "type": "FABRIC", "customer": "Schumacher Transitions", "waiting": "", "acetates": "YES", "screens": "YES", "approver": "PPM", "notes": "waiting for ground to produce", "launch": "", "trials_due": ""}, {"group": "APPROVED", "name": "CLOUD TOILE", "status": "On time", "type": "FABRIC", "customer": "Schumacher Transitions", "waiting": "", "acetates": "", "screens": "YES", "approver": "PPM", "notes": "No silver metallic - waiting on metallic decision", "launch": "", "trials_due": ""}, {"group": "APPROVED", "name": "MAGICAL MING DRAGON", "status": "On time", "type": "WALLPAPER", "customer": "Schumacher Transitions", "waiting": "", "acetates": "", "screens": "YES", "approver": "PPM", "notes": "", "launch": "", "trials_due": ""}, {"group": "APPROVED", "name": "Heidi Caillier", "status": "On time", "type": "FABRIC", "customer": "KATE", "waiting": "", "acetates": "YES", "screens": "YES", "approver": "", "notes": "Waiting for fabric and color plate", "launch": "", "trials_due": ""}, {"group": "APPROVED", "name": "Acanthus Stripe Sisal", "status": "On time", "type": "GRASSCLOTH", "customer": "Schumacher Paris Studio", "waiting": "", "acetates": "", "screens": "", "approver": "Astrid Eilneau", "notes": "", "launch": "", "trials_due": ""}, {"group": "APPROVED", "name": "Acanthus Stripe Sisal", "status": "On time", "type": "GRASSCLOTH", "customer": "Schumacher Paris Studio", "waiting": "", "acetates": "", "screens": "", "approver": "Astrid Eilneau", "notes": "", "launch": "", "trials_due": ""}, {"group": "APPROVED", "name": "Acanthus Stripe Sisal", "status": "On time", "type": "GRASSCLOTH", "customer": "Schumacher Paris Studio", "waiting": "", "acetates": "", "screens": "", "approver": "Astrid Eilneau", "notes": "", "launch": "", "trials_due": ""}, {"group": "APPROVED", "name": "ALEXANDRIA IKAT", "status": "On time", "type": "FABRIC", "customer": "Schumacher NYC Studio", "waiting": "", "acetates": "", "screens": "YES", "approver": "Meghan Moser", "notes": "CUTTINGS HAVE BEEN RECEIVED 7/10", "launch": "", "trials_due": ""}, {"group": "APPROVED", "name": "ALEXANDRIA IKAT", "status": "On time", "type": "FABRIC", "customer": "Schumacher NYC Studio", "waiting": "", "acetates": "", "screens": "YES", "approver": "Meghan Moser", "notes": "WITH WENDY", "launch": "", "trials_due": ""}, {"group": "APPROVED", "name": "ALEXANDRIA IKAT", "status": "On time", "type": "FABRIC", "customer": "Schumacher NYC Studio", "waiting": "", "acetates": "", "screens": "YES", "approver": "Meghan Moser", "notes": "", "launch": "", "trials_due": ""}, {"group": "APPROVED", "name": "ANDO SISAL", "status": "On time", "type": "GRASSCLOTH", "customer": "Schumacher Swift Launch", "waiting": "", "acetates": "", "screens": "YES", "approver": "Julianna", "notes": "", "launch": "", "trials_due": ""}, {"group": "APPROVED", "name": "ANDO SISAL", "status": "On time", "type": "GRASSCLOTH", "customer": "Schumacher Swift Launch", "waiting": "", "acetates": "", "screens": "YES", "approver": "Julianna", "notes": "", "launch": "", "trials_due": ""}, {"group": "APPROVED", "name": "ANDO SISAL", "status": "On time", "type": "GRASSCLOTH", "customer": "Schumacher Swift Launch", "waiting": "", "acetates": "", "screens": "YES", "approver": "Julianna", "notes": "", "launch": "", "trials_due": ""}, {"group": "APPROVED", "name": "ARBOREAL", "status": "On time", "type": "WALLPAPER", "customer": "Schumacher NYC Studio", "waiting": "", "acetates": "", "screens": "YES", "approver": "Paige", "notes": "", "launch": "", "trials_due": ""}, {"group": "APPROVED", "name": "ARBOREAL", "status": "On time", "type": "WALLPAPER", "customer": "Schumacher NYC Studio", "waiting": "", "acetates": "", "screens": "YES", "approver": "Paige", "notes": "", "launch": "", "trials_due": ""}, {"group": "APPROVED", "name": "ARBOREAL", "status": "On time", "type": "WALLPAPER", "customer": "Schumacher NYC Studio", "waiting": "", "acetates": "", "screens": "YES", "approver": "Paige", "notes": "", "launch": "", "trials_due": ""}, {"group": "APPROVED", "name": "BANANA LEAF", "status": "On time", "type": "FABRIC", "customer": "Schumacher Hospitality", "waiting": "", "acetates": "", "screens": "YES", "approver": "Lena Kerno", "notes": "", "launch": "", "trials_due": ""}, {"group": "APPROVED", "name": "Birds & Butterflies", "status": "On time", "type": "WALLPAPER", "customer": "Schumacher NYC Studio", "waiting": "", "acetates": "", "screens": "YES", "approver": "Tiiu", "notes": "", "launch": "", "trials_due": ""}, {"group": "APPROVED", "name": "Birds & Butterflies", "status": "On time", "type": "WALLPAPER", "customer": "Schumacher NYC Studio", "waiting": "", "acetates": "", "screens": "YES", "approver": "Tiiu", "notes": "", "launch": "", "trials_due": ""}, {"group": "APPROVED", "name": "Birds & Butterflies", "status": "On time", "type": "WALLPAPER", "customer": "Schumacher NYC Studio", "waiting": "", "acetates": "", "screens": "YES", "approver": "Tiiu", "notes": "", "launch": "", "trials_due": ""}, {"group": "APPROVED", "name": "CASSIA STRIPE", "status": "On time", "type": "FABRIC", "customer": "Patterson Flynn", "waiting": "", "acetates": "", "screens": "YES", "approver": "PPM", "notes": "", "launch": "", "trials_due": ""}, {"group": "APPROVED", "name": "CASSIA STRIPE", "status": "On time", "type": "FABRIC", "customer": "Patterson Flynn", "waiting": "", "acetates": "", "screens": "YES", "approver": "PPM", "notes": "", "launch": "", "trials_due": ""}, {"group": "APPROVED", "name": "CASSIA STRIPE", "status": "On time", "type": "FABRIC", "customer": "Patterson Flynn", "waiting": "", "acetates": "", "screens": "YES", "approver": "PPM", "notes": "", "launch": "", "trials_due": ""}, {"group": "APPROVED", "name": "CHRYSANTHEMUM", "status": "On time", "type": "GRASSCLOTH", "customer": "Schumacher Swift Launch", "waiting": "", "acetates": "", "screens": "YES", "approver": "Julianna", "notes": "", "launch": "", "trials_due": ""}, {"group": "APPROVED", "name": "CHRYSANTHEMUM", "status": "On time", "type": "GRASSCLOTH", "customer": "Schumacher Swift Launch", "waiting": "", "acetates": "", "screens": "YES", "approver": "Julianna", "notes": "", "launch": "", "trials_due": ""}, {"group": "APPROVED", "name": "CHRYSANTHEMUM", "status": "On time", "type": "GRASSCLOTH", "customer": "Schumacher Swift Launch", "waiting": "", "acetates": "", "screens": "YES", "approver": "Julianna", "notes": "", "launch": "", "trials_due": ""}, {"group": "APPROVED", "name": "CHRYSANTHEMUM", "status": "On time", "type": "WALLPAPER", "customer": "Tillett", "waiting": "", "acetates": "", "screens": "YES", "approver": "Justice", "notes": "", "launch": "", "trials_due": ""}, {"group": "APPROVED", "name": "DALILA HAND PRINT", "status": "On time", "type": "WALLPAPER", "customer": "Schumacher NYC Studio", "waiting": "", "acetates": "", "screens": "YES", "approver": "Tiiu", "notes": "", "launch": "", "trials_due": ""}, {"group": "APPROVED", "name": "DALILA HAND PRINT", "status": "On time", "type": "WALLPAPER", "customer": "Schumacher NYC Studio", "waiting": "", "acetates": "", "screens": "YES", "approver": "Tiiu", "notes": "", "launch": "", "trials_due": ""}, {"group": "APPROVED", "name": "DALILA HAND PRINT", "status": "On time", "type": "WALLPAPER", "customer": "Schumacher NYC Studio", "waiting": "", "acetates": "", "screens": "YES", "approver": "Tiiu", "notes": "", "launch": "", "trials_due": ""}, {"group": "APPROVED", "name": "FEATHER BLOOM", "status": "On time", "type": "GRASSCLOTH", "customer": "Schumacher NYC Studio", "waiting": "", "acetates": "", "screens": "YES", "approver": "Tiiu", "notes": "", "launch": "", "trials_due": ""}, {"group": "APPROVED", "name": "FEATHER BLOOM", "status": "On time", "type": "GRASSCLOTH", "customer": "Schumacher NYC Studio", "waiting": "", "acetates": "", "screens": "YES", "approver": "Tiiu", "notes": "", "launch": "", "trials_due": ""}, {"group": "APPROVED", "name": "FEATHER BLOOM", "status": "On time", "type": "GRASSCLOTH", "customer": "Schumacher NYC Studio", "waiting": "", "acetates": "", "screens": "YES", "approver": "Tiiu", "notes": "", "launch": "", "trials_due": ""}, {"group": "APPROVED", "name": "FEATHER BLOOM", "status": "On time", "type": "GRASSCLOTH", "customer": "Schumacher NYC Studio", "waiting": "", "acetates": "", "screens": "YES", "approver": "Tiiu", "notes": "", "launch": "", "trials_due": ""}, {"group": "APPROVED", "name": "IN DREAMS", "status": "On time", "type": "GRASSCLOTH", "customer": "Schumacher NYC Studio", "waiting": "", "acetates": "", "screens": "YES", "approver": "Natalie", "notes": "", "launch": "", "trials_due": ""}, {"group": "APPROVED", "name": "IN DREAMS", "status": "On time", "type": "GRASSCLOTH", "customer": "Schumacher NYC Studio", "waiting": "", "acetates": "", "screens": "YES", "approver": "Natalie", "notes": "", "launch": "", "trials_due": ""}, {"group": "APPROVED", "name": "IN DREAMS", "status": "On time", "type": "GRASSCLOTH", "customer": "Schumacher NYC Studio", "waiting": "", "acetates": "", "screens": "YES", "approver": "Natalie", "notes": "", "launch": "", "trials_due": ""}, {"group": "APPROVED", "name": "KHAN'S PARK", "status": "On time", "type": "FABRIC", "customer": "Schumacher Paris Studio", "waiting": "", "acetates": "", "screens": "YES", "approver": "Jacob Manon", "notes": "", "launch": "", "trials_due": ""}, {"group": "APPROVED", "name": "KHAN'S PARK", "status": "On time", "type": "FABRIC", "customer": "Schumacher Paris Studio", "waiting": "", "acetates": "", "screens": "YES", "approver": "Jacob Manon", "notes": "", "launch": "", "trials_due": ""}, {"group": "APPROVED", "name": "LAURE DAMASK ABACA", "status": "On time", "type": "GRASSCLOTH", "customer": "Schumacher NYC Studio", "waiting": "", "acetates": "", "screens": "YES", "approver": "Hilary", "notes": "", "launch": "", "trials_due": ""}, {"group": "APPROVED", "name": "MOIRA", "status": "On time", "type": "WALLPAPER", "customer": "Schumacher NYC Studio", "waiting": "", "acetates": "", "screens": "YES", "approver": "Paige", "notes": "", "launch": "", "trials_due": ""}, {"group": "APPROVED", "name": "MOIRA", "status": "On time", "type": "WALLPAPER", "customer": "Schumacher NYC Studio", "waiting": "", "acetates": "", "screens": "YES", "approver": "Paige", "notes": "", "launch": "", "trials_due": ""}, {"group": "APPROVED", "name": "OCTAVIA", "status": "On time", "type": "GRASSCLOTH", "customer": "Schumacher Swift Launch", "waiting": "", "acetates": "", "screens": "YES", "approver": "Julianna", "notes": "", "launch": "", "trials_due": ""}, {"group": "APPROVED", "name": "OCTAVIA", "status": "On time", "type": "GRASSCLOTH", "customer": "Schumacher Swift Launch", "waiting": "", "acetates": "", "screens": "YES", "approver": "Julianna", "notes": "", "launch": "", "trials_due": ""}, {"group": "APPROVED", "name": "OCTAVIA", "status": "On time", "type": "GRASSCLOTH", "customer": "Schumacher Swift Launch", "waiting": "", "acetates": "", "screens": "YES", "approver": "Julianna", "notes": "", "launch": "", "trials_due": ""}, {"group": "APPROVED", "name": "PALAZZO PANEL SET", "status": "On time", "type": "WALLPAPER", "customer": "Backdrop", "waiting": "", "acetates": "", "screens": "YES", "approver": "Annie Irwin", "notes": "2-part process - ground digitally printed at BNY, metallic accent printed at Par", "launch": "", "trials_due": ""}, {"group": "APPROVED", "name": "Ranthambore Garden", "status": "On time", "type": "WALLPAPER", "customer": "Schumacher NYC Studio", "waiting": "", "acetates": "", "screens": "YES", "approver": "Hilary", "notes": "Ranthambore Garden Spice 6/30", "launch": "May 2026", "trials_due": "2025-06-14 00:00:00"}, {"group": "APPROVED", "name": "Ranthambore Garden (copy)", "status": "On time", "type": "WALLPAPER", "customer": "Schumacher NYC Studio", "waiting": "", "acetates": "", "screens": "YES", "approver": "Hilary", "notes": "Ranthambore Garden Navy 6/30", "launch": "May 2026", "trials_due": "2025-06-14 00:00:00"}, {"group": "APPROVED", "name": "STRAWBERRY", "status": "On time", "type": "WALLPAPER", "customer": "Schumacher NYC Studio", "waiting": "", "acetates": "", "screens": "YES", "approver": "Hilary", "notes": "", "launch": "", "trials_due": ""}, {"group": "APPROVED", "name": "STRAWBERRY", "status": "On time", "type": "WALLPAPER", "customer": "Schumacher NYC Studio", "waiting": "", "acetates": "", "screens": "YES", "approver": "Hilary", "notes": "", "launch": "", "trials_due": ""}, {"group": "APPROVED", "name": "SUFFOLK DAMASK", "status": "On time", "type": "WALLPAPER", "customer": "Schumacher NYC Studio", "waiting": "", "acetates": "", "screens": "YES", "approver": "Hilary", "notes": "", "launch": "", "trials_due": ""}, {"group": "APPROVED", "name": "SUFFOLK DAMASK", "status": "On time", "type": "WALLPAPER", "customer": "Schumacher NYC Studio", "waiting": "", "acetates": "", "screens": "YES", "approver": "Hilary", "notes": "", "launch": "", "trials_due": ""}, {"group": "APPROVED", "name": "WOODLAND LEOPARD", "status": "On time", "type": "GRASSCLOTH", "customer": "Schumacher Paris Studio", "waiting": "", "acetates": "", "screens": "YES", "approver": "Jacob Manon", "notes": "", "launch": "", "trials_due": ""}, {"group": "APPROVED", "name": "WOODLAND LEOPARD", "status": "On time", "type": "GRASSCLOTH", "customer": "Schumacher Paris Studio", "waiting": "", "acetates": "", "screens": "YES", "approver": "Jacob Manon", "notes": "", "launch": "", "trials_due": ""}, {"group": "APPROVED", "name": "WOODLAND LEOPARD", "status": "On time", "type": "GRASSCLOTH", "customer": "Schumacher Paris Studio", "waiting": "", "acetates": "", "screens": "YES", "approver": "Jacob Manon", "notes": "", "launch": "", "trials_due": ""}, {"group": "APPROVED", "name": "WOODLAND LEOPARD", "status": "On time", "type": "GRASSCLOTH", "customer": "Schumacher Paris Studio", "waiting": "", "acetates": "", "screens": "YES", "approver": "Jacob Manon", "notes": "", "launch": "", "trials_due": ""}, {"group": "APPROVED", "name": "WOODLAND LEOPARD", "status": "On time", "type": "GRASSCLOTH", "customer": "Schumacher Swift Launch", "waiting": "", "acetates": "", "screens": "YES", "approver": "Julianna", "notes": "", "launch": "", "trials_due": ""}, {"group": "APPROVED", "name": "WOODLAND LEOPARD", "status": "On time", "type": "GRASSCLOTH", "customer": "Schumacher Swift Launch", "waiting": "", "acetates": "", "screens": "YES", "approver": "Julianna", "notes": "", "launch": "", "trials_due": ""}, {"group": "APPROVED", "name": "LA JOLLA", "status": "On time", "type": "WALLPAPER", "customer": "Schumacher NYC Studio", "waiting": "", "acetates": "YES", "screens": "YES", "approver": "Natalie", "notes": "", "launch": "", "trials_due": ""}, {"group": "APPROVED", "name": "CITRUS GARDEN", "status": "On time", "type": "WALLPAPER", "customer": "Schumacher NYC Studio", "waiting": "", "acetates": "YES", "screens": "YES", "approver": "Natalie", "notes": "", "launch": "", "trials_due": ""}, {"group": "APPROVED", "name": "SERAPHINA ( Persephone ) PANEL", "status": "On time", "type": "FABRIC", "customer": "Patterson Flynn", "waiting": "", "acetates": "YES", "screens": "YES", "approver": "Hannah", "notes": "SERAPHINA IS THE NEW LEGEND", "launch": "", "trials_due": ""}, {"group": "APPROVED", "name": "Small Rope - new screen", "status": "On time", "type": "FABRIC", "customer": "Tillett", "waiting": "", "acetates": "YES", "screens": "YES", "approver": "Justice", "notes": "", "launch": "", "trials_due": ""}, {"group": "APPROVED", "name": "HATCHMARK", "status": "On time", "type": "FABRIC", "customer": "Schumacher NYC Studio", "waiting": "", "acetates": "YES", "screens": "YES", "approver": "Hilary", "notes": "3 color ways approved for production", "launch": "", "trials_due": ""}, {"group": "APPROVED", "name": "PALM CANOPY (FKA Baa Leaves)", "status": "On time", "type": "GRASSCLOTH", "customer": "Schumacher NYC Studio", "waiting": "", "acetates": "YES", "screens": "NO", "approver": "Meghan Moser", "notes": "3 color ways approved Natural , Olive ,Leaf", "launch": "", "trials_due": ""}, {"group": "APPROVED", "name": "Woodperry Sisal", "status": "On time", "type": "GRASSCLOTH", "customer": "Schumacher NYC Studio", "waiting": "", "acetates": "YES", "screens": "YES", "approver": "Tiiu", "notes": "", "launch": "", "trials_due": ""}, {"group": "APPROVED", "name": "PEONY ||", "status": "On time", "type": "WALLPAPER", "customer": "Tillett", "waiting": "", "acetates": "YES", "screens": "YES", "approver": "Justice", "notes": "2 COLOR WAYS", "launch": "", "trials_due": ""}, {"group": "APPROVED", "name": "Chrysanthemum - 27 WC CNV", "status": "On time", "type": "WALLPAPER", "customer": "Tillett", "waiting": "", "acetates": "", "screens": "", "approver": "Justice", "notes": "Pink will be approved week of 12/15", "launch": "", "trials_due": ""}, {"group": "APPROVED", "name": "Beaded Bag Sisal ( PUNTINI )", "status": "On time", "type": "GRASSCLOTH", "customer": "Backdrop", "waiting": "", "acetates": "YES", "screens": "YES", "approver": "Annie Irwin", "notes": ".......", "launch": "", "trials_due": ""}, {"group": "APPROVED", "name": "RUBIA", "status": "On time", "type": "FABRIC", "customer": "Schumacher NYC Studio", "waiting": "", "acetates": "YES", "screens": "YES", "approver": "Sophie", "notes": "waiting for cutting from Sophie", "launch": "", "trials_due": ""}, {"group": "APPROVED", "name": "BENI", "status": "On time", "type": "GRASSCLOTH", "customer": "Patterson Flynn", "waiting": "", "acetates": "YES", "screens": "YES", "approver": "Julianna", "notes": "Extra S/O was shipped 1/6", "launch": "October 2026", "trials_due": "2025-11-15 00:00:00"}, {"group": "APPROVED", "name": "DRAPERY", "status": "On time", "type": "WALLPAPER", "customer": "Schumacher Transitions", "waiting": "", "acetates": "YES", "screens": "YES", "approver": "PPM", "notes": "Pink custom ground", "launch": "", "trials_due": ""}, {"group": "APPROVED", "name": "5004203    CHALFONT IN PORCELAIN", "status": "On time", "type": "WALLPAPER", "customer": "Schumacher Transitions", "waiting": "", "acetates": "", "screens": "YES", "approver": "PPM", "notes": "", "launch": "", "trials_due": ""}, {"group": "APPROVED", "name": "BORNEO GRASSCLOTH", "status": "On time", "type": "GRASSCLOTH", "customer": "Schumacher Transitions", "waiting": "", "acetates": "", "screens": "", "approver": "PPM", "notes": "", "launch": "", "trials_due": ""}, {"group": "APPROVED", "name": "BOTANICO METALLIC", "status": "On time", "type": "WALLPAPER", "customer": "Schumacher Transitions", "waiting": "", "acetates": "", "screens": "YES", "approver": "PPM", "notes": "", "launch": "", "trials_due": ""}, {"group": "APPROVED", "name": "CARLY", "status": "On time", "type": "FABRIC", "customer": "Schumacher Transitions", "waiting": "", "acetates": "", "screens": "YES", "approver": "PPM", "notes": "", "launch": "", "trials_due": ""}, {"group": "APPROVED", "name": "CHINOISERIE VINE", "status": "On time", "type": "FABRIC", "customer": "Schumacher Transitions", "waiting": "", "acetates": "", "screens": "ARRIVED", "approver": "PPM", "notes": "", "launch": "", "trials_due": ""}, {"group": "APPROVED", "name": "CHINOISERIE VINE", "status": "On time", "type": "FABRIC", "customer": "Schumacher Transitions", "waiting": "", "acetates": "", "screens": "YES", "approver": "PPM", "notes": "MTO order", "launch": "", "trials_due": ""}, {"group": "APPROVED", "name": "CLOUD TOILE", "status": "On time", "type": "FABRIC", "customer": "Schumacher Transitions", "waiting": "", "acetates": "", "screens": "YES", "approver": "PPM", "notes": "Will review with Pam 5/21", "launch": "", "trials_due": ""}, {"group": "APPROVED", "name": "CLOUD TOILE DELFT", "status": "On time", "type": "FABRIC", "customer": "Schumacher Transitions", "waiting": "", "acetates": "", "screens": "YES", "approver": "PPM", "notes": "", "launch": "", "trials_due": ""}, {"group": "APPROVED", "name": "COPP", "status": "On time", "type": "FABRIC", "customer": "Schumacher Transitions", "waiting": "", "acetates": "", "screens": "NO", "approver": "PPM", "notes": "", "launch": "", "trials_due": ""}, {"group": "APPROVED", "name": "DRAPERY", "status": "On time", "type": "WALLPAPER", "customer": "Schumacher Transitions", "waiting": "", "acetates": "YES", "screens": "YES", "approver": "PPM", "notes": "light beige custom ground", "launch": "", "trials_due": ""}, {"group": "APPROVED", "name": "EXOTIC BUTTERFLY", "status": "On time", "type": "WALLPAPER", "customer": "Schumacher Transitions", "waiting": "", "acetates": "", "screens": "YES", "approver": "PPM", "notes": "", "launch": "", "trials_due": ""}, {"group": "APPROVED", "name": "EXOTIC BUTTERFLY", "status": "On time", "type": "WALLPAPER", "customer": "Schumacher Transitions", "waiting": "", "acetates": "", "screens": "YES", "approver": "PPM", "notes": "", "launch": "", "trials_due": ""}, {"group": "APPROVED", "name": "EXOTIC BUTTERFLY", "status": "On time", "type": "WALLPAPER", "customer": "Schumacher Transitions", "waiting": "", "acetates": "", "screens": "YES", "approver": "PPM", "notes": "", "launch": "", "trials_due": ""}, {"group": "APPROVED", "name": "EXOTIC BUTTERFLY", "status": "On time", "type": "WALLPAPER", "customer": "Schumacher Transitions", "waiting": "", "acetates": "", "screens": "YES", "approver": "PPM", "notes": "", "launch": "", "trials_due": ""}, {"group": "APPROVED", "name": "Floweret Sisal", "status": "On time", "type": "GRASSCLOTH", "customer": "Schumacher Transitions", "waiting": "", "acetates": "", "screens": "YES", "approver": "PPM", "notes": "", "launch": "", "trials_due": ""}, {"group": "APPROVED", "name": "FREEFORM", "status": "On time", "type": "FABRIC", "customer": "Schumacher Transitions", "waiting": "", "acetates": "", "screens": "YES", "approver": "PPM", "notes": "", "launch": "", "trials_due": ""}, {"group": "APPROVED", "name": "JOSEPHA SISAL", "status": "On time", "type": "GRASSCLOTH", "customer": "Schumacher Transitions", "waiting": "", "acetates": "", "screens": "YES", "approver": "PPM", "notes": "", "launch": "", "trials_due": ""}, {"group": "APPROVED", "name": "JOSEPHA SISAL", "status": "On time", "type": "GRASSCLOTH", "customer": "Schumacher Transitions", "waiting": "", "acetates": "", "screens": "YES", "approver": "PPM", "notes": "", "launch": "", "trials_due": ""}, {"group": "APPROVED", "name": "KASTSUGI", "status": "On time", "type": "FABRIC", "customer": "Schumacher Transitions", "waiting": "", "acetates": "", "screens": "YES", "approver": "PPM", "notes": "", "launch": "", "trials_due": ""}, {"group": "APPROVED", "name": "KATMANDU", "status": "On time", "type": "WALLPAPER", "customer": "Schumacher Transitions", "waiting": "", "acetates": "", "screens": "YES", "approver": "PPM", "notes": "", "launch": "", "trials_due": ""}, {"group": "APPROVED", "name": "KATMANDU", "status": "On time", "type": "WALLPAPER", "customer": "Schumacher Transitions", "waiting": "", "acetates": "", "screens": "YES", "approver": "PPM", "notes": "", "launch": "", "trials_due": ""}, {"group": "APPROVED", "name": "KATMANDU", "status": "On time", "type": "WALLPAPER", "customer": "Schumacher Transitions", "waiting": "", "acetates": "", "screens": "YES", "approver": "PPM", "notes": "", "launch": "", "trials_due": ""}, {"group": "APPROVED", "name": "KATSUGI", "status": "On time", "type": "FABRIC", "customer": "Schumacher Transitions", "waiting": "", "acetates": "", "screens": "YES", "approver": "PPM", "notes": "", "launch": "", "trials_due": ""}, {"group": "APPROVED", "name": "KHAN'S PARK", "status": "On time", "type": "FABRIC", "customer": "Schumacher Transitions", "waiting": "", "acetates": "", "screens": "YES", "approver": "PPM", "notes": "", "launch": "", "trials_due": ""}, {"group": "APPROVED", "name": "KHAN'S PARK", "status": "On time", "type": "FABRIC", "customer": "Schumacher Transitions", "waiting": "", "acetates": "", "screens": "YES", "approver": "PPM", "notes": "", "launch": "", "trials_due": ""}, {"group": "APPROVED", "name": "LA CITE PANEL SET", "status": "On time", "type": "WALLPAPER", "customer": "Schumacher Transitions", "waiting": "", "acetates": "", "screens": "YES", "approver": "PPM", "notes": "***Need to print each screen for scanning - will be transitioning to BNY as a di", "launch": "", "trials_due": ""}, {"group": "APPROVED", "name": "LACE Black & Ivory", "status": "On time", "type": "WALLPAPER", "customer": "Schumacher Transitions", "waiting": "", "acetates": "", "screens": "YES", "approver": "PPM", "notes": "", "launch": "", "trials_due": ""}, {"group": "APPROVED", "name": "LOTUS GARDEN", "status": "On time", "type": "WALLPAPER", "customer": "Schumacher Transitions", "waiting": "", "acetates": "", "screens": "YES", "approver": "PPM", "notes": "", "launch": "", "trials_due": ""}, {"group": "APPROVED", "name": "LOTUS GARDEN", "status": "On time", "type": "WALLPAPER", "customer": "Schumacher Transitions", "waiting": "", "acetates": "", "screens": "YES", "approver": "PPM", "notes": "", "launch": "", "trials_due": ""}, {"group": "APPROVED", "name": "LOTUS GARDEN", "status": "On time", "type": "WALLPAPER", "customer": "Schumacher Transitions", "waiting": "", "acetates": "", "screens": "YES", "approver": "PPM", "notes": "", "launch": "", "trials_due": ""}, {"group": "APPROVED", "name": "LOTUS GARDEN", "status": "On time", "type": "WALLPAPER", "customer": "Schumacher Transitions", "waiting": "", "acetates": "", "screens": "YES", "approver": "PPM", "notes": "Re-matching due to loss of OG standard & inks", "launch": "", "trials_due": ""}, {"group": "APPROVED", "name": "MODERN TRELLIS", "status": "On time", "type": "WALLPAPER", "customer": "Schumacher Transitions", "waiting": "", "acetates": "", "screens": "YES", "approver": "PPM", "notes": "", "launch": "", "trials_due": ""}, {"group": "APPROVED", "name": "MODERN TRELLIS", "status": "On time", "type": "WALLPAPER", "customer": "Schumacher Transitions", "waiting": "", "acetates": "", "screens": "YES", "approver": "PPM", "notes": "", "launch": "", "trials_due": ""}, {"group": "APPROVED", "name": "MODERN TRELLIS", "status": "On time", "type": "WALLPAPER", "customer": "Schumacher Transitions", "waiting": "", "acetates": "", "screens": "YES", "approver": "PPM", "notes": "", "launch": "", "trials_due": ""}, {"group": "APPROVED", "name": "MODERN TRELLIS", "status": "On time", "type": "WALLPAPER", "customer": "Schumacher Transitions", "waiting": "", "acetates": "", "screens": "YES", "approver": "PPM", "notes": "", "launch": "", "trials_due": ""}, {"group": "APPROVED", "name": "MOONPENNIES", "status": "On time", "type": "WALLPAPER", "customer": "Schumacher Transitions", "waiting": "", "acetates": "", "screens": "??", "approver": "PPM", "notes": "", "launch": "", "trials_due": ""}, {"group": "APPROVED", "name": "MORI", "status": "On time", "type": "FABRIC", "customer": "Schumacher Transitions", "waiting": "", "acetates": "", "screens": "YES", "approver": "PPM", "notes": "", "launch": "", "trials_due": ""}, {"group": "APPROVED", "name": "NASRID PALACE MOSAIC", "status": "On time", "type": "WALLPAPER", "customer": "Schumacher Transitions", "waiting": "", "acetates": "", "screens": "YES", "approver": "PPM", "notes": "", "launch": "", "trials_due": ""}, {"group": "APPROVED", "name": "OVINGTON SISAL FOG", "status": "On time", "type": "GRASSCLOTH", "customer": "Schumacher Transitions", "waiting": "", "acetates": "", "screens": "", "approver": "PPM", "notes": "", "launch": "", "trials_due": ""}, {"group": "APPROVED", "name": "OVINGTON SISAL MINERAL", "status": "On time", "type": "GRASSCLOTH", "customer": "Schumacher Transitions", "waiting": "", "acetates": "", "screens": "", "approver": "PPM", "notes": "", "launch": "", "trials_due": ""}, {"group": "APPROVED", "name": "OVINGTON SISAL SAGE", "status": "On time", "type": "GRASSCLOTH", "customer": "Schumacher Transitions", "waiting": "", "acetates": "", "screens": "", "approver": "PPM", "notes": "", "launch": "", "trials_due": ""}, {"group": "APPROVED", "name": "OVINGTON SISAL YELLOW", "status": "On time", "type": "GRASSCLOTH", "customer": "Schumacher Transitions", "waiting": "", "acetates": "", "screens": "", "approver": "PPM", "notes": "", "launch": "", "trials_due": ""}, {"group": "APPROVED", "name": "PEARL RIVER", "status": "On time", "type": "WALLPAPER", "customer": "Schumacher Transitions", "waiting": "", "acetates": "", "screens": "YES", "approver": "PPM", "notes": "", "launch": "", "trials_due": ""}, {"group": "APPROVED", "name": "PYNE HOLLYHOCK", "status": "On time", "type": "WALLPAPER", "customer": "Schumacher Transitions", "waiting": "", "acetates": "", "screens": "YES", "approver": "PPM", "notes": "", "launch": "", "trials_due": ""}, {"group": "APPROVED", "name": "PYNE HOLLYHOCK", "status": "On time", "type": "WALLPAPER", "customer": "Schumacher Transitions", "waiting": "", "acetates": "", "screens": "YES", "approver": "PPM", "notes": "", "launch": "", "trials_due": ""}, {"group": "APPROVED", "name": "PYNE HOLLYHOCK", "status": "On time", "type": "WALLPAPER", "customer": "Schumacher Transitions", "waiting": "", "acetates": "", "screens": "YES", "approver": "PPM", "notes": "", "launch": "", "trials_due": ""}, {"group": "APPROVED", "name": "PYNE HOLLYHOCK", "status": "On time", "type": "WALLPAPER", "customer": "Schumacher Transitions", "waiting": "", "acetates": "", "screens": "YES", "approver": "PPM", "notes": "Approved with drawdowns", "launch": "", "trials_due": ""}, {"group": "APPROVED", "name": "QUEEN OF SPAIN", "status": "On time", "type": "WALLPAPER", "customer": "Schumacher Transitions", "waiting": "", "acetates": "", "screens": "YES", "approver": "PPM", "notes": "", "launch": "", "trials_due": ""}, {"group": "APPROVED", "name": "REGALIA", "status": "On time", "type": "FABRIC", "customer": "Schumacher Transitions", "waiting": "", "acetates": "", "screens": "", "approver": "PPM", "notes": "", "launch": "", "trials_due": ""}, {"group": "APPROVED", "name": "REGALIA", "status": "On time", "type": "FABRIC", "customer": "Schumacher Transitions", "waiting": "", "acetates": "", "screens": "YES", "approver": "PPM", "notes": "", "launch": "", "trials_due": ""}, {"group": "APPROVED", "name": "REGALIA", "status": "On time", "type": "FABRIC", "customer": "Schumacher Transitions", "waiting": "", "acetates": "", "screens": "YES", "approver": "PPM", "notes": "", "launch": "", "trials_due": ""}, {"group": "APPROVED", "name": "REGALIA", "status": "On time", "type": "FABRIC", "customer": "Schumacher Transitions", "waiting": "", "acetates": "", "screens": "", "approver": "PPM", "notes": "", "launch": "", "trials_due": ""}, {"group": "APPROVED", "name": "Scallop Filigree Sisal", "status": "On time", "type": "GRASSCLOTH", "customer": "Schumacher Transitions", "waiting": "", "acetates": "", "screens": "YES", "approver": "PPM", "notes": "waiting for acetates", "launch": "", "trials_due": ""}, {"group": "APPROVED", "name": "Scallop Filigree Sisal", "status": "On time", "type": "GRASSCLOTH", "customer": "Schumacher Transitions", "waiting": "", "acetates": "", "screens": "YES", "approver": "PPM", "notes": "", "launch": "", "trials_due": ""}, {"group": "APPROVED", "name": "SHANTUNG SILHOUETTE SISAL", "status": "On time", "type": "GRASSCLOTH", "customer": "Schumacher Transitions", "waiting": "", "acetates": "", "screens": "YES", "approver": "PPM", "notes": "*Requested to up priority by Timur", "launch": "", "trials_due": ""}, {"group": "APPROVED", "name": "SHANTUNG SILHOUETTE SISAL", "status": "On time", "type": "GRASSCLOTH", "customer": "Schumacher Transitions", "waiting": "", "acetates": "", "screens": "YES", "approver": "PPM", "notes": "", "launch": "", "trials_due": ""}, {"group": "APPROVED", "name": "SHANTUNG SILHOUETTE SISAL (copy)", "status": "On time", "type": "GRASSCLOTH", "customer": "Schumacher Transitions", "waiting": "", "acetates": "", "screens": "YES", "approver": "PPM", "notes": "", "launch": "", "trials_due": ""}, {"group": "APPROVED", "name": "SNAKE CHARMER", "status": "On time", "type": "WALLPAPER", "customer": "Schumacher Transitions", "waiting": "", "acetates": "", "screens": "YES", "approver": "PPM", "notes": "", "launch": "", "trials_due": ""}, {"group": "APPROVED", "name": "SNAKE CHARMER", "status": "On time", "type": "WALLPAPER", "customer": "Schumacher Transitions", "waiting": "", "acetates": "", "screens": "YES", "approver": "PPM", "notes": "", "launch": "", "trials_due": ""}, {"group": "APPROVED", "name": "SNAKE CHARMER", "status": "On time", "type": "WALLPAPER", "customer": "Schumacher Transitions", "waiting": "", "acetates": "", "screens": "YES", "approver": "PPM", "notes": "", "launch": "", "trials_due": ""}, {"group": "APPROVED", "name": "TAKI FLORAL", "status": "On time", "type": "WALLPAPER", "customer": "Schumacher Transitions", "waiting": "", "acetates": "", "screens": "YES", "approver": "PPM", "notes": "", "launch": "", "trials_due": ""}, {"group": "APPROVED", "name": "YANGTZE RIVER", "status": "On time", "type": "WALLPAPER", "customer": "Schumacher Transitions", "waiting": "", "acetates": "", "screens": "YES", "approver": "PPM", "notes": "", "launch": "", "trials_due": ""}, {"group": "APPROVED", "name": "YANGTZE RIVER", "status": "On time", "type": "WALLPAPER", "customer": "Schumacher Transitions", "waiting": "", "acetates": "", "screens": "YES", "approver": "PPM", "notes": "", "launch": "", "trials_due": ""}, {"group": "APPROVED", "name": "Scallop Filigree Sisal", "status": "On time", "type": "GRASSCLOTH", "customer": "Schumacher Transitions", "waiting": "", "acetates": "", "screens": "YES", "approver": "PPM", "notes": "", "launch": "", "trials_due": ""}, {"group": "APPROVED", "name": "KATSUGI", "status": "On time", "type": "FABRIC", "customer": "Schumacher Transitions", "waiting": "", "acetates": "YES", "screens": "YES", "approver": "PPM", "notes": "", "launch": "", "trials_due": ""}, {"group": "APPROVED", "name": "Plumes", "status": "On time", "type": "WALLPAPER", "customer": "Schumacher Transitions", "waiting": "", "acetates": "YES", "screens": "YES", "approver": "PPM", "notes": "", "launch": "", "trials_due": ""}, {"group": "APPROVED", "name": "CHINOISERIE VINE", "status": "On time", "type": "FABRIC", "customer": "Schumacher Transitions", "waiting": "", "acetates": "", "screens": "YES", "approver": "PPM", "notes": "approved and was printed", "launch": "", "trials_due": ""}, {"group": "APPROVED", "name": "Deconstructed Stripe", "status": "On time", "type": "FABRIC", "customer": "Schumacher Transitions", "waiting": "", "acetates": "YES", "screens": "YES", "approver": "PPM", "notes": "Fabi approved the S/O", "launch": "", "trials_due": ""}, {"group": "APPROVED", "name": "HORIZON PAPERWEAVE", "status": "On time", "type": "PAPERWEAVE", "customer": "Schumacher Transitions", "waiting": "", "acetates": "", "screens": "YES", "approver": "PPM", "notes": "", "launch": "", "trials_due": ""}, {"group": "APPROVED", "name": "PLUMES ET RUBANS", "status": "On time", "type": "WALLPAPER", "customer": "Schumacher Transitions", "waiting": "", "acetates": "", "screens": "YES", "approver": "PPM", "notes": "1,2,3,4,6,7,8,9. #6 same as #1", "launch": "", "trials_due": ""}, {"group": "APPROVED", "name": "TEMPLE GARDEN II", "status": "On time", "type": "FABRIC", "customer": "Schumacher Transitions", "waiting": "", "acetates": "YES", "screens": "YES", "approver": "PPM", "notes": "Approved week of 12/15", "launch": "", "trials_due": ""}, {"group": "APPROVED", "name": "PLUMES ET RUBANS", "status": "On time", "type": "WALLPAPER", "customer": "Schumacher Transitions", "waiting": "", "acetates": "YES", "screens": "YES", "approver": "PPM", "notes": "", "launch": "", "trials_due": ""}, {"group": "APPROVED", "name": "Deconstructed Stripe", "status": "On time", "type": "FABRIC", "customer": "Schumacher Transitions", "waiting": "", "acetates": "YES", "screens": "NO", "approver": "PPM", "notes": "", "launch": "", "trials_due": ""}, {"group": "APPROVED", "name": "CARLY", "status": "On time", "type": "FABRIC", "customer": "Schumacher Transitions", "waiting": "", "acetates": "", "screens": "YES", "approver": "PPM", "notes": "", "launch": "", "trials_due": ""}, {"group": "APPROVED", "name": "GARDEN OF PERSIA", "status": "On time", "type": "WALLPAPER", "customer": "Schumacher Transitions", "waiting": "", "acetates": "", "screens": "YES", "approver": "PPM", "notes": "", "launch": "", "trials_due": ""}, {"group": "APPROVED", "name": "FLOWERET PAPERWEAVE", "status": "On time", "type": "PAPERWEAVE", "customer": "Schumacher Transitions", "waiting": "", "acetates": "", "screens": "YES", "approver": "PPM", "notes": "", "launch": "", "trials_due": ""}, {"group": "APPROVED", "name": "LES BAMBOUS SISAL", "status": "On time", "type": "GRASSCLOTH", "customer": "Schumacher Transitions", "waiting": "", "acetates": "", "screens": "YES", "approver": "PPM", "notes": "", "launch": "", "trials_due": ""}, {"group": "APPROVED", "name": "Prosperity Panel Set", "status": "On time", "type": "WALLPAPER", "customer": "Schumacher NYC Studio", "waiting": "", "acetates": "YES", "screens": "YES", "approver": "Tiiu", "notes": "Tiiu was on site to approve it 1/23", "launch": "October 2026", "trials_due": "2025-11-15 00:00:00"}, {"group": "APPROVED", "name": "TWIGGY on silk", "status": "On time", "type": "FABRIC", "customer": "Schumacher NYC Studio", "waiting": "", "acetates": "NO", "screens": "NO", "approver": "Megan Chaney", "notes": "Approved , pricing was sent", "launch": "April 2027", "trials_due": "2026-05-16 00:00:00"}, {"group": "APPROVED", "name": "Deconstructed Stripe", "status": "On time", "type": "FABRIC", "customer": "Schumacher Transitions", "waiting": "", "acetates": "YES", "screens": "YES", "approver": "PPM", "notes": "", "launch": "", "trials_due": ""}, {"group": "APPROVED", "name": "UCCELLO SISAL", "status": "On time", "type": "GRASSCLOTH", "customer": "Schumacher Transitions", "waiting": "", "acetates": "YES", "screens": "YES", "approver": "PPM", "notes": "", "launch": "", "trials_due": ""}, {"group": "APPROVED", "name": "MOONPENNIS", "status": "On time", "type": "WALLPAPER", "customer": "Schumacher Transitions", "waiting": "", "acetates": "", "screens": "YES", "approver": "PPM", "notes": "", "launch": "", "trials_due": ""}, {"group": "APPROVED", "name": "Lyme Regis", "status": "On time", "type": "FABRIC", "customer": "Mally Skok", "waiting": "", "acetates": "YES", "screens": "YES", "approver": "Mally Skok", "notes": "", "launch": "", "trials_due": ""}, {"group": "APPROVED", "name": "CHALFONT", "status": "On time", "type": "WALLPAPER", "customer": "Schumacher Transitions", "waiting": "", "acetates": "", "screens": "YES", "approver": "PPM", "notes": "", "launch": "", "trials_due": ""}, {"group": "APPROVED", "name": "TWIG STRIPE", "status": "On time", "type": "WALLPAPER", "customer": "", "waiting": "", "acetates": "", "screens": "", "approver": "PPM", "notes": "", "launch": "", "trials_due": ""}, {"group": "APPROVED", "name": "INKWELL sisal", "status": "On time", "type": "GRASSCLOTH", "customer": "Schumacher NYC Studio", "waiting": "Studio Comments", "acetates": "YES", "screens": "YES", "approver": "Megan Chaney", "notes": "SECOND ROUND OF S/O WAS SHIPPED 1/22", "launch": "December 2026", "trials_due": "2026-01-17 00:00:00"}, {"group": "APPROVED", "name": "ICEHOUSE sisal", "status": "On time", "type": "GRASSCLOTH", "customer": "Schumacher NYC Studio", "waiting": "Studio Comments", "acetates": "YES", "screens": "YES", "approver": "Megan Chaney", "notes": "SECOND ROUND OF S/O WAS SHIPPED 1/22", "launch": "December 2026", "trials_due": "2026-01-17 00:00:00"}, {"group": "APPROVED", "name": "FLORALIA SISAL", "status": "May be late", "type": "GRASSCLOTH", "customer": "Schumacher Transitions", "waiting": "", "acetates": "YES", "screens": "YES", "approver": "PPM", "notes": "", "launch": "", "trials_due": ""}, {"group": "APPROVED", "name": "ARTICHOKE", "status": "On time", "type": "FABRIC", "customer": "Serena & Lily", "waiting": "see updates", "acetates": "YES", "screens": "YES", "approver": "Kelsey", "notes": "", "launch": "", "trials_due": ""}, {"group": "APPROVED", "name": "KATSUGI", "status": "On time", "type": "FABRIC", "customer": "Schumacher Transitions", "waiting": "", "acetates": "YES", "screens": "YES", "approver": "PPM", "notes": "", "launch": "", "trials_due": ""}, {"group": "APPROVED", "name": "FAUX BOIS", "status": "On time", "type": "BNY PRINT", "customer": "Backdrop", "waiting": "", "acetates": "", "screens": "DRAG BOX", "approver": "Annie Irwin", "notes": "", "launch": "", "trials_due": ""}, {"group": "DROPPED", "name": "SEAHAVEN", "status": "On time", "type": "FABRIC", "customer": "Serena & Lily", "waiting": "", "acetates": "YES", "screens": "YES", "approver": "Kelsey", "notes": "S/Os WERE SHIPPED WEEK OF 12/15", "launch": "", "trials_due": ""}, {"group": "DROPPED", "name": "CLOCKWORK", "status": "", "type": "GRASSCLOTH", "customer": "Schumacher NYC Studio", "waiting": "", "acetates": "YES", "screens": "YES", "approver": "Hilary", "notes": "Mineral ,Mist,Indigo,Petal,Plumes,Oatmeal", "launch": "December 2026", "trials_due": "2026-01-17 00:00:00"}, {"group": "DROPPED", "name": "WABI SABI", "status": "", "type": "BNY PRINT", "customer": "Backdrop", "waiting": "", "acetates": "", "screens": "NO", "approver": "Annie Irwin", "notes": "Julianna is working for new gloss provider", "launch": "", "trials_due": ""}, {"group": "DROPPED", "name": "BIRDS sisal", "status": "", "type": "GRASSCLOTH", "customer": "Schumacher NYC Studio", "waiting": "", "acetates": "", "screens": "", "approver": "Megan Chaney", "notes": "", "launch": "", "trials_due": ""}, {"group": "DROPPED", "name": "BOOTH BAY SISAL", "status": "", "type": "GRASSCLOTH", "customer": "Backdrop", "waiting": "", "acetates": "YES", "screens": "YES", "approver": "Annie Irwin", "notes": "", "launch": "", "trials_due": ""}, {"group": "DROPPED", "name": "IN DREAMS", "status": "", "type": "GRASSCLOTH", "customer": "Schumacher NYC Studio", "waiting": "", "acetates": "", "screens": "YES", "approver": "Natalie", "notes": "", "launch": "", "trials_due": ""}, {"group": "DROPPED", "name": "IN DREAMS", "status": "", "type": "GRASSCLOTH", "customer": "Schumacher NYC Studio", "waiting": "", "acetates": "", "screens": "YES", "approver": "Natalie", "notes": "", "launch": "", "trials_due": ""}, {"group": "DROPPED", "name": "FEATHER BLOOM", "status": "", "type": "GRASSCLOTH", "customer": "Schumacher NYC Studio", "waiting": "", "acetates": "", "screens": "YES", "approver": "Tiiu", "notes": "", "launch": "", "trials_due": ""}, {"group": "DROPPED", "name": "FEATHER BLOOM", "status": "", "type": "GRASSCLOTH", "customer": "Schumacher NYC Studio", "waiting": "", "acetates": "", "screens": "YES", "approver": "Tiiu", "notes": "", "launch": "", "trials_due": ""}, {"group": "DROPPED", "name": "Acanthus Stripe Sisal", "status": "On time", "type": "GRASSCLOTH", "customer": "Schumacher NYC Studio", "waiting": "", "acetates": "", "screens": "YES", "approver": "Astrid Eilneau", "notes": "", "launch": "", "trials_due": ""}, {"group": "DROPPED", "name": "Acanthus Stripe Sisal", "status": "On time", "type": "GRASSCLOTH", "customer": "Schumacher NYC Studio", "waiting": "", "acetates": "", "screens": "YES", "approver": "Astrid Eilneau", "notes": "", "launch": "", "trials_due": ""}, {"group": "DROPPED", "name": "Acanthus Stripe Sisal", "status": "On time", "type": "GRASSCLOTH", "customer": "Schumacher NYC Studio", "waiting": "", "acetates": "", "screens": "YES", "approver": "Astrid Eilneau", "notes": "", "launch": "", "trials_due": ""}, {"group": "DROPPED", "name": "Acanthus Stripe Sisal", "status": "On time", "type": "GRASSCLOTH", "customer": "Schumacher NYC Studio", "waiting": "", "acetates": "", "screens": "YES", "approver": "Astrid Eilneau", "notes": "", "launch": "", "trials_due": ""}, {"group": "DROPPED", "name": "Acanthus Stripe Sisal", "status": "On time", "type": "GRASSCLOTH", "customer": "Schumacher Paris Studio", "waiting": "", "acetates": "", "screens": "", "approver": "Astrid Eilneau", "notes": "", "launch": "", "trials_due": ""}, {"group": "DROPPED", "name": "AGRA SISAL", "status": "On time", "type": "GRASSCLOTH", "customer": "Schumacher Swift Launch", "waiting": "", "acetates": "", "screens": "", "approver": "PPM", "notes": "", "launch": "", "trials_due": ""}, {"group": "DROPPED", "name": "AGRA SISAL", "status": "On time", "type": "GRASSCLOTH", "customer": "Schumacher Swift Launch", "waiting": "", "acetates": "", "screens": "", "approver": "PPM", "notes": "", "launch": "", "trials_due": ""}, {"group": "DROPPED", "name": "AGRA SISAL", "status": "On time", "type": "GRASSCLOTH", "customer": "Schumacher Swift Launch", "waiting": "", "acetates": "", "screens": "", "approver": "PPM", "notes": "", "launch": "", "trials_due": ""}, {"group": "DROPPED", "name": "Birds & Butterflies", "status": "On time", "type": "WALLPAPER", "customer": "Schumacher NYC Studio", "waiting": "", "acetates": "", "screens": "YES", "approver": "Tiiu", "notes": "", "launch": "", "trials_due": ""}, {"group": "DROPPED", "name": "Birds & Butterflies", "status": "On time", "type": "WALLPAPER", "customer": "Schumacher NYC Studio", "waiting": "", "acetates": "", "screens": "YES", "approver": "Tiiu", "notes": "", "launch": "", "trials_due": ""}, {"group": "DROPPED", "name": "BOTANICO", "status": "On time", "type": "WALLPAPER", "customer": "Schumacher NYC Studio", "waiting": "", "acetates": "", "screens": "YES", "approver": "PPM", "notes": "", "launch": "", "trials_due": ""}, {"group": "DROPPED", "name": "Home Couture", "status": "On time", "type": "WALLPAPER", "customer": "Home Couture", "waiting": "", "acetates": "", "screens": "#1 NEED TO BE RESHOOTED", "approver": "PPM", "notes": "", "launch": "", "trials_due": ""}, {"group": "DROPPED", "name": "Home Couture", "status": "On time", "type": "WALLPAPER", "customer": "Home Couture", "waiting": "", "acetates": "", "screens": "#1 NEED TO BE RESHOOTED", "approver": "PPM", "notes": "", "launch": "", "trials_due": ""}, {"group": "DROPPED", "name": "Home Couture", "status": "On time", "type": "WALLPAPER", "customer": "Home Couture", "waiting": "", "acetates": "", "screens": "#1 NEED TO BE RESHOOTED", "approver": "PPM", "notes": "", "launch": "", "trials_due": ""}, {"group": "DROPPED", "name": "KATARA PAISLEY", "status": "On time", "type": "WALLPAPER", "customer": "Schumacher Transitions", "waiting": "", "acetates": "", "screens": "??", "approver": "PPM", "notes": "DROPPED - hand block printed in India, cannot produce at Paramount", "launch": "", "trials_due": ""}, {"group": "DROPPED", "name": "OCTAVIA", "status": "On time", "type": "GRASSCLOTH", "customer": "Schumacher Swift Launch", "waiting": "", "acetates": "", "screens": "YES", "approver": "PPM", "notes": "", "launch": "", "trials_due": ""}, {"group": "DROPPED", "name": "OCTAVIA", "status": "On time", "type": "GRASSCLOTH", "customer": "Schumacher Swift Launch", "waiting": "", "acetates": "", "screens": "YES", "approver": "PPM", "notes": "", "launch": "", "trials_due": ""}, {"group": "DROPPED", "name": "OCTAVIA", "status": "On time", "type": "GRASSCLOTH", "customer": "Schumacher Swift Launch", "waiting": "", "acetates": "", "screens": "YES", "approver": "PPM", "notes": "", "launch": "", "trials_due": ""}, {"group": "DROPPED", "name": "OCTAVIA", "status": "On time", "type": "GRASSCLOTH", "customer": "Schumacher Swift Launch", "waiting": "", "acetates": "", "screens": "YES", "approver": "PPM", "notes": "", "launch": "", "trials_due": ""}, {"group": "DROPPED", "name": "OCTAVIA", "status": "On time", "type": "GRASSCLOTH", "customer": "Schumacher Swift Launch", "waiting": "", "acetates": "", "screens": "YES", "approver": "PPM", "notes": "", "launch": "", "trials_due": ""}, {"group": "DROPPED", "name": "SPRINGS STRIPE", "status": "On time", "type": "FABRIC", "customer": "Schumacher NYC Studio", "waiting": "", "acetates": "", "screens": "YES", "approver": "Hilary", "notes": "WAITTING FOR FILMS,ART WORK", "launch": "", "trials_due": ""}, {"group": "DROPPED", "name": "TOULA KEY-WP", "status": "On time", "type": "GRASSCLOTH", "customer": "", "waiting": "", "acetates": "", "screens": "", "approver": "PPM", "notes": "", "launch": "", "trials_due": ""}, {"group": "DROPPED", "name": "TWO PROCESS WALLCOVERING", "status": "On time", "type": "WALLPAPER", "customer": "Schumacher NYC Studio", "waiting": "", "acetates": "", "screens": "", "approver": "Natalie", "notes": "", "launch": "", "trials_due": ""}, {"group": "DROPPED", "name": "WAVE (TASMAN )", "status": "On time", "type": "WALLPAPER", "customer": "Patterson Flynn", "waiting": "", "acetates": "YES", "screens": "YES", "approver": "PPM", "notes": "Acetates printed 8/28", "launch": "", "trials_due": ""}, {"group": "DROPPED", "name": "WAVE (TASMAN )", "status": "On time", "type": "FABRIC", "customer": "Patterson Flynn", "waiting": "", "acetates": "YES", "screens": "YES", "approver": "PPM", "notes": "Acetates printed 8/28", "launch": "", "trials_due": ""}, {"group": "DROPPED", "name": "Acanthus Stripe", "status": "On time", "type": "FABRIC", "customer": "Schumacher Transitions", "waiting": "", "acetates": "NO", "screens": "NO", "approver": "PPM", "notes": "waiting for samples and screen", "launch": "", "trials_due": ""}, {"group": "DROPPED", "name": "METALLIC ON SOFT VELVET", "status": "On time", "type": "FABRIC", "customer": "Schumacher Hospitality", "waiting": "", "acetates": "YES", "screens": "NO", "approver": "PPM", "notes": "NEVER GET BACK FROM CUSTOMER", "launch": "", "trials_due": ""}, {"group": "DROPPED", "name": "SUFFOLK DAMASK", "status": "On time", "type": "WALLPAPER", "customer": "Schumacher NYC Studio", "waiting": "", "acetates": "YES", "screens": "YES", "approver": "Hilary", "notes": "", "launch": "", "trials_due": ""}, {"group": "DROPPED", "name": "Tulip / Tillett BESPOKE", "status": "On time", "type": "FABRIC", "customer": "Tillett", "waiting": "", "acetates": "", "screens": "", "approver": "PPM", "notes": "", "launch": "", "trials_due": ""}, {"group": "DROPPED", "name": "Iris / Tillett BESPOKE", "status": "On time", "type": "FABRIC", "customer": "Tillett", "waiting": "", "acetates": "", "screens": "", "approver": "PPM", "notes": "", "launch": "", "trials_due": ""}, {"group": "DROPPED", "name": "Happy Garden", "status": "May be late", "type": "FABRIC", "customer": "Schumacher Transitions", "waiting": "", "acetates": "", "screens": "", "approver": "Javier", "notes": "", "launch": "", "trials_due": ""}, {"group": "Re-engravings", "name": "Exotic Butterfly", "status": "On time", "type": "WALLPAPER", "customer": "Schumacher NYC Studio", "waiting": "", "acetates": "", "screens": "", "approver": "", "notes": "", "launch": "", "trials_due": ""}, {"group": "Re-engravings", "name": "Zebra Palm Sisal", "status": "On time", "type": "", "customer": "", "waiting": "", "acetates": "", "screens": "", "approver": "", "notes": "", "launch": "", "trials_due": ""}, {"group": "Re-engravings", "name": "Octavia Sisal", "status": "On time", "type": "GRASSCLOTH", "customer": "Schumacher NYC Studio", "waiting": "", "acetates": "", "screens": "", "approver": "", "notes": "", "launch": "", "trials_due": ""}, {"group": "Re-engravings", "name": "Links II", "status": "On time", "type": "FABRIC", "customer": "Schumacher Transitions", "waiting": "", "acetates": "", "screens": "", "approver": "PPM", "notes": "", "launch": "", "trials_due": ""}, {"group": "Re-engravings", "name": "Katsugi", "status": "On time", "type": "FABRIC", "customer": "Schumacher NYC Studio", "waiting": "", "acetates": "", "screens": "", "approver": "", "notes": "", "launch": "", "trials_due": ""}, {"group": "Re-engravings", "name": "Ripple Sisal", "status": "On time", "type": "GRASSCLOTH", "customer": "", "waiting": "Compare file to screen", "acetates": "", "screens": "", "approver": "", "notes": "", "launch": "", "trials_due": ""}, {"group": "Re-engravings", "name": "Ripple Sisal", "status": "", "type": "GRASSCLOTH", "customer": "Schumacher NYC Studio", "waiting": "", "acetates": "", "screens": "", "approver": "", "notes": "", "launch": "", "trials_due": ""}, {"group": "Re-engravings", "name": "Twiggy", "status": "", "type": "WALLPAPER", "customer": "", "waiting": "new screens", "acetates": "", "screens": "", "approver": "", "notes": "", "launch": "", "trials_due": ""}, {"group": "Re-engravings", "name": "La Jolla", "status": "", "type": "WALLPAPER", "customer": "", "waiting": "new screens", "acetates": "", "screens": "", "approver": "", "notes": "", "launch": "", "trials_due": ""}, {"group": "Re-engravings", "name": "SIGOURNEY", "status": "", "type": "WALLPAPER", "customer": "Quadrille", "waiting": "new screens", "acetates": "", "screens": "", "approver": "PPM", "notes": "", "launch": "", "trials_due": ""}, {"group": "Re-engravings", "name": "Imperial Trellis", "status": "", "type": "GRASSCLOTH", "customer": "", "waiting": "Awaiting Feedback", "acetates": "", "screens": "", "approver": "PPM", "notes": "", "launch": "", "trials_due": ""}, {"group": "Re-engravings", "name": "Country Check", "status": "", "type": "", "customer": "", "waiting": "Files from client", "acetates": "", "screens": "", "approver": "", "notes": "", "launch": "", "trials_due": ""}, {"group": "Re-engravings", "name": "Bijou Stripe", "status": "", "type": "", "customer": "Quadrille", "waiting": "Files from client", "acetates": "", "screens": "", "approver": "Javier", "notes": "", "launch": "", "trials_due": ""}, {"group": "Re-engravings", "name": "Sea Island", "status": "", "type": "FABRIC", "customer": "Carlton V", "waiting": "Files from client", "acetates": "", "screens": "", "approver": "", "notes": "", "launch": "", "trials_due": ""}, {"group": "Re-engravings", "name": "Cirrus Clouds", "status": "", "type": "WALLPAPER", "customer": "", "waiting": "new screens", "acetates": "", "screens": "", "approver": "", "notes": "", "launch": "", "trials_due": ""}, {"group": "Re-engravings", "name": "Tea Table", "status": "", "type": "FABRIC", "customer": "Carlton V", "waiting": "new screens", "acetates": "", "screens": "", "approver": "", "notes": "", "launch": "", "trials_due": ""}, {"group": "Re-engravings", "name": "Serallo Mosaic", "status": "", "type": "", "customer": "Carlton V", "waiting": "", "acetates": "", "screens": "", "approver": "", "notes": "", "launch": "", "trials_due": ""}, {"group": "Re-engravings", "name": "Chalfont", "status": "On time", "type": "WALLPAPER", "customer": "Schumacher Transitions", "waiting": "", "acetates": "", "screens": "", "approver": "PPM", "notes": "", "launch": "", "trials_due": ""}, {"group": "Re-engravings", "name": "Borneo", "status": "", "type": "GRASSCLOTH", "customer": "", "waiting": "new screens", "acetates": "", "screens": "", "approver": "PPM", "notes": "", "launch": "", "trials_due": ""}];
+  const sip  = DATA.filter(i=>i.group==='Unknown');
+  const late = DATA.filter(i=>['May be late','Late'].includes(i.status) && i.group!=='APPROVED');
+  const reeng= DATA.filter(i=>i.group==='Re-engravings');
+  const TC   = {GRASSCLOTH:'#2ea043',FABRIC:'#7c6af5',WALLPAPER:'#e3a341',PAPERWEAVE:'#58a6ff',Other:'#8b949e'};
+
+  // Late
+  const lateEl = document.getElementById('passaic-late');
+  late.forEach(i=>{
+    const c = i.status==='Late'?'#e05c5c':'#d29922';
+    lateEl.innerHTML += `<div style="padding:7px 10px;margin-bottom:4px;background:var(--bg2);border:1px solid var(--border);border-left:3px solid ${c};border-radius:3px">
+      <div style="font-size:11px;font-weight:600">${i.name}</div>
+      <div style="font-size:10px;color:${c};margin-top:2px">${i.status} · ${i.type||'—'}</div>
+      ${i.waiting&&i.waiting!=='nan'?`<div style="font-size:10px;color:var(--text2);margin-top:2px">Waiting: ${i.waiting}</div>`:''}
+    </div>`;
+  });
+
+  // Types
+  const types={};
+  sip.forEach(i=>{const t=i.type||'Other';types[t]=(types[t]||0)+1;});
+  const typeEl = document.getElementById('passaic-types');
+  Object.entries(types).sort((a,b)=>b[1]-a[1]).forEach(([t,c])=>{
+    const pct=Math.round(c/sip.length*100);
+    const col=TC[t]||'#8b949e';
+    typeEl.innerHTML+=`<div style="margin-bottom:8px">
+      <div style="display:flex;justify-content:space-between;margin-bottom:3px">
+        <span style="font-size:11px">${t}</span>
+        <span style="font-family:var(--mono);font-size:11px;color:${col}">${c}</span>
+      </div>
+      <div style="height:5px;background:var(--bg);border-radius:3px;overflow:hidden">
+        <div style="height:100%;width:${pct}%;background:${col};border-radius:3px"></div>
+      </div>
+    </div>`;
+  });
+
+  // Re-engravings
+  const reengEl = document.getElementById('passaic-reeng');
+  reeng.slice(0,15).forEach(i=>{
+    const c=i.status==='May be late'?'#d29922':i.status==='Late'?'#e05c5c':'#8b949e';
+    reengEl.innerHTML+=`<div style="padding:5px 8px;margin-bottom:3px;background:var(--bg2);border:1px solid var(--border);border-radius:3px;display:flex;justify-content:space-between">
+      <span style="font-size:11px">${i.name}</span>
+      <span style="font-size:9px;color:${c}">${i.status||'—'}</span>
+    </div>`;
+  });
+
+  // Full table
+  const tbody = document.getElementById('p-tbody');
+  sip.forEach(i=>{
+    const sc=i.status==='May be late'?'#d29922':i.status==='Late'?'#e05c5c':i.status==='On time'?'#3fb950':'var(--text2)';
+    const ac=i.acetates==='YES'?{t:'✓',c:'#3fb950'}:{t:'○',c:'#4a5568'};
+    const scr=i.screens==='YES'?{t:'✓',c:'#3fb950'}:{t:'○',c:'#4a5568'};
+    tbody.innerHTML+=`<tr style="border-bottom:1px solid var(--border)">
+      <td style="padding:7px 8px;font-size:11px;font-weight:500">${i.name}</td>
+      <td style="padding:7px 8px;font-size:10px;color:${TC[i.type]||'var(--text2)'}">${i.type||'—'}</td>
+      <td style="padding:7px 8px;font-size:10px;color:var(--text2)">${(i.customer||'').replace('Schumacher ','Schu ')}</td>
+      <td style="padding:7px 8px;font-size:10px;color:var(--text2)">${(i.approver||'').split(' ')[0]}</td>
+      <td style="padding:7px 8px;text-align:center;font-size:12px;font-weight:700;color:${ac.c}">${ac.t}</td>
+      <td style="padding:7px 8px;text-align:center;font-size:12px;font-weight:700;color:${scr.c}">${scr.t}</td>
+      <td style="padding:7px 8px;font-size:10px;color:${sc}">${i.status||'—'}</td>
+      <td style="padding:7px 8px;font-size:10px;color:var(--text2)">${i.waiting&&i.waiting!=='nan'?i.waiting:'—'}</td>
+    </tr>`;
+  });
+})();
+</script>
+
+<a href="index.html" class="back">← Management</a>
+
+<script>
+// ── CLOCK
+function updateClock(){
+  const now=new Date();
+  document.getElementById('clock').textContent=now.toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit',hour12:true});
+  document.getElementById('datestr').textContent=now.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'});
+}
+updateClock(); setInterval(updateClock,30000);
+
+// ── FUNNEL DATA
+const FUNNEL=[
+  {status:'Orders Unallocated',orders:228,yards:124493,color:'#58a6ff'},
+  {status:'Waiting for Material',orders:357,yards:116245,color:'#e05c5c'},
+  {status:'In Mixing Queue',orders:268,yards:67554,color:'#d29922'},
+  {status:'Mixing',orders:12,yards:276,color:'#d29922'},
+  {status:'Strike Off',orders:17,yards:1752,color:'#7c6af5'},
+  {status:'Waiting for Approval',orders:92,yards:24789,color:'#d29922'},
+  {status:'Approved to Print',orders:84,yards:27272,color:'#3fb950'},
+  {status:'In Progress',orders:116,yards:21444,color:'#3fb950'},
+  {status:'In Packing',orders:192,yards:29474,color:'#58a6ff'},
+  {status:'Shipped',orders:84,yards:2345,color:'#3fb950'},
+];
+const maxYards=Math.max(...FUNNEL.map(r=>r.yards));
+const funnelEl=document.getElementById('funnel-sp');
+FUNNEL.forEach(r=>{
+  const pct=Math.round(r.yards/maxYards*100);
+  funnelEl.innerHTML+=`<div class="funnel-row">
+    <div class="funnel-status"><div class="f-dot" style="background:${r.color}"></div>${r.status}</div>
+    <div class="funnel-bar-wrap"><div class="funnel-bar" style="width:${pct}%;background:${r.color};opacity:.7"></div></div>
+    <div class="funnel-orders" style="color:${r.color}">${r.orders}</div>
+    <div class="funnel-yds">${r.yards.toLocaleString()}</div>
+  </div>`;
+});
+
+// ── WEEKLY CHART
+const wCtx=document.getElementById('weeklyChart').getContext('2d');
+new Chart(wCtx,{type:'bar',data:{
+  labels:['Wk 1','Wk 2','Wk 3','Wk 4'],
+  datasets:[
+    {label:'Grass Cloth CY',data:[7484,7072,4247,5116],backgroundColor:'rgba(46,160,67,.8)',borderRadius:3,barPercentage:.5},
+    {label:'Fabric CY',data:[3915,4030,2856,598],backgroundColor:'rgba(124,106,245,.8)',borderRadius:3,barPercentage:.5},
+    {label:'Wallpaper CY',data:[11059,13004,6906,6992],backgroundColor:'rgba(227,163,65,.8)',borderRadius:3,barPercentage:.5},
+  ]
+},{options:{
+  responsive:true,maintainAspectRatio:true,
+  plugins:{
+    legend:{labels:{color:'#8b949e',font:{size:10},boxWidth:10,padding:10}},
+    tooltip:{backgroundColor:'#1c2330',borderColor:'#2d3748',borderWidth:1,titleColor:'#e6edf3',bodyColor:'#8b949e',padding:8,callbacks:{label:ctx=>` ${ctx.dataset.label}: ${ctx.raw.toLocaleString()} yds`}}
+  },
+  scales:{
+    x:{grid:{color:'rgba(45,55,72,.5)'},ticks:{color:'#8b949e',font:{size:10}},stacked:true},
+    y:{grid:{color:'rgba(45,55,72,.5)'},ticks:{color:'#8b949e',font:{size:10},callback:v=>v>=1000?Math.round(v/1000)+'K':v},stacked:true}
+  }
+}});
+
+// ── WIP AGING CHART
+const wipCtx=document.getElementById('wipChart').getContext('2d');
+new Chart(wipCtx,{type:'bar',data:{
+  labels:['Jul','Aug','Sep','Oct','Nov','Dec','Jan'],
+  datasets:[
+    {label:'Over Lead Time',data:[50030,33060,30840,28390,46130,36480,34949],backgroundColor:'rgba(224,92,92,.75)',borderRadius:2,barPercentage:.5},
+    {label:'Remaining WIP',data:[21540,34970,34940,37190,17920,35370,34140],backgroundColor:'rgba(88,166,255,.3)',borderRadius:2,barPercentage:.5},
+  ]
+},{options:{
+  responsive:true,maintainAspectRatio:true,
+  plugins:{
+    legend:{labels:{color:'#8b949e',font:{size:10},boxWidth:10,padding:10}},
+    tooltip:{backgroundColor:'#1c2330',borderColor:'#2d3748',borderWidth:1,titleColor:'#e6edf3',bodyColor:'#8b949e',padding:8,callbacks:{label:ctx=>` ${ctx.dataset.label}: ${ctx.raw.toLocaleString()} yds`}}
+  },
+  scales:{
+    x:{grid:{color:'rgba(45,55,72,.5)'},ticks:{color:'#8b949e',font:{size:10}},stacked:true},
+    y:{grid:{color:'rgba(45,55,72,.5)'},ticks:{color:'#8b949e',font:{size:10},callback:v=>v>=1000?Math.round(v/1000)+'K':v},stacked:true}
+  }
+}});
+</script>
+</body>
+</html>

@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Paramount Prints · Operations Hub</title>
+<link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f8f5f0;--ink:#0f0e0c;--muted:#8a8478;--rule:#ddd8cf;
+  --dig:#1a3d6b;--dig-lt:#e8eef7;
+  --sp:#6b1a1a;--sp-lt:#f7e8e8;
+  --mgmt:#2a1f0e;--mgmt-lt:#f9f4ec;
+  --font-hd:'Libre Baskerville',Georgia,serif;
+  --font-bd:'DM Sans',sans-serif;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;font-family:var(--font-bd)}
+body{background:var(--bg);display:flex;flex-direction:column;min-height:100vh}
+
+.masthead{background:var(--ink);padding:28px 48px;display:flex;align-items:flex-end;justify-content:space-between}
+.logo{font-family:var(--font-hd);font-size:28px;font-weight:700;color:#f8f5f0;letter-spacing:-.5px}
+.logo span{color:#c8a96e}
+.logo-sub{font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:rgba(248,245,240,.35);margin-top:6px}
+.status{display:flex;align-items:center;gap:8px;font-size:10px;color:rgba(248,245,240,.5)}
+.sdot{width:6px;height:6px;border-radius:50%;background:#4fcd8a;animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+
+.hero{padding:56px 48px 40px;max-width:1100px;margin:0 auto;width:100%}
+.hero-label{font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);margin-bottom:16px}
+.hero-title{font-family:var(--font-hd);font-size:clamp(32px,4vw,52px);font-weight:700;line-height:1.05;letter-spacing:-.5px;color:var(--ink);margin-bottom:16px}
+.hero-desc{font-size:14px;color:var(--muted);max-width:560px;line-height:1.7}
+
+.cards{padding:0 48px 56px;max-width:1100px;margin:0 auto;width:100%;display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+
+.card{border-radius:8px;overflow:hidden;text-decoration:none;display:block;transition:transform .2s,box-shadow .2s;position:relative}
+.card:hover{transform:translateY(-4px);box-shadow:0 12px 40px rgba(0,0,0,.12)}
+.card-top{padding:28px 28px 20px;position:relative}
+.card-icon{font-size:28px;margin-bottom:14px;display:block}
+.card-label{font-size:9px;letter-spacing:.15em;text-transform:uppercase;margin-bottom:8px;font-weight:600}
+.card-title{font-family:var(--font-hd);font-size:22px;font-weight:700;line-height:1.1;margin-bottom:10px}
+.card-desc{font-size:12px;line-height:1.7;opacity:.75}
+.card-bottom{padding:16px 28px;display:flex;align-items:center;justify-content:space-between;border-top:1px solid rgba(0,0,0,.06)}
+.card-owner{font-size:10px;letter-spacing:.04em;opacity:.6}
+.card-arrow{font-size:16px;opacity:.4}
+.card:hover .card-arrow{opacity:.8}
+
+/* Management card */
+.card-mgmt{background:var(--mgmt-lt);border:1px solid #e8e0d0}
+.card-mgmt .card-label{color:#8a7450}
+.card-mgmt .card-title{color:var(--mgmt)}
+.card-mgmt .card-desc{color:#4a3f2e}
+.card-mgmt .card-bottom{background:rgba(42,31,14,.04)}
+.card-mgmt .card-owner{color:#6a5a3e}
+
+/* Digital card */
+.card-dig{background:var(--dig-lt);border:1px solid #c8d8ef}
+.card-dig .card-label{color:#3a6090}
+.card-dig .card-title{color:var(--dig)}
+.card-dig .card-desc{color:#2a3a4a}
+.card-dig .card-bottom{background:rgba(26,61,107,.04)}
+.card-dig .card-owner{color:#4a6080}
+
+/* Screen Print card */
+.card-sp{background:var(--sp-lt);border:1px solid #efcac8}
+.card-sp .card-label{color:#903a3a}
+.card-sp .card-title{color:var(--sp)}
+.card-sp .card-desc{color:#4a2a2a}
+.card-sp .card-bottom{background:rgba(107,26,26,.04)}
+.card-sp .card-owner{color:#804040}
+
+/* Info strip */
+.info-strip{background:var(--ink);padding:16px 48px;margin-top:auto;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px}
+.info-item{font-size:10px;color:rgba(248,245,240,.4);display:flex;align-items:center;gap:6px}
+.info-dot{width:4px;height:4px;border-radius:50%;background:rgba(248,245,240,.25)}
+
+@media(max-width:900px){.cards{grid-template-columns:1fr}.masthead,.hero,.cards{padding-left:24px;padding-right:24px}}
+</style>
+</head>
+<body>
+
+<div class="masthead">
+  <div>
+    <div class="logo">Paramount <span>Prints</span></div>
+    <div class="logo-sub">Operations Hub</div>
+  </div>
+  <div class="status"><div class="sdot"></div>X-LIFT Connected · Mar 14, 2026</div>
+</div>
+
+<div class="hero">
+  <div class="hero-label">Select your dashboard</div>
+  <div class="hero-title">Where do you<br>need to be today?</div>
+  <div class="hero-desc">Live operational data from X-LIFT. Financial data from Vena (monthly). Choose your view below.</div>
+</div>
+
+<div class="cards">
+
+  <a href="paramount-cockpit.html" class="card card-mgmt">
+    <div class="card-top">
+      <span class="card-icon">◈</span>
+      <div class="card-label">Management · 609 · 610 · 612</div>
+      <div class="card-title">Executive Cockpit</div>
+      <div class="card-desc">Consolidated P&L, EBITDA vs plan, production KPIs, WIP pipeline, and inventory overview across both locations. Monthly Vena financials + real-time LIFT operations.</div>
+    </div>
+    <div class="card-bottom">
+      <div class="card-owner">Peter Webster · Emily H · FSCO</div>
+      <div class="card-arrow">→</div>
+    </div>
+  </a>
+
+  <a href="brooklyn-daily.html" class="card card-dig">
+    <div class="card-top">
+      <span class="card-icon">⬡</span>
+      <div class="card-label">609 · Brooklyn Navy Yard · Digital</div>
+      <div class="card-title">BNY Daily Ops</div>
+      <div class="card-desc">Machine utilization, production by category, WIP aging, held-to-invoice balance, and LIFT status funnel. Shelby leads production · Phil leads shipping.</div>
+    </div>
+    <div class="card-bottom">
+      <div class="card-owner">Brynn Lawlor · Chandler · Adam</div>
+      <div class="card-arrow">→</div>
+    </div>
+  </a>
+
+  <a href="passaic-daily.html" class="card card-sp">
+    <div class="card-top">
+      <span class="card-icon">⬢</span>
+      <div class="card-label">610 · Passaic · Screen Print</div>
+      <div class="card-title">Passaic Daily Ops</div>
+      <div class="card-desc">Production by material type (Grass/Fabric/Wallpaper), color yards vs target, waste % by category, mixing queue depth, WIP aging, and 30-step LIFT pipeline.</div>
+    </div>
+    <div class="card-bottom">
+      <div class="card-owner">Wendy Reger · Marcos · Armando · Roberto</div>
+      <div class="card-arrow">→</div>
+    </div>
+  </a>
+
+</div>
+
+<div class="info-strip">
+  <div class="info-item"><div class="info-dot"></div>Operations data: X-LIFT ERP · refreshed on CSV upload</div>
+  <div class="info-item"><div class="info-dot"></div>Financial data: Vena · updated monthly</div>
+  <div class="info-item"><div class="info-dot"></div>paramountprints-dash.netlify.app</div>
+</div>
+
+</body>
+</html>
