@@ -1,112 +1,96 @@
-// netlify/edge-functions/lift.js
-// Proxies requests to X-LIFT API endpoints using session cookie auth
-
-const LIFT_BASE_URL = 'https://bny.lifterp.com';
-
-const ENDPOINTS = {
-  orders:             '/ords/lift/erp/flush/ondemand/1162/orders/orders.csv',
-  products:           '/ords/lift/erp/flush/ondemand/1162/products/products.csv',
-  shipments:          '/ords/lift/erp/flush/ondemand/1162/shipments/shipments.csv',
-  shipmentshub:       '/ords/lift/erp/flush/ondemand/1162/shipmentshub/shipmentshub.csv',
-  invoiceshub:        '/ords/lift/erp/flush/ondemand/1162/invoiceshub/invoiceshub.csv',
-  InvoiceAdjustments: '/ords/lift/erp/flush/ondemand/1162/InvoiceAdjustments/InvoiceAdjustments.csv',
-  InvoiceSummary:     '/ords/lift/erp/flush/ondemand/1162/InvoiceSummary/InvoiceSummary.csv',
-  CreditSummary:      '/ords/lift/erp/flush/ondemand/1162/CreditSummary/CreditSummary.csv',
-  OnHandYards:        '/ords/lift/erp/flush/ondemand/1162/OnHandYards/OnHandYards.csv',
-  po:                 '/ords/lift/erp/flush/ondemand/1162/po/po.csv',
-  printJobs:          '/ords/lift/erp/flush/ondemand/1162/printJobs/printJobs.csv',
-  po_details:         '/ords/lift/erp/flush/ondemand/1162/po_details/po_details.csv',
-};
-
-export default async function handler(req, context) {
-  const corsHeaders = {
-    'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Methods': 'GET, OPTIONS',
-    'Access-Control-Allow-Headers': 'Content-Type',
-  };
-
-  if (req.method === 'OPTIONS') {
-    return new Response(null, { status: 204, headers: corsHeaders });
+export default async (request, context) => {
+  // Handle CORS preflight
+  if (request.method === 'OPTIONS') {
+    return new Response(null, {
+      status: 204,
+      headers: {
+        'Access-Control-Allow-Origin': 'https://paramountprints-dash.netlify.app',
+        'Access-Control-Allow-Methods': 'GET, OPTIONS',
+        'Access-Control-Allow-Headers': 'Content-Type',
+      }
+    });
   }
 
-  if (req.method !== 'GET') {
-    return new Response('Method not allowed', { status: 405, headers: corsHeaders });
+  const url = new URL(request.url);
+
+  // Extract the CSV name from the path: /api/lift/Data_Orders_All
+  const pathParts = url.pathname.split('/');
+  const name = pathParts[pathParts.length - 1];
+
+  if (!name || name === 'lift') {
+    return new Response(JSON.stringify({ error: 'Missing CSV name. Usage: /api/lift/{CSVName}' }), {
+      status: 400,
+      headers: { 'Content-Type': 'application/json' }
+    });
   }
+
+  const cookie = Deno.env.get('LIFT_SESSION_COOKIE');
+
+  if (!cookie) {
+    return new Response(JSON.stringify({ error: 'LIFT_SESSION_COOKIE environment variable not set' }), {
+      status: 500,
+      headers: { 'Content-Type': 'application/json' }
+    });
+  }
+
+  const liftUrl = `https://bny.lifterp.com/ords/lift/erp/flush/ondemand/1162/${name}/${name}.csv`;
 
   try {
-    const url = new URL(req.url);
-    const report = url.searchParams.get('report');
-
-    if (!report) {
-      return new Response(JSON.stringify({
-        error: 'Missing ?report= parameter',
-        available: Object.keys(ENDPOINTS)
-      }), {
-        status: 400,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
-      });
-    }
-
-    const endpoint = ENDPOINTS[report];
-    if (!endpoint) {
-      return new Response(JSON.stringify({
-        error: `Unknown report: ${report}`,
-        available: Object.keys(ENDPOINTS)
-      }), {
-        status: 404,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
-      });
-    }
-
-    const sessionCookie = Netlify.env.get('LIFT_SESSION_COOKIE');
-
-    if (!sessionCookie) {
-      return new Response(JSON.stringify({
-        error: 'LIFT_SESSION_COOKIE not configured in Netlify env vars'
-      }), {
-        status: 500,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
-      });
-    }
-
-    // Fetch and stream directly — avoids timeout on large files like orders
-    const liftRes = await fetch(`${LIFT_BASE_URL}${endpoint}?`, {
+    const response = await fetch(liftUrl, {
       headers: {
-        'Cookie': sessionCookie,
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
-        'Referer': `${LIFT_BASE_URL}/ords/lift/lift/f?p=100:9900`,
-      },
-      redirect: 'follow',
+        'Cookie': `ORA_WWV_APP_100=${cookie}`,
+        'Accept': 'text/csv,*/*',
+        'User-Agent': 'ParamountPrints-Dashboard/1.0',
+      }
     });
 
-    if (!liftRes.ok) {
-      return new Response(JSON.stringify({
-        error: `LIFT returned ${liftRes.status}`
-      }), {
-        status: liftRes.status,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
-      });
+    if (!response.ok) {
+      return new Response(
+        JSON.stringify({ error: `LIFT returned HTTP ${response.status}`, url: liftUrl }),
+        {
+          status: response.status,
+          headers: { 'Content-Type': 'application/json' }
+        }
+      );
     }
 
-    return new Response(liftRes.body, {
+    const csv = await response.text();
+
+    // Basic sanity check — if we got HTML back, the cookie is probably expired
+    if (csv.trim().startsWith('<!DOCTYPE') || csv.trim().startsWith('<html')) {
+      return new Response(
+        JSON.stringify({
+          error: 'LIFT returned HTML instead of CSV — session cookie is likely expired',
+          fix: 'Refresh ORA_WWV_APP_100 cookie in DevTools and update LIFT_SESSION_COOKIE in Netlify env vars'
+        }),
+        {
+          status: 401,
+          headers: { 'Content-Type': 'application/json' }
+        }
+      );
+    }
+
+    return new Response(csv, {
       status: 200,
       headers: {
-        ...corsHeaders,
-        'Content-Type': 'text/csv; charset=utf-8',
-        'Cache-Control': 'no-cache',
-        'X-Report': report,
-        'X-Timestamp': new Date().toISOString(),
-      },
+        'Content-Type': 'text/csv',
+        'Access-Control-Allow-Origin': 'https://paramountprints-dash.netlify.app',
+        'Cache-Control': 'no-store',
+        'X-LIFT-Source': liftUrl,
+      }
     });
 
   } catch (err) {
-    return new Response(JSON.stringify({ error: err.message }), {
-      status: 500,
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' }
-    });
+    return new Response(
+      JSON.stringify({ error: `Proxy fetch failed: ${err.message}` }),
+      {
+        status: 500,
+        headers: { 'Content-Type': 'application/json' }
+      }
+    );
   }
-}
+};
 
 export const config = {
-  path: '/api/lift',
+  path: '/api/lift/:name',
 };
