@@ -24,6 +24,8 @@ export default async (request, context) => {
     });
   }
 
+  // Cookie stored as full "name=value" pair in Netlify env var
+  // e.g. LIFT_SESSION_COOKIE = "ORA_WWV-R15muB6cIPZZ4GVaomS-uSF1=ORA_WWV-R15muB6cIPZZ4GVaomS-uSF1"
   const cookie = Deno.env.get('LIFT_SESSION_COOKIE');
 
   if (!cookie) {
@@ -38,7 +40,7 @@ export default async (request, context) => {
   try {
     const response = await fetch(liftUrl, {
       headers: {
-        'Cookie': `ORA_WWV_APP_100=${cookie}`,
+        'Cookie': cookie,
         'Accept': 'text/csv,*/*',
         'User-Agent': 'ParamountPrints-Dashboard/1.0',
       }
@@ -61,7 +63,7 @@ export default async (request, context) => {
       return new Response(
         JSON.stringify({
           error: 'LIFT returned HTML instead of CSV — session cookie is likely expired',
-          fix: 'Refresh ORA_WWV_APP_100 cookie in DevTools and update LIFT_SESSION_COOKIE in Netlify env vars'
+          fix: 'Refresh cookie in DevTools and update LIFT_SESSION_COOKIE in Netlify env vars as full name=value pair'
         }),
         {
           status: 401,
