@@ -11,6 +11,8 @@ export default async (request, context) => {
     });
   }
 
+  // Cookie stored as full "name=value" pair in Netlify env var
+  // e.g. LIFT_SESSION_COOKIE = "ORA_WWV-R15muB6cIPZZ4GVaomS-uSF1=ORA_WWV-R15muB6cIPZZ4GVaomS-uSF1"
   const cookie = Deno.env.get('LIFT_SESSION_COOKIE');
   const timestamp = new Date().toISOString();
 
@@ -24,7 +26,7 @@ export default async (request, context) => {
         lift_reachable: { pass: null, message: 'Skipped — no cookie to test with' },
         session_valid: { pass: null, message: 'Skipped — no cookie to test with' },
       },
-      action_required: 'Add LIFT_SESSION_COOKIE to Netlify environment variables'
+      action_required: 'Add LIFT_SESSION_COOKIE to Netlify environment variables as full name=value pair'
     }), {
       status: 500,
       headers: {
@@ -46,7 +48,7 @@ export default async (request, context) => {
   try {
     const response = await fetch(testUrl, {
       headers: {
-        'Cookie': `ORA_WWV_APP_100=${cookie}`,
+        'Cookie': cookie,
         'Accept': 'text/csv,*/*',
         'User-Agent': 'ParamountPrints-Dashboard/1.0',
       }
@@ -102,7 +104,7 @@ export default async (request, context) => {
 
   if (!allGood) {
     result.action_required = sessionValid === false
-      ? 'Refresh ORA_WWV_APP_100 in DevTools → update LIFT_SESSION_COOKIE in Netlify env vars → redeploy'
+      ? 'Refresh cookie in DevTools → update LIFT_SESSION_COOKIE in Netlify env vars as full name=value pair → trigger redeploy'
       : errorMessage;
   }
 
