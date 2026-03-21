@@ -15,6 +15,7 @@ const ENDPOINTS = {
   OnHandYards:        '/ords/lift/erp/flush/ondemand/1162/OnHandYards/OnHandYards.csv',
   po:                 '/ords/lift/erp/flush/ondemand/1162/po/po.csv',
   printJobs:          '/ords/lift/erp/flush/ondemand/1162/printJobs/printJobs.csv',
+  po_details:         '/ords/lift/erp/flush/ondemand/1162/po_details/po_details.csv',
 };
 
 export default async function handler(req, context) {
@@ -37,9 +38,9 @@ export default async function handler(req, context) {
     const report = url.searchParams.get('report');
 
     if (!report) {
-      return new Response(JSON.stringify({ 
-        error: 'Missing ?report= parameter', 
-        available: Object.keys(ENDPOINTS) 
+      return new Response(JSON.stringify({
+        error: 'Missing ?report= parameter',
+        available: Object.keys(ENDPOINTS)
       }), {
         status: 400,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' }
@@ -48,29 +49,28 @@ export default async function handler(req, context) {
 
     const endpoint = ENDPOINTS[report];
     if (!endpoint) {
-      return new Response(JSON.stringify({ 
-        error: `Unknown report: ${report}`, 
-        available: Object.keys(ENDPOINTS) 
+      return new Response(JSON.stringify({
+        error: `Unknown report: ${report}`,
+        available: Object.keys(ENDPOINTS)
       }), {
         status: 404,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' }
       });
     }
 
-    // Get session cookie from Netlify environment variable
     const sessionCookie = Netlify.env.get('LIFT_SESSION_COOKIE');
 
     if (!sessionCookie) {
-      return new Response(JSON.stringify({ 
-        error: 'LIFT_SESSION_COOKIE not configured in Netlify env vars' 
+      return new Response(JSON.stringify({
+        error: 'LIFT_SESSION_COOKIE not configured in Netlify env vars'
       }), {
         status: 500,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' }
       });
     }
 
-    // Fetch the CSV with the session cookie
-    const csvRes = await fetch(`${LIFT_BASE_URL}${endpoint}?`, {
+    // Fetch and stream directly — avoids timeout on large files like orders
+    const liftRes = await fetch(`${LIFT_BASE_URL}${endpoint}?`, {
       headers: {
         'Cookie': sessionCookie,
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
@@ -79,36 +79,24 @@ export default async function handler(req, context) {
       redirect: 'follow',
     });
 
-    if (!csvRes.ok) {
-      return new Response(JSON.stringify({ 
-        error: `LIFT returned ${csvRes.status}` 
+    if (!liftRes.ok) {
+      return new Response(JSON.stringify({
+        error: `LIFT returned ${liftRes.status}`
       }), {
-        status: csvRes.status,
+        status: liftRes.status,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' }
       });
     }
 
-    const csvData = await csvRes.text();
-
-    // Check if we got HTML back (means session expired)
-    if (csvData.trim().startsWith('<')) {
-      return new Response(JSON.stringify({ 
-        error: 'Session expired — update LIFT_SESSION_COOKIE in Netlify env vars' 
-      }), {
-        status: 401,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
-      });
-    }
-
-    return new Response(csvData, {
+    return new Response(liftRes.body, {
       status: 200,
       headers: {
         ...corsHeaders,
-        'Content-Type': 'text/csv',
+        'Content-Type': 'text/csv; charset=utf-8',
         'Cache-Control': 'no-cache',
         'X-Report': report,
         'X-Timestamp': new Date().toISOString(),
-      }
+      },
     });
 
   } catch (err) {
