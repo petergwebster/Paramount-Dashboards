@@ -116,15 +116,6 @@ canvas{max-height:220px}
 .tl.yellow{background:#e6a817}
 .tl.red{background:var(--red)}
 
-/* ── EBITDA BRIDGE ── */
-.bridge{display:flex;flex-direction:column;gap:8px;padding:4px 0}
-.bridge-row{display:flex;align-items:center;gap:10px}
-.bridge-lbl{font-size:11px;color:var(--ink2);width:140px;flex-shrink:0}
-.bridge-bar-wrap{flex:1;position:relative;height:20px}
-.bridge-track{position:absolute;left:0;right:0;top:50%;transform:translateY(-50%);height:4px;background:var(--bg2);border-radius:2px}
-.bridge-fill{position:absolute;top:50%;transform:translateY(-50%);height:14px;border-radius:2px;transition:width .8s ease}
-.bridge-val{font-size:11px;font-weight:600;width:80px;text-align:right;flex-shrink:0}
-
 /* ── SECTION DIVIDER ── */
 .sect{font-family:var(--font-hd);font-size:13px;font-weight:700;color:var(--ink);padding:18px 0 10px;border-top:1px solid var(--rule);margin-top:4px;display:flex;align-items:center;gap:12px}
 .sect-badge{font-family:var(--font-bd);font-size:9px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;padding:3px 10px;border-radius:2px}
@@ -149,8 +140,8 @@ canvas{max-height:220px}
   </div>
   <div class="masthead-right">
     <div class="data-status">
-      <div class="status-item"><div class="status-dot live"></div>X-LIFT Operations · Mar 14, 2026</div>
-      <div class="status-item"><div class="status-dot manual"></div>Vena Financials · Jan 2026</div>
+      <div class="status-item"><div class="status-dot live"></div>X-LIFT Operations · Mar 21, 2026</div>
+      <div class="status-item"><div class="status-dot manual"></div>Vena Financials · Feb 2026</div>
     </div>
     <div class="refresh-zone">
       <div class="refresh-label">Refresh Data</div>
@@ -185,45 +176,45 @@ canvas{max-height:220px}
 <!-- ════════════════════════════════ -->
 <div class="view active" id="view-consolidated">
   <div class="note-bar">
-    <strong>Note:</strong> Financials from Vena (Jan 2026 actuals). OpEx captured at month-end via FSCO/GP — not available in real-time. LIFT production data current as of Mar 14.
+    <strong>Note:</strong> Financials from Vena (Jan–Feb 2026 actuals). Feb 610 COGS includes ~$47K WIP intercompany entry — review with Emily. OpEx captured at month-end via FSCO/GP. LIFT production data current as of Mar 21.
   </div>
 
   <div class="kpi-row">
     <div class="kpi">
       <div class="kpi-bar" style="background:var(--ink)"></div>
-      <div class="kpi-lbl">Jan Revenue (Actual)</div>
-      <div class="kpi-val">$937K</div>
-      <div class="kpi-foot"><span class="delta neg">–$110K vs Plan</span><span style="color:var(--muted)">Plan $1,047K</span></div>
-    </div>
-    <div class="kpi">
-      <div class="kpi-bar" style="background:var(--red)"></div>
-      <div class="kpi-lbl">Jan COGS (Actual)</div>
-      <div class="kpi-val">$964K</div>
-      <div class="kpi-foot"><span class="delta neg">–$116K vs Plan</span><span style="color:var(--muted)">Plan $848K</span></div>
-    </div>
-    <div class="kpi">
-      <div class="kpi-bar" style="background:var(--red)"></div>
-      <div class="kpi-lbl">Jan EBITDA (Actual)</div>
-      <div class="kpi-val" style="color:var(--red)">–$26.5K</div>
-      <div class="kpi-foot"><span class="delta neg">–$226K vs Plan</span><span style="color:var(--muted)">Plan +$200K</span></div>
+      <div class="kpi-lbl">Feb Revenue (Actual)</div>
+      <div class="kpi-val">$990K</div>
+      <div class="kpi-foot"><span class="delta neg">–$61K vs Plan</span><span style="color:var(--muted)">Plan $1,047K</span></div>
     </div>
     <div class="kpi">
       <div class="kpi-bar" style="background:var(--amber)"></div>
-      <div class="kpi-lbl">Jan EBITDA Adj.</div>
-      <div class="kpi-val" style="color:var(--green)">+$188K</div>
-      <div class="kpi-foot"><span class="delta warn">Excl. PW error</span><span style="color:var(--muted)">20% margin</span></div>
+      <div class="kpi-lbl">Feb COGS (Actual)</div>
+      <div class="kpi-val">$916K</div>
+      <div class="kpi-foot"><span class="delta warn">vs Plan $770K</span></div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-bar" style="background:var(--amber)"></div>
+      <div class="kpi-lbl">Feb EBITDA (Actual)</div>
+      <div class="kpi-val" style="color:var(--amber)">+$75K</div>
+      <div class="kpi-foot"><span class="delta warn">7.6% margin</span><span style="color:var(--muted)">Plan $277K</span></div>
     </div>
     <div class="kpi">
       <div class="kpi-bar" style="background:var(--dig)"></div>
-      <div class="kpi-lbl">Digital EBITDA</div>
-      <div class="kpi-val" style="color:var(--green)">+$254K</div>
-      <div class="kpi-foot"><span class="delta pos">+$42K vs Plan</span><span style="color:var(--muted)">48% margin</span></div>
+      <div class="kpi-lbl">Digital Feb EBITDA</div>
+      <div class="kpi-val" style="color:var(--green)">+$179K</div>
+      <div class="kpi-foot"><span class="delta pos">37% margin</span><span style="color:var(--muted)">Plan 40%</span></div>
     </div>
     <div class="kpi">
       <div class="kpi-bar" style="background:var(--sp)"></div>
-      <div class="kpi-lbl">SP EBITDA (Adj.)</div>
-      <div class="kpi-val" style="color:var(--amber)">+$18K</div>
-      <div class="kpi-foot"><span class="delta warn">4.5% margin</span><span style="color:var(--muted)">Plan 12.7%</span></div>
+      <div class="kpi-lbl">SP Feb EBITDA</div>
+      <div class="kpi-val" style="color:var(--red)">–$104K</div>
+      <div class="kpi-foot"><span class="delta neg">–21% margin</span><span style="color:var(--muted)">Plan +$65K</span></div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-bar" style="background:var(--ink)"></div>
+      <div class="kpi-lbl">YTD Revenue (Jan–Feb)</div>
+      <div class="kpi-val">$1.93M</div>
+      <div class="kpi-foot"><span class="delta neg">–$173K vs Plan</span><span style="color:var(--muted)">Plan $2.10M</span></div>
     </div>
   </div>
 
@@ -240,22 +231,57 @@ canvas{max-height:220px}
       <canvas id="conRevChart"></canvas>
     </div>
     <div class="panel">
-      <div class="panel-title">January P&L Summary</div>
+      <div class="panel-title">February P&L Summary</div>
       <div class="panel-sub">609 + 610 + 612 consolidated</div>
       <table class="dt">
         <thead><tr><th>Line Item</th><th>Actual</th><th>Plan</th><th>Var $</th><th>Var %</th></tr></thead>
         <tbody>
-          <tr><td><strong>Revenue</strong></td><td>$937K</td><td>$1,047K</td><td class="neg-cell">–$110K</td><td class="neg-cell">–10.5%</td></tr>
-          <tr><td style="padding-left:16px;color:var(--muted)">609 Digital</td><td>$529K</td><td>$532K</td><td class="neg-cell">–$2K</td><td class="neg-cell">–0.4%</td></tr>
-          <tr><td style="padding-left:16px;color:var(--muted)">610 Screen Print</td><td>$408K</td><td>$516K</td><td class="neg-cell">–$108K</td><td class="neg-cell">–20.9%</td></tr>
-          <tr><td><strong>COGS</strong></td><td>$964K</td><td>$848K</td><td class="neg-cell">–$116K</td><td class="neg-cell">–13.7%</td></tr>
-          <tr><td style="padding-left:16px;color:var(--muted)">609 Digital</td><td>$275K</td><td>$319K</td><td class="pos-cell">+$44K</td><td class="pos-cell">+13.7%</td></tr>
-          <tr><td style="padding-left:16px;color:var(--muted)">610 Screen Print</td><td>$604K</td><td>$451K</td><td class="neg-cell">–$153K</td><td class="neg-cell">–34.0%</td></tr>
-          <tr><td style="padding-left:16px;color:var(--muted)">  Adjusted (ex-PW)</td><td>$390K</td><td>$451K</td><td class="pos-cell">+$61K</td><td class="pos-cell">+13.5%</td></tr>
-          <tr><td><strong>EBITDA</strong></td><td class="neg-cell">–$26K</td><td>+$200K</td><td class="neg-cell">–$226K</td><td class="neg-cell">–113%</td></tr>
-          <tr><td><strong>EBITDA (Adj.)</strong></td><td class="pos-cell">+$188K</td><td>+$200K</td><td class="warn-cell">–$12K</td><td class="warn-cell">–6%</td></tr>
+          <tr><td><strong>Revenue</strong></td><td>$990K</td><td>$1,048K</td><td class="neg-cell">–$61K</td><td class="neg-cell">–5.8%</td></tr>
+          <tr><td style="padding-left:16px;color:var(--muted)">609 Digital</td><td>$487K</td><td>$532K</td><td class="neg-cell">–$44K</td><td class="neg-cell">–8.3%</td></tr>
+          <tr><td style="padding-left:16px;color:var(--muted)">610 Screen Print</td><td>$503K</td><td>$516K</td><td class="neg-cell">–$13K</td><td class="neg-cell">–2.5%</td></tr>
+          <tr><td><strong>COGS</strong></td><td>$916K</td><td>$848K</td><td class="neg-cell">–$68K</td><td class="neg-cell">–8.0%</td></tr>
+          <tr><td style="padding-left:16px;color:var(--muted)">609 Digital</td><td>$308K</td><td>$319K</td><td class="pos-cell">+$11K</td><td class="pos-cell">+3.5%</td></tr>
+          <tr><td style="padding-left:16px;color:var(--muted)">610 Screen Print</td><td>$607K</td><td>$451K</td><td class="neg-cell">–$156K</td><td class="neg-cell">–34.6%</td></tr>
+          <tr><td><strong>EBITDA</strong></td><td class="warn-cell">+$75K</td><td>+$277K</td><td class="neg-cell">–$202K</td><td class="neg-cell">–73%</td></tr>
         </tbody>
       </table>
+      <div style="margin-top:12px;padding-top:12px;border-top:1px solid var(--rule)">
+        <div class="panel-sub" style="margin-bottom:8px">YTD Jan–Feb vs Plan</div>
+        <div style="display:flex;flex-direction:column;gap:6px">
+          <div style="display:flex;align-items:center;gap:10px">
+            <span style="font-size:11px;color:var(--ink2);width:100px">609 Revenue</span>
+            <div style="flex:1;height:14px;background:var(--bg2);border-radius:3px;overflow:hidden">
+              <div style="height:100%;width:95.6%;background:var(--dig);border-radius:3px"></div>
+            </div>
+            <span style="font-size:11px;font-weight:600;width:50px">95.6%</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:10px">
+            <span style="font-size:11px;color:var(--ink2);width:100px">610 Revenue</span>
+            <div style="flex:1;height:14px;background:var(--bg2);border-radius:3px;overflow:hidden">
+              <div style="height:100%;width:88%;background:var(--sp);border-radius:3px"></div>
+            </div>
+            <span style="font-size:11px;font-weight:600;width:50px">88.2%</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:10px">
+            <span style="font-size:11px;color:var(--ink2);width:100px">609 COGS</span>
+            <div style="flex:1;height:14px;background:var(--bg2);border-radius:3px;overflow:hidden">
+              <div style="height:100%;width:90%;background:var(--green);border-radius:3px"></div>
+            </div>
+            <span style="font-size:11px;font-weight:600;color:var(--green);width:50px">90% ✓</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:10px">
+            <span style="font-size:11px;color:var(--ink2);width:100px">610 COGS</span>
+            <div style="flex:1;height:14px;background:var(--bg2);border-radius:3px;overflow:hidden">
+              <div style="height:100%;width:100%;background:var(--red);border-radius:3px"></div>
+            </div>
+            <span style="font-size:11px;font-weight:600;color:var(--red);width:50px">134% ✗</span>
+          </div>
+        </div>
+        <div style="margin-top:10px;font-size:11px;color:var(--muted);line-height:1.8">
+          <strong style="color:var(--green)">609 trending well.</strong> COGS discipline maintained both months.<br>
+          <strong style="color:var(--red)">610 COGS persistently elevated</strong> — WIP intercompany entries inflating. Review with Emily H.
+        </div>
+      </div>
     </div>
   </div>
 
@@ -266,57 +292,38 @@ canvas{max-height:220px}
       <canvas id="fy25Chart"></canvas>
     </div>
     <div class="panel">
-      <div class="panel-title">2026 YTD vs Plan</div>
-      <div class="panel-sub">Jan 2026 — both divisions</div>
-      <div style="margin-top:8px">
-        <div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px">Revenue</div>
-        <div style="display:flex;flex-direction:column;gap:8px">
-          <div style="display:flex;align-items:center;gap:10px">
-            <span style="font-size:11px;color:var(--ink2);width:100px">609 Digital</span>
-            <div style="flex:1;height:16px;background:var(--bg2);border-radius:3px;overflow:hidden;position:relative">
-              <div style="height:100%;width:99.6%;background:var(--dig);border-radius:3px"></div>
-            </div>
-            <span style="font-size:11px;font-weight:600;width:50px">99.6%</span>
+      <div class="panel-title">2026 YTD vs Plan — Jan + Feb</div>
+      <div class="panel-sub">Both divisions · two months in</div>
+      <div style="margin-top:12px;display:flex;flex-direction:column;gap:14px">
+        <div>
+          <div style="font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:8px">609 Digital</div>
+          <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px">
+            <span>Revenue</span><span><strong>$1,016.7K</strong> <span style="color:var(--muted)">/ $1,063.2K plan</span></span>
           </div>
-          <div style="display:flex;align-items:center;gap:10px">
-            <span style="font-size:11px;color:var(--ink2);width:100px">610 SP</span>
-            <div style="flex:1;height:16px;background:var(--bg2);border-radius:3px;overflow:hidden">
-              <div style="height:100%;width:79%;background:var(--sp);border-radius:3px"></div>
-            </div>
-            <span style="font-size:11px;font-weight:600;width:50px">79.0%</span>
+          <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px">
+            <span>COGS</span><span class="pos-cell"><strong>$583.6K</strong> <span style="color:var(--muted)">/ $638.2K plan ✓</span></span>
+          </div>
+          <div style="display:flex;justify-content:space-between;font-size:12px">
+            <span>EBITDA</span><span class="pos-cell"><strong>+$433.1K</strong> <span style="color:var(--muted)">42.6% margin</span></span>
           </div>
         </div>
-      </div>
-      <div style="margin-top:18px;padding-top:14px;border-top:1px solid var(--rule)">
-        <div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px">COGS vs Plan</div>
-        <div style="display:flex;flex-direction:column;gap:8px">
-          <div style="display:flex;align-items:center;gap:10px">
-            <span style="font-size:11px;color:var(--ink2);width:100px">609 Digital</span>
-            <div style="flex:1;height:16px;background:var(--bg2);border-radius:3px;overflow:hidden">
-              <div style="height:100%;width:86%;background:var(--green);border-radius:3px"></div>
-            </div>
-            <span style="font-size:11px;font-weight:600;color:var(--green);width:50px">86% ✓</span>
+        <div style="border-top:1px solid var(--rule);padding-top:14px">
+          <div style="font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:8px">610 Screen Print</div>
+          <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px">
+            <span>Revenue</span><span><strong>$910.6K</strong> <span style="color:var(--muted)">/ $1,031.6K plan</span></span>
           </div>
-          <div style="display:flex;align-items:center;gap:10px">
-            <span style="font-size:11px;color:var(--ink2);width:100px">610 SP</span>
-            <div style="flex:1;height:16px;background:var(--bg2);border-radius:3px;overflow:hidden">
-              <div style="height:100%;width:100%;background:var(--red);border-radius:3px"></div>
-            </div>
-            <span style="font-size:11px;font-weight:600;color:var(--red);width:50px">134% ✗</span>
+          <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px">
+            <span>COGS</span><span class="neg-cell"><strong>$1,210.9K</strong> <span style="color:var(--muted)">/ $900.9K plan ✗</span></span>
           </div>
-          <div style="display:flex;align-items:center;gap:10px">
-            <span style="font-size:11px;color:var(--ink2);width:100px">610 Adj.</span>
-            <div style="flex:1;height:16px;background:var(--bg2);border-radius:3px;overflow:hidden">
-              <div style="height:100%;width:87%;background:var(--amber);border-radius:3px"></div>
-            </div>
-            <span style="font-size:11px;font-weight:600;color:var(--amber);width:50px">87% ~</span>
+          <div style="display:flex;justify-content:space-between;font-size:12px">
+            <span>EBITDA</span><span class="neg-cell"><strong>–$300.3K</strong> <span style="color:var(--muted)">–33% margin</span></span>
           </div>
         </div>
-      </div>
-      <div style="margin-top:14px;padding-top:12px;border-top:1px solid var(--rule);font-size:11px;color:var(--muted);line-height:1.8">
-        <strong style="color:var(--green)">609 on track.</strong> Revenue –$2K vs plan, COGS $44K better.<br>
-        <strong style="color:var(--red)">610 SP revenue miss</strong> –$108K. Two short weeks + timing on PW grounds.<br>
-        <strong style="color:var(--amber)">610 adj. EBITDA $18K (4.5%)</strong> vs plan $65K on an adjusted basis.
+        <div style="border-top:1px solid var(--rule);padding-top:14px;background:var(--gold-lt);padding:10px 12px;border-radius:3px;margin-top:2px">
+          <div style="font-size:11px;color:var(--amber);line-height:1.8">
+            <strong>610 COGS pattern:</strong> Jan $603.5K (PW error $214K), Feb $607.3K (WIP $46.9K). Two consecutive months with large intercompany entries inflating COGS. Needs reconciliation before March close.
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -327,11 +334,11 @@ canvas{max-height:220px}
 <!-- ════════════════════════════════ -->
 <div class="view" id="view-digital">
   <div class="kpi-row">
-    <div class="kpi"><div class="kpi-bar" style="background:var(--dig)"></div><div class="kpi-lbl">Jan Revenue</div><div class="kpi-val">$529K</div><div class="kpi-foot"><span class="delta neg">–$2K vs Plan</span></div></div>
-    <div class="kpi"><div class="kpi-bar" style="background:var(--green)"></div><div class="kpi-lbl">Jan COGS</div><div class="kpi-val">$275K</div><div class="kpi-foot"><span class="delta pos">+$44K vs Plan</span><span style="color:var(--muted)">Plan $319K</span></div></div>
-    <div class="kpi"><div class="kpi-bar" style="background:var(--green)"></div><div class="kpi-lbl">Jan EBITDA</div><div class="kpi-val" style="color:var(--green)">$254K</div><div class="kpi-foot"><span class="delta pos">48% margin</span><span style="color:var(--muted)">Plan 40%</span></div></div>
-    <div class="kpi"><div class="kpi-bar" style="background:var(--dig)"></div><div class="kpi-lbl">Invoiced Yards</div><div class="kpi-val">50,645</div><div class="kpi-foot"><span class="delta pos">Target 48,000</span></div></div>
-    <div class="kpi"><div class="kpi-bar" style="background:var(--green)"></div><div class="kpi-lbl">COGS / Yd</div><div class="kpi-val">$5.43</div><div class="kpi-foot"><span class="delta pos">–$1.22 vs Plan</span><span style="color:var(--muted)">Plan $6.65</span></div></div>
+    <div class="kpi"><div class="kpi-bar" style="background:var(--dig)"></div><div class="kpi-lbl">Feb Revenue</div><div class="kpi-val">$487K</div><div class="kpi-foot"><span class="delta neg">–$44K vs Plan</span><span style="color:var(--muted)">Plan $532K</span></div></div>
+    <div class="kpi"><div class="kpi-bar" style="background:var(--green)"></div><div class="kpi-lbl">Feb COGS</div><div class="kpi-val">$308K</div><div class="kpi-foot"><span class="delta pos">+$11K vs Plan</span><span style="color:var(--muted)">Plan $319K</span></div></div>
+    <div class="kpi"><div class="kpi-bar" style="background:var(--green)"></div><div class="kpi-lbl">Feb EBITDA</div><div class="kpi-val" style="color:var(--green)">$179K</div><div class="kpi-foot"><span class="delta pos">37% margin</span><span style="color:var(--muted)">Plan 40%</span></div></div>
+    <div class="kpi"><div class="kpi-bar" style="background:var(--dig)"></div><div class="kpi-lbl">YTD Revenue</div><div class="kpi-val">$1.02M</div><div class="kpi-foot"><span class="delta warn">–$47K vs Plan</span><span style="color:var(--muted)">Plan $1.06M</span></div></div>
+    <div class="kpi"><div class="kpi-bar" style="background:var(--green)"></div><div class="kpi-lbl">YTD EBITDA</div><div class="kpi-val" style="color:var(--green)">$433K</div><div class="kpi-foot"><span class="delta pos">42.6% margin</span></div></div>
     <div class="kpi"><div class="kpi-bar" style="background:var(--amber)"></div><div class="kpi-lbl">2026 Plan (Full Yr)</div><div class="kpi-val">$6.91M</div><div class="kpi-foot"><span class="delta warn">+45% vs 2025</span></div></div>
   </div>
 
@@ -348,40 +355,40 @@ canvas{max-height:220px}
       <canvas id="digMonthChart"></canvas>
     </div>
     <div class="panel">
-      <div class="panel-title">COGS Breakdown — Jan 2026</div>
-      <div class="panel-sub">Per invoiced yard (50,645 yds)</div>
+      <div class="panel-title">January vs February — 609 Comparison</div>
+      <div class="panel-sub">Two-month trend</div>
       <table class="dt" style="margin-top:8px">
-        <thead><tr><th>Category</th><th>Actual $</th><th>Plan $</th><th>Act $/Yd</th><th>Plan $/Yd</th></tr></thead>
+        <thead><tr><th>Metric</th><th>Jan 2026</th><th>Feb 2026</th><th>Trend</th></tr></thead>
         <tbody>
-          <tr><td>Material</td><td>$144,106</td><td>$189,711</td><td class="pos-cell">$0.90</td><td>$3.95</td></tr>
-          <tr><td>Labor</td><td>$64,826</td><td>$74,257</td><td class="pos-cell">$1.28</td><td>$1.55</td></tr>
-          <tr><td>WIP / Held</td><td>$66,201</td><td>—</td><td>$1.31</td><td>—</td></tr>
-          <tr><td>Other OpEx</td><td>$98,608</td><td>$49,845</td><td class="neg-cell">$1.95</td><td>$1.04</td></tr>
+          <tr><td>Revenue</td><td>$529,234</td><td>$487,475</td><td class="neg-cell">–$41,759</td></tr>
+          <tr><td>COGS</td><td>$275,240</td><td>$308,403</td><td class="neg-cell">+$33,163</td></tr>
+          <tr><td>EBITDA</td><td class="pos-cell">$253,994</td><td class="pos-cell">$179,072</td><td class="neg-cell">–$74,922</td></tr>
+          <tr><td>Margin %</td><td class="pos-cell">48.0%</td><td class="pos-cell">36.7%</td><td class="neg-cell">–11.3pp</td></tr>
+          <tr><td>COGS vs Plan</td><td class="pos-cell">–$43,849</td><td class="pos-cell">–$10,686</td><td class="pos-cell">Favorable</td></tr>
+          <tr><td>3020 3rd Party Rev</td><td>$19,365</td><td>$12,389</td><td class="neg-cell">–$6,976</td></tr>
+          <tr><td>3025 Interco Rev</td><td>$509,869</td><td>$475,086</td><td class="neg-cell">–$34,783</td></tr>
         </tbody>
-        <tfoot><tr><td><strong>Total</strong></td><td><strong>$275,240</strong></td><td>$319,089</td><td class="pos-cell"><strong>$5.43</strong></td><td>$6.65</td></tr></tfoot>
+        <tfoot><tr><td><strong>YTD Total</strong></td><td colspan="2"><strong>$1,016,709 Rev · $583,643 COGS</strong></td><td class="pos-cell">42.6%</td></tr></tfoot>
       </table>
-      <div style="margin-top:14px;padding:10px 12px;background:var(--dig-lt);border-radius:3px;font-size:11px;color:var(--dig);line-height:1.8">
-        <strong>Ink up ~$15K/mo</strong> from Paramount machines now in operation — reflected in Material + Other.<br>
-        <strong>Distribution up</strong> due to expanded production volume — expected.
+      <div style="margin-top:12px;padding:10px 12px;background:var(--dig-lt);border-radius:3px;font-size:11px;color:var(--dig);line-height:1.8">
+        <strong>Feb revenue dip</strong> vs Jan — likely production calendar / mix shift, not structural.<br>
+        <strong>COGS discipline holding</strong> — both months favorable vs plan.<br>
+        <strong>2-month EBITDA $433K</strong> puts us ahead of a 40% run rate.
       </div>
     </div>
   </div>
 
   <div class="panel gfull">
     <div class="panel-hdr">
-      <div><div class="panel-title">Schumacher vs 3rd Party — Jan 2026</div><div class="panel-sub">Revenue split by client type</div></div>
+      <div><div class="panel-title">Jan 2026 — Schumacher vs 3rd Party</div><div class="panel-sub">Revenue split by client type · Jan actuals</div></div>
     </div>
     <table class="dt">
       <thead><tr><th>Category</th><th>Schu (Hub)</th><th>3rd Party</th><th>Total</th></tr></thead>
       <tbody>
-        <tr><td>Yards Written</td><td>47,923</td><td>1,200</td><td>49,123</td></tr>
-        <tr><td>Yards Produced</td><td>47,925</td><td>1,260</td><td>49,185</td></tr>
-        <tr><td>Production Waste</td><td>2,461</td><td>40</td><td class="warn-cell">2,501 (5.1%)</td></tr>
-        <tr><td>Held to Invoice</td><td>15,392</td><td>0</td><td class="warn-cell">15,392</td></tr>
         <tr><td>Net Yards Invoiced</td><td>48,795</td><td>1,850</td><td>50,645</td></tr>
-        <tr><td>Net Revenue Invoiced</td><td>$509,234</td><td>$19,366</td><td>$529,234</td></tr>
+        <tr><td>Net Revenue Invoiced</td><td>$509,869</td><td>$19,365</td><td>$529,234</td></tr>
         <tr><td>Total COGS</td><td>$263,633</td><td>$11,607</td><td>$275,240</td></tr>
-        <tr><td>Margin %</td><td class="pos-cell">48.2%</td><td class="pos-cell">40.1%</td><td class="pos-cell">48.0%</td></tr>
+        <tr><td>Margin %</td><td class="pos-cell">48.3%</td><td class="pos-cell">40.1%</td><td class="pos-cell">48.0%</td></tr>
       </tbody>
     </table>
   </div>
@@ -392,12 +399,12 @@ canvas{max-height:220px}
 <!-- ════════════════════════════════ -->
 <div class="view" id="view-sp">
   <div class="kpi-row">
-    <div class="kpi"><div class="kpi-bar" style="background:var(--sp)"></div><div class="kpi-lbl">Jan Revenue</div><div class="kpi-val">$408K</div><div class="kpi-foot"><span class="delta neg">–$108K vs Plan</span><span style="color:var(--muted)">Plan $516K</span></div></div>
-    <div class="kpi"><div class="kpi-bar" style="background:var(--red)"></div><div class="kpi-lbl">Jan COGS (Actual)</div><div class="kpi-val" style="color:var(--red)">$604K</div><div class="kpi-foot"><span class="delta neg">PW error +$214K</span></div></div>
-    <div class="kpi"><div class="kpi-bar" style="background:var(--amber)"></div><div class="kpi-lbl">Jan COGS (Adj.)</div><div class="kpi-val">$390K</div><div class="kpi-foot"><span class="delta warn">+$61K vs Plan</span></div></div>
-    <div class="kpi"><div class="kpi-bar" style="background:var(--red)"></div><div class="kpi-lbl">Jan EBITDA</div><div class="kpi-val" style="color:var(--red)">–$196K</div><div class="kpi-foot"><span class="delta neg">Adj. +$18K</span></div></div>
-    <div class="kpi"><div class="kpi-bar" style="background:var(--amber)"></div><div class="kpi-lbl">Color Yards Invoiced</div><div class="kpi-val">63,616</div><div class="kpi-foot"><span class="delta neg">Target 102K</span></div></div>
-    <div class="kpi"><div class="kpi-bar" style="background:var(--amber)"></div><div class="kpi-lbl">COGS / Color Yd (Adj.)</div><div class="kpi-val">$6.12</div><div class="kpi-foot"><span class="delta warn">Plan $13.25</span></div></div>
+    <div class="kpi"><div class="kpi-bar" style="background:var(--sp)"></div><div class="kpi-lbl">Feb Revenue</div><div class="kpi-val">$503K</div><div class="kpi-foot"><span class="delta warn">–$13K vs Plan</span><span style="color:var(--muted)">Plan $516K</span></div></div>
+    <div class="kpi"><div class="kpi-bar" style="background:var(--red)"></div><div class="kpi-lbl">Feb COGS (Actual)</div><div class="kpi-val" style="color:var(--red)">$607K</div><div class="kpi-foot"><span class="delta neg">WIP $46.9K</span></div></div>
+    <div class="kpi"><div class="kpi-bar" style="background:var(--red)"></div><div class="kpi-lbl">Feb EBITDA</div><div class="kpi-val" style="color:var(--red)">–$104K</div><div class="kpi-foot"><span class="delta neg">–21% margin</span></div></div>
+    <div class="kpi"><div class="kpi-bar" style="background:var(--sp)"></div><div class="kpi-lbl">YTD Revenue</div><div class="kpi-val">$910.6K</div><div class="kpi-foot"><span class="delta neg">–$121K vs Plan</span></div></div>
+    <div class="kpi"><div class="kpi-bar" style="background:var(--red)"></div><div class="kpi-lbl">YTD COGS</div><div class="kpi-val" style="color:var(--red)">$1.21M</div><div class="kpi-foot"><span class="delta neg">Plan $900.9K</span></div></div>
+    <div class="kpi"><div class="kpi-bar" style="background:var(--amber)"></div><div class="kpi-lbl">2026 Plan (Full Yr)</div><div class="kpi-val">$6.71M</div><div class="kpi-foot"><span class="delta warn">Target 12.7% margin</span></div></div>
   </div>
 
   <div class="g2">
@@ -413,22 +420,26 @@ canvas{max-height:220px}
       <canvas id="spMonthChart"></canvas>
     </div>
     <div class="panel">
-      <div class="panel-title">COGS Breakdown — Jan 2026</div>
-      <div class="panel-sub">Per invoiced yard (25,931 yds) · Adjusted</div>
+      <div class="panel-title">January vs February — 610 Comparison</div>
+      <div class="panel-sub">COGS anomaly analysis</div>
       <table class="dt" style="margin-top:8px">
-        <thead><tr><th>Category</th><th>Adj. $</th><th>Plan $</th><th>Adj $/Yd</th><th>Plan $/Yd</th></tr></thead>
+        <thead><tr><th>COGS Account</th><th>Jan 2026</th><th>Feb 2026</th></tr></thead>
         <tbody>
-          <tr><td>Material</td><td>$253,738</td><td>$212,614</td><td class="neg-cell">$9.79</td><td>$6.25</td></tr>
-          <tr><td>Labor</td><td>$165,235</td><td>$170,437</td><td class="pos-cell">$6.37</td><td>$5.01</td></tr>
-          <tr><td>WIP Adj.</td><td class="pos-cell">–$89,881</td><td>—</td><td class="pos-cell">–$3.47</td><td>—</td></tr>
-          <tr><td>Other OpEx</td><td>$60,457</td><td>$67,403</td><td class="pos-cell">$2.33</td><td>$1.98</td></tr>
+          <tr><td>4104 Mat. 3rd Party</td><td>$4,111</td><td>$4,383</td></tr>
+          <tr><td>4105 Mat. Interco</td><td>$463,626</td><td>$288,683</td></tr>
+          <tr><td>4108 Labor 3rd Party</td><td>$27,425</td><td>$43,567</td></tr>
+          <tr><td>4109 Labor Interco</td><td>$137,809</td><td>$132,917</td></tr>
+          <tr><td class="warn-cell">4111 WIP Interco</td><td class="neg-cell">–$74,962</td><td class="neg-cell">+$46,886</td></tr>
+          <tr><td>4112 WIP 3rd Party</td><td>–$14,918</td><td>$15,368</td></tr>
+          <tr><td>4113 Other Interco</td><td>$50,422</td><td>$56,889</td></tr>
+          <tr><td>4114 Other 3rd Party</td><td>$10,035</td><td>$18,647</td></tr>
         </tbody>
-        <tfoot><tr><td><strong>Total (Adj.)</strong></td><td><strong>$389,549</strong></td><td>$450,453</td><td class="warn-cell"><strong>$15.02</strong></td><td>$13.25</td></tr></tfoot>
+        <tfoot><tr><td><strong>Total COGS</strong></td><td class="neg-cell"><strong>$603,549</strong></td><td class="neg-cell"><strong>$607,341</strong></td></tr></tfoot>
       </table>
       <div style="margin-top:12px;padding:10px 12px;background:var(--sp-lt);border-radius:3px;font-size:11px;color:var(--sp);line-height:1.8">
-        <strong>Revenue miss:</strong> 2 short production weeks + zero PW ground shipments (timing).<br>
-        <strong>Material over:</strong> High color-count orders + new grass cloth setup costs.<br>
-        <strong>Next month:</strong> 2nd shift launch for wallpaper · new grass cloth tables active.
+        <strong>4105 Interco Material</strong> normalized from $463K → $288K (Jan PW error reversed).<br>
+        <strong>4111 WIP swung</strong> from –$75K (Jan credit) to +$47K (Feb charge) — net impact +$122K on COGS.<br>
+        <strong>Revenue improving</strong> — $503K Feb vs $408K Jan, closing the plan gap.
       </div>
     </div>
   </div>
@@ -446,16 +457,16 @@ canvas{max-height:220px}
         </tr>
         <tr>
           <td><strong>Fabric</strong></td><td>1,078</td><td>4,910</td><td>11,343</td><td>294</td>
-          <td class="warn-cell">6.0%</td><td style="color:var(--muted)">8%</td><td>4,407</td><td>12,610</td>
+          <td class="pos-cell">6.0%</td><td style="color:var(--muted)">8%</td><td>4,407</td><td>12,610</td>
         </tr>
         <tr>
           <td><strong>Wallpaper</strong></td><td>6,782</td><td>10,525</td><td>37,609</td><td>1,689</td>
-          <td class="neg-cell">16.1%</td><td style="color:var(--muted)">20%</td><td>10,525</td><td>25,860</td>
+          <td class="pos-cell">16.1%</td><td style="color:var(--muted)">20%</td><td>10,525</td><td>25,860</td>
         </tr>
       </tbody>
       <tfoot>
         <tr><td><strong>Total</strong></td><td>12,400</td><td>24,857</td><td>73,279</td><td class="warn-cell">2,851</td>
-        <td class="neg-cell">11.5%</td><td style="color:var(--muted)">4%</td><td>25,931</td><td>63,616</td></tr>
+        <td class="warn-cell">11.5%</td><td style="color:var(--muted)">4%</td><td>25,931</td><td>63,616</td></tr>
       </tfoot>
     </table>
   </div>
@@ -466,7 +477,7 @@ canvas{max-height:220px}
 <!-- ════════════════════════════════ -->
 <div class="view" id="view-ops">
   <div class="note-bar">
-    Production data from X-LIFT · current as of Mar 14, 2026. Waste % calculated from Data_Orders_All — Jan 2026.
+    Production data from X-LIFT · current as of Mar 21, 2026. Waste % calculated from Data_Orders_All — Jan 2026.
   </div>
   <div class="kpi-row">
     <div class="kpi"><div class="kpi-bar" style="background:var(--dig)"></div><div class="kpi-lbl">Digital Produced (Jan)</div><div class="kpi-val">49,185</div><div class="kpi-foot"><span class="delta pos">Target 48,000</span></div></div>
@@ -529,13 +540,13 @@ canvas{max-height:220px}
       <div class="panel-title">Screen Print WIP — Material Breakdown</div>
       <div class="panel-sub">Held-to-invoice target: &lt;8,500 yds</div>
       <table class="dt" style="margin-top:8px">
-        <thead><tr><th>Material</th><th>Held-to-Inv</th><th>Aging &gt;6wk</th><th>No Ground</th><th>Status</th></tr></thead>
+        <thead><tr><th>Material</th><th>Held-to-Inv</th><th>Aging &gt;6wk</th><th>Status</th></tr></thead>
         <tbody>
-          <tr><td>Grass Cloth</td><td>5,282</td><td>—</td><td>—</td><td><span class="tl red">R</span></td></tr>
-          <tr><td>Fabric</td><td>267</td><td>—</td><td>—</td><td><span class="tl green">G</span></td></tr>
-          <tr><td>Wallpaper</td><td>3,983</td><td>—</td><td>—</td><td><span class="tl yellow">Y</span></td></tr>
+          <tr><td>Grass Cloth</td><td>5,282</td><td>—</td><td><span class="tl red">R</span></td></tr>
+          <tr><td>Fabric</td><td>267</td><td>—</td><td><span class="tl green">G</span></td></tr>
+          <tr><td>Wallpaper</td><td>3,983</td><td>—</td><td><span class="tl yellow">Y</span></td></tr>
         </tbody>
-        <tfoot><tr><td><strong>Total</strong></td><td class="warn-cell"><strong>9,532</strong></td><td>34,949</td><td>—</td><td><span class="tl red">R</span></td></tr></tfoot>
+        <tfoot><tr><td><strong>Total</strong></td><td class="warn-cell"><strong>9,532</strong></td><td>34,949</td><td><span class="tl red">R</span></td></tr></tfoot>
       </table>
       <div style="margin-top:12px;padding:10px 12px;background:var(--gold-lt);border-radius:3px;font-size:11px;color:var(--amber);line-height:1.8">
         <strong>WIP improving:</strong> Dec total was 71,857 yds — Jan improved to 69,089 yds (–$2.8K).<br>
@@ -579,10 +590,10 @@ canvas{max-height:220px}
     </div>
     <div class="panel">
       <div class="panel-title">NK Closure — Action Plan</div>
-      <div class="panel-sub">Neu Kaliss substrate transition</div>
+      <div class="panel-sub">Neu Kaliss substrate transition · April 1 deadline</div>
       <div style="display:flex;flex-direction:column;gap:12px;margin-top:8px">
         <div style="padding:12px;background:var(--sp-lt);border-radius:3px;border-left:3px solid var(--red)">
-          <div style="font-size:11px;font-weight:600;color:var(--sp);margin-bottom:4px">⚠ NK Closure: April 1, 2026</div>
+          <div style="font-size:11px;font-weight:600;color:var(--sp);margin-bottom:4px">⚠ NK Closure: April 1, 2026 — 11 Days Away</div>
           <div style="font-size:11px;color:var(--ink2);line-height:1.7">277,152 yards total in transit (4 containers).<br>Mid-Mar: 2 standard + 2 unconverted arriving.<br>Late Mar: 1–2 additional unconverted departing.</div>
         </div>
         <div style="padding:12px;background:var(--gold-lt);border-radius:3px;border-left:3px solid var(--amber)">
@@ -602,26 +613,26 @@ canvas{max-height:220px}
 
 <script>
 // ═══════════════════════════════════════════
-// DATA — from Vena + X-LIFT
+// DATA — from Vena Feb 2026 + X-LIFT
 // ═══════════════════════════════════════════
 const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 
-// Financial data (from Vena)
+// Financial data (from Vena — Jan + Feb 2026 actuals)
 const FIN = {
   dig: {
     act25: [182428,476822,355325,348680,289942,407473,359686,391949,494502,420193,469863,576215],
-    act26: [529234,0,0,0,0,0,0,0,0,0,0,0],
+    act26: [529234,487475,0,0,0,0,0,0,0,0,0,0],
     plan26:[531599,531599,664499,531599,531599,664499,531599,531599,664499,531599,531599,664499],
     cogs_act25:[138633,302764,334060,284041,334670,261079,256584,233870,294157,275707,262167,312609],
-    cogs_act26:[275240,0,0,0,0,0,0,0,0,0,0,0],
+    cogs_act26:[275240,308403,0,0,0,0,0,0,0,0,0,0],
     cogs_plan26:[319089,319089,385082,319089,319089,385082,319089,319089,385082,319089,319089,385082],
   },
   sp: {
     act25: [226548,239135,365757,190532,257757,328890,216366,370508,573923,312492,503161,642666],
-    act26: [407768,0,0,0,0,0,0,0,0,0,0,0],
+    act26: [407768,502872,0,0,0,0,0,0,0,0,0,0],
     plan26:[515804,515804,644755,515804,515804,644755,515804,515804,644755,515804,515804,644755],
     cogs_act25:[240074,299890,278315,268286,276102,359124,297356,435776,634170,313558,487624,527801],
-    cogs_act26:[603549,0,0,0,0,0,0,0,0,0,0,0],
+    cogs_act26:[603549,607341,0,0,0,0,0,0,0,0,0,0],
     cogs_plan26:[450453,450453,544924,450453,450453,544924,451193,451193,545842,451193,451193,557842],
   },
   admin: {
@@ -650,7 +661,7 @@ FIN.sp.ebitda_act25 = FIN.sp.act25.map((v,i)=>v-FIN.sp.cogs_act25[i]);
 FIN.sp.ebitda_act26 = FIN.sp.act26.map((v,i)=>v-FIN.sp.cogs_act26[i]);
 FIN.sp.ebitda_plan26 = FIN.sp.plan26.map((v,i)=>v-FIN.sp.cogs_plan26[i]);
 
-// Machine data for ops view
+// Machine data
 const MACHINES = {
   digital: [
     {name:'Sasha',type:'3600',loc:'BNY',max:12000,jan:11782},
@@ -698,25 +709,22 @@ const BASE = {
 function fmtK(v){const a=Math.abs(v),s=v>=0?'':'–'; if(a>=1000000) return s+'$'+(a/1000000).toFixed(2)+'M'; return s+'$'+Math.round(a/1000)+'K';}
 function nullAfter(arr,cutoff){return arr.map((v,i)=>i>=cutoff?null:v);}
 
-// Only Jan 2026 is actual; rest are plan
-const DIG_ACT26_REAL = nullAfter(FIN.dig.act26,1);
-const SP_ACT26_REAL  = nullAfter(FIN.sp.act26,1);
-const CON_ACT26_REAL = nullAfter(CON.act26,1);
+// Jan + Feb 2026 are actual; rest are null
+const DIG_ACT26_REAL = nullAfter(FIN.dig.act26,2);
+const SP_ACT26_REAL  = nullAfter(FIN.sp.act26,2);
+const CON_ACT26_REAL = nullAfter(CON.act26,2);
 
 // ── CONSOLIDATED CHART
 let conChart;
 function buildConChart(metric){
   const ctx = document.getElementById('conRevChart').getContext('2d');
   if(conChart) conChart.destroy();
-  
   let act25,act26,plan26;
   if(metric==='rev'){act25=CON.act25;act26=CON_ACT26_REAL;plan26=CON.plan26;}
-  else if(metric==='ebitda'){act25=CON.ebitda_act25;act26=nullAfter(CON.ebitda_act26,1);plan26=CON.ebitda_plan26;}
-  else{act25=CON.cogs_act25;act26=nullAfter(CON.cogs_act26,1);plan26=CON.cogs_plan26;}
-  
+  else if(metric==='ebitda'){act25=CON.ebitda_act25;act26=nullAfter(CON.ebitda_act26,2);plan26=CON.ebitda_plan26;}
+  else{act25=CON.cogs_act25;act26=nullAfter(CON.cogs_act26,2);plan26=CON.cogs_plan26;}
   const opts = JSON.parse(JSON.stringify(BASE));
   opts.plugins.tooltip.callbacks = {label:ctx=>` ${ctx.dataset.label}: ${fmtK(ctx.raw)}`};
-  
   conChart = new Chart(ctx,{type:'bar',data:{
     labels:MONTHS,
     datasets:[
@@ -748,8 +756,8 @@ function buildDigChart(metric){
   if(digChart) digChart.destroy();
   let act25,act26r,plan26;
   if(metric==='rev'){act25=FIN.dig.act25;act26r=DIG_ACT26_REAL;plan26=FIN.dig.plan26;}
-  else if(metric==='ebitda'){act25=FIN.dig.ebitda_act25;act26r=nullAfter(FIN.dig.ebitda_act26,1);plan26=FIN.dig.ebitda_plan26;}
-  else{act25=FIN.dig.cogs_act25;act26r=nullAfter(FIN.dig.cogs_act26,1);plan26=FIN.dig.cogs_plan26;}
+  else if(metric==='ebitda'){act25=FIN.dig.ebitda_act25;act26r=nullAfter(FIN.dig.ebitda_act26,2);plan26=FIN.dig.ebitda_plan26;}
+  else{act25=FIN.dig.cogs_act25;act26r=nullAfter(FIN.dig.cogs_act26,2);plan26=FIN.dig.cogs_plan26;}
   const opts=JSON.parse(JSON.stringify(BASE));
   opts.plugins.tooltip.callbacks={label:ctx=>` ${ctx.dataset.label}: ${fmtK(ctx.raw)}`};
   digChart=new Chart(ctx,{type:'bar',data:{labels:MONTHS,datasets:[
@@ -766,8 +774,8 @@ function buildSPChart(metric){
   if(spChart) spChart.destroy();
   let act25,act26r,plan26;
   if(metric==='rev'){act25=FIN.sp.act25;act26r=SP_ACT26_REAL;plan26=FIN.sp.plan26;}
-  else if(metric==='ebitda'){act25=FIN.sp.ebitda_act25;act26r=nullAfter(FIN.sp.ebitda_act26,1);plan26=FIN.sp.ebitda_plan26;}
-  else{act25=FIN.sp.cogs_act25;act26r=nullAfter(FIN.sp.cogs_act26,1);plan26=FIN.sp.cogs_plan26;}
+  else if(metric==='ebitda'){act25=FIN.sp.ebitda_act25;act26r=nullAfter(FIN.sp.ebitda_act26,2);plan26=FIN.sp.ebitda_plan26;}
+  else{act25=FIN.sp.cogs_act25;act26r=nullAfter(FIN.sp.cogs_act26,2);plan26=FIN.sp.cogs_plan26;}
   const opts=JSON.parse(JSON.stringify(BASE));
   opts.plugins.tooltip.callbacks={label:ctx=>` ${ctx.dataset.label}: ${fmtK(ctx.raw)}`};
   spChart=new Chart(ctx,{type:'bar',data:{labels:MONTHS,datasets:[
@@ -846,14 +854,14 @@ function handleOps(input){
   const bar=document.querySelector('.data-status .status-item:first-child');
   bar.innerHTML=`<div class="status-dot live"></div>X-LIFT · ${f.name} loaded`;
   const nb=document.querySelector('.note-bar');
-  if(nb) nb.innerHTML=`<strong>Updated:</strong> Operations data refreshed from ${f.name}. Financial data still from Jan 2026 Vena export.`;
+  if(nb) nb.innerHTML=`<strong>Updated:</strong> Operations data refreshed from ${f.name}.`;
 }
 function handleFin(input){
   const f=input.files[0]; if(!f) return;
   const bar=document.querySelector('.data-status .status-item:last-child');
   bar.innerHTML=`<div class="status-dot manual"></div>Vena · ${f.name} loaded`;
   const nb=document.querySelector('.note-bar');
-  if(nb) nb.innerHTML=`<strong>Updated:</strong> Financial data refreshed from ${f.name}. Charts will reflect new Vena data on next full reload.`;
+  if(nb) nb.innerHTML=`<strong>Updated:</strong> Financial data refreshed from ${f.name}.`;
 }
 
 // ─────────────────────────
