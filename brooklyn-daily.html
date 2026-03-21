@@ -131,25 +131,25 @@ canvas{max-height:180px}
 <div class="pipeline">
   <div class="phase">
     <div class="phase-hdr"><div class="phase-dot" style="background:#58a6ff"></div>Pre-Production <span style="color:var(--muted)">Ariel CS · Yensi Screens · Henry Warehouse</span></div>
-    <div class="steps-row">
-      <div class="step-chip warn"><span class="step-count">261</span>Orders Unallocated</div>
-      <div class="step-chip alert"><span class="step-count">409</span>Waiting for Material</div>
-      <div class="step-chip warn"><span class="step-count">49</span>Ready to Print</div>
+    <div class="steps-row" id="pipeline-pre">
+      <div class="step-chip alert"><span class="step-count">—</span>Waiting for Material</div>
+      <div class="step-chip warn"><span class="step-count">—</span>Ready to Print</div>
+      <div class="step-chip warn"><span class="step-count">—</span>Waiting for Approval</div>
     </div>
   </div>
   <div class="phase">
     <div class="phase-hdr"><div class="phase-dot" style="background:#d29922"></div>Production <span style="color:var(--muted)">Shelby Lead · Jeanne · Joe · Jess · Luis</span></div>
-    <div class="steps-row">
-      <div class="step-chip clear"><span class="step-count">47</span>Approved to Print</div>
-      <div class="step-chip clear"><span class="step-count">101</span>In Progress</div>
+    <div class="steps-row" id="pipeline-prod">
+      <div class="step-chip clear"><span class="step-count">—</span>Approved to Print</div>
+      <div class="step-chip clear"><span class="step-count">—</span>In Progress</div>
     </div>
   </div>
   <div class="phase">
     <div class="phase-hdr"><div class="phase-dot" style="background:#3fb950"></div>Post-Production <span style="color:var(--muted)">Phil Shipping · Blake + Denzell Cutters · Ramon Packaging</span></div>
-    <div class="steps-row">
-      <div class="step-chip normal"><span class="step-count">103</span>In Packing</div>
-      <div class="step-chip normal"><span class="step-count">66</span>Shipped</div>
-      <div class="step-chip normal"><span class="step-count">2</span>Ready to Ship</div>
+    <div class="steps-row" id="pipeline-post">
+      <div class="step-chip normal"><span class="step-count">—</span>In Packing</div>
+      <div class="step-chip normal"><span class="step-count">—</span>Ready to Ship</div>
+      <div class="step-chip normal"><span class="step-count">—</span>Shipped</div>
     </div>
   </div>
 </div>
@@ -356,8 +356,6 @@ canvas{max-height:180px}
   </div>
 </div>
 
-</div>
-</div>
 
 <!-- MONDAY BNY PRE-PROD SECTION -->
 <div style="padding:0 20px 20px">
@@ -365,37 +363,37 @@ canvas{max-height:180px}
     <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:16px">
       <div>
         <div class="panel-title">New Goods &amp; Pre-Production Pipeline</div>
-        <div class="panel-sub">Monday.com · BNY PRE-PRODUCTION board · Live</div>
+        <div class="panel-sub">Monday.com · BNY PRE-PRODUCTION board · Shelby Adams</div>
       </div>
-      <div id="monday-status" style="font-size:9px;padding:3px 10px;background:rgba(88,166,255,.1);border:1px solid rgba(88,166,255,.25);color:#58a6ff;border-radius:3px">
-        ⟳ Loading...
+      <div style="font-size:9px;padding:3px 10px;background:rgba(88,166,255,.1);border:1px solid rgba(88,166,255,.25);color:#58a6ff;border-radius:3px">
+        ⟳ Static · Mar 14 export &nbsp;·&nbsp; Live API: enable via Netlify env
       </div>
     </div>
 
     <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-bottom:16px">
       <div style="background:var(--bg2);border:1px solid var(--border);padding:12px;border-radius:4px;border-top:2px solid #58a6ff">
         <div style="font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:var(--text2);margin-bottom:6px">Studio In Progress</div>
-        <div id="cnt-studio" style="font-family:var(--mono);font-size:22px">—</div>
+        <div style="font-family:var(--mono);font-size:22px">10</div>
         <div style="font-size:10px;color:var(--text2);margin-top:3px">patterns in dev</div>
       </div>
       <div style="background:var(--bg2);border:1px solid var(--border);padding:12px;border-radius:4px;border-top:2px solid #d29922">
         <div style="font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:var(--text2);margin-bottom:6px">Transitions</div>
-        <div id="cnt-trans" style="font-family:var(--mono);font-size:22px">—</div>
+        <div style="font-family:var(--mono);font-size:22px">37</div>
         <div style="font-size:10px;color:var(--text2);margin-top:3px">in progress</div>
       </div>
       <div style="background:var(--bg2);border:1px solid var(--border);padding:12px;border-radius:4px;border-top:2px solid #3fb950">
         <div style="font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:var(--text2);margin-bottom:6px">Contract</div>
-        <div id="cnt-contract" style="font-family:var(--mono);font-size:22px">—</div>
+        <div style="font-family:var(--mono);font-size:22px">5</div>
         <div style="font-size:10px;color:var(--text2);margin-top:3px">contract jobs</div>
       </div>
       <div style="background:var(--bg2);border:1px solid var(--border);padding:12px;border-radius:4px;border-top:2px solid #e05c5c">
         <div style="font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:var(--text2);margin-bottom:6px">Late / May Be Late</div>
-        <div id="cnt-late" style="font-family:var(--mono);font-size:22px;color:#e05c5c">—</div>
+        <div style="font-family:var(--mono);font-size:22px;color:#e05c5c">10</div>
         <div style="font-size:10px;color:var(--text2);margin-top:3px">need attention</div>
       </div>
       <div style="background:var(--bg2);border:1px solid var(--border);padding:12px;border-radius:4px;border-top:2px solid #3fb950">
         <div style="font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:var(--text2);margin-bottom:6px">Approved Library</div>
-        <div id="cnt-approved" style="font-family:var(--mono);font-size:22px;color:#3fb950">—</div>
+        <div style="font-family:var(--mono);font-size:22px;color:#3fb950">95</div>
         <div style="font-size:10px;color:var(--text2);margin-top:3px">ready for production</div>
       </div>
     </div>
@@ -413,10 +411,35 @@ canvas{max-height:180px}
   </div>
 </div>
 
+<script>
+(function(){
+  const DATA = [{"group": "Unknown", "name": "Tiger Palm Sisal", "status": "May be late", "type": "", "customer": "", "waiting": "", "acetates": "", "screens": "", "approver": "Megan Ciraolo", "notes": "", "launch": "Feb 2027", "trials_due": ""}, {"group": "Unknown", "name": "Shells", "status": "May be late", "type": "", "customer": "", "waiting": "", "acetates": "", "screens": "", "approver": "Megan Ciraolo", "notes": "", "launch": "Feb 2027", "trials_due": ""}, {"group": "Unknown", "name": "Toyama Panel", "status": "Late", "type": "", "customer": "", "waiting": "", "acetates": "", "screens": "", "approver": "Tiiu", "notes": "", "launch": "Oct 2026", "trials_due": ""}, {"group": "Unknown", "name": "Chinoiserie Panel", "status": "Late", "type": "", "customer": "", "waiting": "", "acetates": "", "screens": "", "approver": "Tiiu", "notes": "", "launch": "Oct 2026", "trials_due": ""}, {"group": "Unknown", "name": "Villa Trellis", "status": "On time", "type": "", "customer": "", "waiting": "", "acetates": "", "screens": "", "approver": "Tiiu", "notes": "", "launch": "March 2027", "trials_due": ""}, {"group": "Unknown", "name": "Poppy Block Print", "status": "On time", "type": "", "customer": "", "waiting": "", "acetates": "", "screens": "", "approver": "Tiiu", "notes": "", "launch": "April 2027", "trials_due": ""}, {"group": "Unknown", "name": "Le Port D’Apres", "status": "On time", "type": "", "customer": "", "waiting": "", "acetates": "", "screens": "", "approver": "Megan Ciraolo", "notes": "", "launch": "Jan 2027", "trials_due": ""}, {"group": "Unknown", "name": "Villa Stripe RCL", "status": "May be late", "type": "", "customer": "", "waiting": "", "acetates": "", "screens": "", "approver": "Megan Ciraolo", "notes": "", "launch": "Feb 2027", "trials_due": ""}, {"group": "Studio in Progress", "name": "Le Detour", "status": "On time", "type": "", "customer": "", "waiting": "", "acetates": "", "screens": "", "approver": "Astrid", "notes": "", "launch": "Jan 2027", "trials_due": ""}, {"group": "Studio in Progress", "name": "Prosperity Panel Set", "status": "May be late", "type": "", "customer": "", "waiting": "", "acetates": "", "screens": "", "approver": "Tiiu", "notes": "", "launch": "Oct 2026", "trials_due": ""}, {"group": "Studio in Progress", "name": "White Lotus RCL", "status": "On time", "type": "", "customer": "", "waiting": "", "acetates": "", "screens": "", "approver": "Paige", "notes": "", "launch": "Feb 2027", "trials_due": ""}, {"group": "Studio in Progress", "name": "Myers Fern RCL", "status": "On time", "type": "", "customer": "", "waiting": "", "acetates": "", "screens": "", "approver": "Hilary", "notes": "", "launch": "May 2027", "trials_due": ""}, {"group": "Studio in Progress", "name": "Spring Lake Toile", "status": "On time", "type": "", "customer": "", "waiting": "", "acetates": "", "screens": "", "approver": "Megan Ciraolo", "notes": "", "launch": "Nov 2026", "trials_due": ""}, {"group": "Studio in Progress", "name": "Southern Dogwood", "status": "On time", "type": "", "customer": "", "waiting": "", "acetates": "", "screens": "", "approver": "Hilary", "notes": "", "launch": "Nov 2026", "trials_due": ""}, {"group": "Studio in Progress", "name": "Lemons", "status": "On time", "type": "", "customer": "", "waiting": "", "acetates": "", "screens": "", "approver": "Paige", "notes": "", "launch": "Feb 2027", "trials_due": ""}, {"group": "Studio in Progress", "name": "Anshun", "status": "On time", "type": "", "customer": "", "waiting": "", "acetates": "", "screens": "", "approver": "Megan Chaney", "notes": "", "launch": "", "trials_due": ""}, {"group": "Studio in Progress", "name": "Monkey Jungle Print", "status": "On time", "type": "", "customer": "", "waiting": "", "acetates": "", "screens": "", "approver": "Megan Ciraolo", "notes": "", "launch": "Feb 2027", "trials_due": ""}, {"group": "Studio in Progress", "name": "Woodman Check", "status": "Late", "type": "", "customer": "", "waiting": "", "acetates": "", "screens": "", "approver": "Tiiu", "notes": "", "launch": "Oct 2026", "trials_due": ""}, {"group": "Transitions in Progress", "name": "Albero Floreale Damask", "status": "May be late", "type": "", "customer": "", "waiting": "", "acetates": "", "screens": "", "approver": "Fabi & Caroline", "notes": "", "launch": "", "trials_due": ""}, {"group": "Transitions in Progress", "name": "Oiseaux Et Fleurs", "status": "On time", "type": "", "customer": "", "waiting": "", "acetates": "", "screens": "", "approver": "Fabi & Caroline", "notes": "", "launch": "", "trials_due": ""}, {"group": "Transitions in Progress", "name": "Villa Panel", "status": "On time", "type": "", "customer": "", "waiting": "", "acetates": "", "screens": "", "approver": "Fabi & Caroline", "notes": "", "launch": "", "trials_due": ""}, {"group": "Transitions in Progress", "name": "Binary Panel Set", "status": "On time", "type": "", "customer": "", "waiting": "", "acetates": "", "screens": "", "approver": "Fabi & Caroline", "notes": "", "launch": "", "trials_due": ""}, {"group": "Transitions in Progress", "name": "Diana", "status": "On time", "type": "", "customer": "", "waiting": "", "acetates": "", "screens": "", "approver": "Fabi & Caroline", "notes": "", "launch": "", "trials_due": ""}, {"group": "Transitions in Progress", "name": "Sinclair Paisley", "status": "On time", "type": "", "customer": "", "waiting": "", "acetates": "", "screens": "", "approver": "Fabi & Caroline", "notes": "", "launch": "", "trials_due": ""}, {"group": "Transitions in Progress", "name": "Marquetry", "status": "On time", "type": "", "customer": "", "waiting": "", "acetates": "", "screens": "", "approver": "Fabi & Caroline", "notes": "", "launch": "", "trials_due": ""}, {"group": "Transitions in Progress", "name": "Mercurio", "status": "On time", "type": "", "customer": "", "waiting": "", "acetates": "", "screens": "", "approver": "Fabi & Caroline", "notes": "", "launch": "", "trials_due": ""}, {"group": "Transitions in Progress", "name": "Anjou Stripe", "status": "On time", "type": "", "customer": "", "waiting": "", "acetates": "", "screens": "", "approver": "Fabi & Caroline", "notes": "", "launch": "", "trials_due": ""}, {"group": "Transitions in Progress", "name": "Pasha Paisley", "status": "On time", "type": "", "customer": "", "waiting": "", "acetates": "", "screens": "", "approver": "Fabi & Caroline", "notes": "", "launch": "", "trials_due": ""}, {"group": "Transitions in Progress", "name": "Lotus Batik", "status": "On time", "type": "", "customer": "", "waiting": "", "acetates": "", "screens": "", "approver": "Fabi & Caroline", "notes": "", "launch": "", "trials_due": ""}, {"group": "Transitions in Progress", "name": "Deco Diamonds Panel", "status": "On time", "type": "", "customer": "", "waiting": "", "acetates": "", "screens": "", "approver": "Fabi & Caroline", "notes": "", "launch": "", "trials_due": ""}, {"group": "Transitions in Progress", "name": "Traverse", "status": "On time", "type": "", "customer": "", "waiting": "", "acetates": "", "screens": "", "approver": "Fabi & Caroline", "notes": "", "launch": "", "trials_due": ""}, {"group": "Transitions in Progress", "name": "Brompton", "status": "On time", "type": "", "customer": "", "waiting": "", "acetates": "", "screens": "", "approver": "Fabi & Caroline", "notes": "", "launch": "", "trials_due": ""}, {"group": "Transitions in Progress", "name": "Manor Gate", "status": "On time", "type": "", "customer": "", "waiting": "", "acetates": "", "screens": "", "approver": "Fabi & Caroline", "notes": "", "launch": "", "trials_due": ""}, {"group": "Transitions in Progress", "name": "Tudor Rose", "status": "On time", "type": "", "customer": "", "waiting": "", "acetates": "", "screens": "", "approver": "Fabi & Caroline", "notes": "", "launch": "", "trials_due": ""}, {"group": "Transitions in Progress", "name": "Bespotted", "status": "On time", "type": "", "customer": "", "waiting": "", "acetates": "", "screens": "", "approver": "Fabi & Caroline", "notes": "", "launch": "", "trials_due": ""}, {"group": "Transitions in Progress", "name": "Elsa", "status": "On time", "type": "", "customer": "", "waiting": "", "acetates": "", "screens": "", "approver": "Fabi & Caroline", "notes": "", "launch": "", "trials_due": ""}, {"group": "Transitions in Progress", "name": "Kasari Ikat", "status": "On time", "type": "", "customer": "", "waiting": "", "acetates": "", "screens": "", "approver": "Fabi & Caroline", "notes": "", "launch": "", "trials_due": ""}, {"group": "Transitions in Progress", "name": "Kasumi Diamond", "status": "On time", "type": "", "customer": "", "waiting": "", "acetates": "", "screens": "", "approver": "Fabi & Caroline", "notes": "", "launch": "", "trials_due": ""}, {"group": "Transitions in Progress", "name": "Montpellier", "status": "On time", "type": "", "customer": "", "waiting": "", "acetates": "", "screens": "", "approver": "Fabi & Caroline", "notes": "", "launch": "", "trials_due": ""}, {"group": "Transitions in Progress", "name": "Valais Stripe", "status": "On time", "type": "", "customer": "", "waiting": "", "acetates": "", "screens": "", "approver": "Fabi & Caroline", "notes": "", "launch": "", "trials_due": ""}, {"group": "Transitions in Progress", "name": "Chalon Stripe", "status": "On time", "type": "", "customer": "", "waiting": "", "acetates": "", "screens": "", "approver": "Fabi & Caroline", "notes": "", "launch": "", "trials_due": ""}, {"group": "Transitions in Progress", "name": "Quincy", "status": "On time", "type": "", "customer": "", "waiting": "", "acetates": "", "screens": "", "approver": "Fabi & Caroline", "notes": "", "launch": "", "trials_due": ""}, {"group": "Transitions in Progress", "name": "Otto", "status": "On time", "type": "", "customer": "", "waiting": "", "acetates": "", "screens": "", "approver": "Fabi & Caroline", "notes": "", "launch": "", "trials_due": ""}, {"group": "Transitions in Progress", "name": "Corsini Paisley", "status": "On time", "type": "", "customer": "", "waiting": "", "acetates": "", "screens": "", "approver": "Fabi & Caroline", "notes": "", "launch": "", "trials_due": ""}, {"group": "Transitions in Progress", "name": "Tokat", "status": "On time", "type": "", "customer": "", "waiting": "", "acetates": "", "screens": "", "approver": "Fabi & Caroline", "notes": "", "launch": "", "trials_due": ""}, {"group": "Transitions in Progress", "name": "Taj Trellis", "status": "On time", "type": "", "customer": "", "waiting": "", "acetates": "", "screens": "", "approver": "Fabi & Caroline", "notes": "", "launch": "", "trials_due": ""}, {"group": "Transitions in Progress", "name": "Plaza", "status": "On time", "type": "", "customer": "", "waiting": "", "acetates": "", "screens": "", "approver": "Fabi & Caroline", "notes": "", "launch": "", "trials_due": ""}, {"group": "Transitions in Progress", "name": "Soho Diamond", "status": "On time", "type": "", "customer": "", "waiting": "", "acetates": "", "screens": "", "approver": "Fabi & Caroline", "notes": "", "launch": "", "trials_due": ""}, {"group": "Transitions in Progress", "name": "Fetlock", "status": "On time", "type": "", "customer": "", "waiting": "", "acetates": "", "screens": "", "approver": "Fabi & Caroline", "notes": "", "launch": "", "trials_due": ""}, {"group": "Transitions in Progress", "name": "La Cite", "status": "On time", "type": "", "customer": "", "waiting": "", "acetates": "", "screens": "", "approver": "Fabi & Caroline", "notes": "", "launch": "", "trials_due": ""}, {"group": "Transitions in Progress", "name": "Sinhala Sidewall", "status": "On time", "type": "", "customer": "", "waiting": "", "acetates": "", "screens": "", "approver": "Fabi & Caroline", "notes": "", "launch": "", "trials_due": ""}, {"group": "Transitions in Progress", "name": "Lupita", "status": "On time", "type": "", "customer": "", "waiting": "", "acetates": "", "screens": "", "approver": "Fabi & Caroline", "notes": "", "launch": "", "trials_due": ""}, {"group": "Transitions in Progress", "name": "Linfea", "status": "On time", "type": "", "customer": "", "waiting": "", "acetates": "", "screens": "", "approver": "Fabi & Caroline", "notes": "", "launch": "", "trials_due": ""}, {"group": "Transitions in Progress", "name": "Nanjing", "status": "May be late", "type": "", "customer": "", "waiting": "", "acetates": "", "screens": "", "approver": "Fabi & Caroline", "notes": "", "launch": "", "trials_due": ""}, {"group": "Transitions in Progress", "name": "Bisou Panel Set", "status": "On time", "type": "", "customer": "", "waiting": "", "acetates": "", "screens": "", "approver": "Julianna", "notes": "", "launch": "", "trials_due": ""}, {"group": "Backdrop", "name": "The Bureau (previously Squares)", "status": "On time", "type": "", "customer": "", "waiting": "", "acetates": "", "screens": "", "approver": "Annie", "notes": "", "launch": "Oct 2026", "trials_due": ""}, {"group": "Backdrop", "name": "Illusion De Bois (previously Bricks)", "status": "May be late", "type": "", "customer": "", "waiting": "", "acetates": "", "screens": "", "approver": "Annie", "notes": "", "launch": "Oct 2026", "trials_due": ""}, {"group": "Approved", "name": "Romeo", "status": "", "type": "", "customer": "", "waiting": "", "acetates": "", "screens": "", "approver": "Fabi & Caroline", "notes": "", "launch": "", "trials_due": ""}, {"group": "Approved", "name": "Windermere", "status": "", "type": "", "customer": "", "waiting": "", "acetates": "", "screens": "", "approver": "Paige", "notes": "", "launch": "", "trials_due": ""}, {"group": "Approved", "name": "HM Cats", "status": "", "type": "", "customer": "", "waiting": "", "acetates": "", "screens": "", "approver": "Natalie", "notes": "", "launch": "Feb 2026", "trials_due": ""}, {"group": "Approved", "name": "HM Dogs", "status": "", "type": "", "customer": "", "waiting": "", "acetates": "", "screens": "", "approver": "Natalie", "notes": "", "launch": "Feb 2026", "trials_due": ""}, {"group": "Approved", "name": "Carl D’Aquino Panel Set", "status": "", "type": "", "customer": "", "waiting": "", "acetates": "", "screens": "", "approver": "Tiiu", "notes": "", "launch": "Nov 2025", "trials_due": ""}, {"group": "Approved", "name": "Binary Panel Set", "status": "", "type": "", "customer": "", "waiting": "", "acetates": "", "screens": "", "approver": "Fabi & Caroline", "notes": "", "launch": "", "trials_due": ""}, {"group": "Approved", "name": "Big Botanical", "status": "", "type": "", "customer": "", "waiting": "", "acetates": "", "screens": "", "approver": "Natalie", "notes": "", "launch": "Feb 2026", "trials_due": ""}, {"group": "Approved", "name": "Villa Panel", "status": "", "type": "", "customer": "", "waiting": "", "acetates": "", "screens": "", "approver": "Fabi & Caroline", "notes": "", "launch": "", "trials_due": ""}, {"group": "Approved", "name": "Garden's Trust", "status": "", "type": "", "customer": "", "waiting": "", "acetates": "", "screens": "", "approver": "Tiiu", "notes": "", "launch": "April 2026", "trials_due": ""}, {"group": "Approved", "name": "Up, Up and Away!", "status": "", "type": "", "customer": "", "waiting": "", "acetates": "", "screens": "", "approver": "Tiiu", "notes": "", "launch": "Nov 2025", "trials_due": ""}, {"group": "Approved", "name": "Chinois Palais Panel", "status": "", "type": "", "customer": "", "waiting": "", "acetates": "", "screens": "", "approver": "Fabi & Caroline", "notes": "", "launch": "", "trials_due": ""}, {"group": "Approved", "name": "Sahane (Kilim)", "status": "", "type": "", "customer": "", "waiting": "", "acetates": "", "screens": "", "approver": "Megan Ciraolo", "notes": "", "launch": "April 2026", "trials_due": ""}, {"group": "Approved", "name": "Edinburgh Vine", "status": "", "type": "", "customer": "", "waiting": "", "acetates": "", "screens": "", "approver": "Tiiu", "notes": "", "launch": "Oct 2025", "trials_due": ""}, {"group": "Approved", "name": "Inverness Garden", "status": "", "type": "", "customer": "", "waiting": "", "acetates": "", "screens": "", "approver": "Tiiu", "notes": "", "launch": "Oct 2025", "trials_due": ""}, {"group": "Approved", "name": "Lupita", "status": "", "type": "", "customer": "", "waiting": "", "acetates": "", "screens": "", "approver": "Fabi & Caroline", "notes": "", "launch": "", "trials_due": ""}, {"group": "Approved", "name": "Chinois Palais Panel", "status": "", "type": "", "customer": "", "waiting": "", "acetates": "", "screens": "", "approver": "Fabi & Caroline", "notes": "", "launch": "", "trials_due": ""}, {"group": "Approved", "name": "Chinois Palais Panel", "status": "", "type": "", "customer": "", "waiting": "", "acetates": "", "screens": "", "approver": "Fabi & Caroline", "notes": "", "launch": "", "trials_due": ""}, {"group": "Approved", "name": "Pineapples", "status": "", "type": "", "customer": "", "waiting": "", "acetates": "", "screens": "", "approver": "Fabi & Caroline", "notes": "", "launch": "", "trials_due": ""}, {"group": "Approved", "name": "Pineapples", "status": "", "type": "", "customer": "", "waiting": "", "acetates": "", "screens": "", "approver": "Fabi & Caroline", "notes": "", "launch": "", "trials_due": ""}, {"group": "Approved", "name": "Chinois Palais Panel", "status": "", "type": "", "customer": "", "waiting": "", "acetates": "", "screens": "", "approver": "Fabi & Caroline", "notes": "", "launch": "", "trials_due": ""}, {"group": "Approved", "name": "Daydream", "status": "", "type": "", "customer": "", "waiting": "", "acetates": "", "screens": "", "approver": "Fabi & Caroline", "notes": "", "launch": "", "trials_due": ""}, {"group": "Approved", "name": "Daydream", "status": "", "type": "", "customer": "", "waiting": "", "acetates": "", "screens": "", "approver": "Fabi & Caroline", "notes": "", "launch": "", "trials_due": ""}, {"group": "Approved", "name": "A-Twitter", "status": "", "type": "", "customer": "", "waiting": "", "acetates": "", "screens": "", "approver": "Fabi & Caroline", "notes": "", "launch": "", "trials_due": ""}, {"group": "Approved", "name": "Broderie", "status": "", "type": "", "customer": "", "waiting": "", "acetates": "", "screens": "", "approver": "Annie", "notes": "", "launch": "", "trials_due": ""}, {"group": "Approved", "name": "Garden of Hearts", "status": "", "type": "", "customer": "", "waiting": "", "acetates": "", "screens": "", "approver": "Annie", "notes": "", "launch": "", "trials_due": ""}, {"group": "Approved", "name": "Tasmanian Mimosa RCL", "status": "", "type": "", "customer": "", "waiting": "", "acetates": "", "screens": "", "approver": "Tiiu", "notes": "", "launch": "", "trials_due": ""}, {"group": "Approved", "name": "Flying West RCL", "status": "", "type": "", "customer": "", "waiting": "", "acetates": "", "screens": "", "approver": "Natalie", "notes": "", "launch": "", "trials_due": ""}, {"group": "Approved", "name": "Polka Dot Jungle RCL", "status": "", "type": "", "customer": "", "waiting": "", "acetates": "", "screens": "", "approver": "Tiiu", "notes": "", "launch": "", "trials_due": ""}, {"group": "Approved", "name": "Weeping Pine RCL", "status": "", "type": "", "customer": "", "waiting": "", "acetates": "", "screens": "", "approver": "Tiiu", "notes": "", "launch": "", "trials_due": ""}, {"group": "Approved", "name": "Canopy RCL", "status": "", "type": "", "customer": "", "waiting": "", "acetates": "", "screens": "", "approver": "Tiiu", "notes": "", "launch": "", "trials_due": ""}, {"group": "Approved", "name": "Madame De Pompadour Panel Set RCL", "status": "", "type": "", "customer": "", "waiting": "", "acetates": "", "screens": "", "approver": "Tiiu", "notes": "", "launch": "", "trials_due": ""}, {"group": "Approved", "name": "Daydream RCL", "status": "", "type": "", "customer": "", "waiting": "", "acetates": "", "screens": "", "approver": "Tiiu", "notes": "", "launch": "Sept 2025", "trials_due": ""}, {"group": "Approved", "name": "Polka Dot Jungle RCL", "status": "", "type": "", "customer": "", "waiting": "", "acetates": "", "screens": "", "approver": "Astrid", "notes": "", "launch": "", "trials_due": ""}, {"group": "Approved", "name": "Tiger Palm RCL", "status": "", "type": "", "customer": "", "waiting": "", "acetates": "", "screens": "", "approver": "Astrid", "notes": "", "launch": "", "trials_due": ""}, {"group": "Approved", "name": "Chiang Mai Dragon RCL", "status": "", "type": "", "customer": "", "waiting": "", "acetates": "", "screens": "", "approver": "Astrid", "notes": "", "launch": "", "trials_due": ""}, {"group": "Approved", "name": "French Stripe", "status": "", "type": "", "customer": "", "waiting": "", "acetates": "", "screens": "", "approver": "Paige", "notes": "", "launch": "", "trials_due": ""}, {"group": "Approved", "name": "Feather Bloom", "status": "", "type": "", "customer": "", "waiting": "", "acetates": "", "screens": "", "approver": "", "notes": "", "launch": "", "trials_due": ""}, {"group": "Approved", "name": "Birds", "status": "", "type": "", "customer": "", "waiting": "", "acetates": "", "screens": "", "approver": "", "notes": "", "launch": "", "trials_due": ""}, {"group": "Approved", "name": "Tulip Sisal", "status": "", "type": "", "customer": "", "waiting": "", "acetates": "", "screens": "", "approver": "", "notes": "", "launch": "", "trials_due": ""}, {"group": "Approved", "name": "Poppy Block", "status": "", "type": "", "customer": "", "waiting": "", "acetates": "", "screens": "", "approver": "", "notes": "", "launch": "", "trials_due": ""}, {"group": "Approved", "name": "Nocturnum", "status": "", "type": "", "customer": "", "waiting": "", "acetates": "", "screens": "", "approver": "Natalie", "notes": "", "launch": "", "trials_due": ""}, {"group": "Approved", "name": "Flores Paradisi Panel Set", "status": "", "type": "", "customer": "", "waiting": "", "acetates": "", "screens": "", "approver": "Natalie", "notes": "", "launch": "", "trials_due": ""}, {"group": "Approved", "name": "Tiasquam", "status": "", "type": "", "customer": "", "waiting": "", "acetates": "", "screens": "", "approver": "", "notes": "", "launch": "Sept 2025", "trials_due": ""}, {"group": "Approved", "name": "Indah Batik", "status": "", "type": "", "customer": "", "waiting": "", "acetates": "", "screens": "", "approver": "Tiiu", "notes": "", "launch": "March 2026", "trials_due": ""}, {"group": "Approved", "name": "Summerville Stripe", "status": "", "type": "", "customer": "", "waiting": "", "acetates": "", "screens": "", "approver": "", "notes": "", "launch": "", "trials_due": ""}, {"group": "Approved", "name": "Louise Stripe", "status": "", "type": "", "customer": "", "waiting": "", "acetates": "", "screens": "", "approver": "", "notes": "", "launch": "", "trials_due": ""}, {"group": "Approved", "name": "Westerly Stripe", "status": "", "type": "", "customer": "", "waiting": "", "acetates": "", "screens": "", "approver": "", "notes": "", "launch": "", "trials_due": ""}, {"group": "Approved", "name": "Chatham Stripe", "status": "", "type": "", "customer": "", "waiting": "", "acetates": "", "screens": "", "approver": "", "notes": "", "launch": "", "trials_due": ""}, {"group": "Approved", "name": "Audrey Stripe", "status": "", "type": "", "customer": "", "waiting": "", "acetates": "", "screens": "", "approver": "", "notes": "", "launch": "", "trials_due": ""}, {"group": "Approved", "name": "Coco Stripe", "status": "", "type": "", "customer": "", "waiting": "", "acetates": "", "screens": "", "approver": "", "notes": "", "launch": "", "trials_due": ""}, {"group": "Approved", "name": "Mathis Ticking Stripe", "status": "", "type": "", "customer": "", "waiting": "", "acetates": "", "screens": "", "approver": "", "notes": "", "launch": "", "trials_due": ""}, {"group": "Approved", "name": "Rafe Stripe", "status": "", "type": "", "customer": "", "waiting": "", "acetates": "", "screens": "", "approver": "", "notes": "", "launch": "", "trials_due": ""}, {"group": "Approved", "name": "Rigsby Stripe", "status": "", "type": "", "customer": "", "waiting": "", "acetates": "", "screens": "", "approver": "", "notes": "", "launch": "", "trials_due": ""}, {"group": "Approved", "name": "Tyla Stripe", "status": "", "type": "", "customer": "", "waiting": "", "acetates": "", "screens": "", "approver": "", "notes": "", "launch": "", "trials_due": ""}, {"group": "Approved", "name": "Palazzo Panel Set", "status": "", "type": "", "customer": "", "waiting": "", "acetates": "", "screens": "", "approver": "Annie", "notes": "", "launch": "Oct 2025", "trials_due": ""}, {"group": "Approved", "name": "Amaltas Panel RCL", "status": "", "type": "", "customer": "", "waiting": "", "acetates": "", "screens": "", "approver": "Tiiu", "notes": "", "launch": "July 2026", "trials_due": ""}, {"group": "Approved", "name": "Mahdavi Stripe", "status": "", "type": "", "customer": "", "waiting": "", "acetates": "", "screens": "", "approver": "Tiiu", "notes": "", "launch": "Aug 2026", "trials_due": ""}, {"group": "Approved", "name": "Ellora", "status": "", "type": "", "customer": "", "waiting": "", "acetates": "", "screens": "", "approver": "Tiiu", "notes": "", "launch": "Aug 2026", "trials_due": ""}, {"group": "Approved", "name": "Beasts RCL", "status": "", "type": "", "customer": "", "waiting": "", "acetates": "", "screens": "", "approver": "Natalie", "notes": "", "launch": "April 2026", "trials_due": ""}, {"group": "Approved", "name": "Amal", "status": "", "type": "", "customer": "", "waiting": "", "acetates": "", "screens": "", "approver": "Megan Ciraolo", "notes": "", "launch": "April 2026", "trials_due": ""}, {"group": "Approved", "name": "Nancy Floral", "status": "", "type": "", "customer": "", "waiting": "", "acetates": "", "screens": "", "approver": "Tiiu", "notes": "", "launch": "April 2026", "trials_due": ""}, {"group": "Approved", "name": "Springs Stripe", "status": "", "type": "", "customer": "", "waiting": "", "acetates": "", "screens": "", "approver": "Hilary", "notes": "", "launch": "June 2026", "trials_due": ""}, {"group": "Approved", "name": "Emma Stripe RCL (Medium and Narrow)", "status": "", "type": "", "customer": "", "waiting": "", "acetates": "", "screens": "", "approver": "Hilary", "notes": "", "launch": "June 2026", "trials_due": ""}, {"group": "Approved", "name": "Brighton Pavilion Sisal", "status": "", "type": "", "customer": "", "waiting": "", "acetates": "", "screens": "", "approver": "", "notes": "", "launch": "Aug 2025", "trials_due": ""}, {"group": "Approved", "name": "Abstract Ikat", "status": "", "type": "", "customer": "", "waiting": "", "acetates": "", "screens": "", "approver": "", "notes": "", "launch": "", "trials_due": ""}, {"group": "Approved", "name": "Abstract Ikat", "status": "", "type": "", "customer": "", "waiting": "", "acetates": "", "screens": "", "approver": "", "notes": "", "launch": "", "trials_due": ""}, {"group": "Approved", "name": "Dianthus", "status": "", "type": "", "customer": "", "waiting": "", "acetates": "", "screens": "", "approver": "", "notes": "", "launch": "", "trials_due": ""}, {"group": "Approved", "name": "Garthwaite Botanical", "status": "On time", "type": "", "customer": "", "waiting": "", "acetates": "", "screens": "", "approver": "Tiiu", "notes": "", "launch": "Sep 2026", "trials_due": ""}, {"group": "Approved", "name": "Vibrato Plaid", "status": "On time", "type": "", "customer": "", "waiting": "", "acetates": "", "screens": "", "approver": "Astrid", "notes": "", "launch": "Sep 2026", "trials_due": ""}, {"group": "Approved", "name": "Spellbound", "status": "On time", "type": "", "customer": "", "waiting": "", "acetates": "", "screens": "", "approver": "Astrid", "notes": "", "launch": "Sep 2026", "trials_due": ""}, {"group": "Approved", "name": "Les Fleurs Exotiques", "status": "On time", "type": "", "customer": "", "waiting": "", "acetates": "", "screens": "", "approver": "Tiiu", "notes": "", "launch": "Sep 2026", "trials_due": ""}, {"group": "Approved", "name": "Brighton Pavilon RCL", "status": "On time", "type": "", "customer": "", "waiting": "", "acetates": "", "screens": "", "approver": "Tiiu", "notes": "", "launch": "Oct 2026", "trials_due": ""}, {"group": "Approved", "name": "Philly Harbor Panel Set", "status": "Late", "type": "", "customer": "", "waiting": "", "acetates": "", "screens": "", "approver": "Paige", "notes": "", "launch": "July 2026", "trials_due": ""}, {"group": "Approved", "name": "Century Scenic Toile", "status": "Late", "type": "", "customer": "", "waiting": "", "acetates": "", "screens": "", "approver": "Paige", "notes": "", "launch": "July 2026", "trials_due": ""}, {"group": "Approved", "name": "Le Jardin", "status": "Late", "type": "", "customer": "", "waiting": "", "acetates": "", "screens": "", "approver": "Tiiu", "notes": "", "launch": "April 2026", "trials_due": ""}, {"group": "Approved", "name": "Colette Tree Panel", "status": "May be late", "type": "", "customer": "", "waiting": "", "acetates": "", "screens": "", "approver": "Tiiu", "notes": "", "launch": "Oct 2026", "trials_due": ""}, {"group": "Approved", "name": "Guinone", "status": "On time", "type": "", "customer": "", "waiting": "", "acetates": "", "screens": "", "approver": "Fabi & Caroline", "notes": "", "launch": "", "trials_due": ""}, {"group": "Approved", "name": "Modern Toile", "status": "On time", "type": "", "customer": "", "waiting": "", "acetates": "", "screens": "", "approver": "Fabi & Caroline", "notes": "", "launch": "", "trials_due": ""}, {"group": "Approved", "name": "A-Twitter", "status": "On time", "type": "", "customer": "", "waiting": "", "acetates": "", "screens": "", "approver": "Fabi & Caroline", "notes": "", "launch": "", "trials_due": ""}, {"group": "Approved", "name": "Promenade Panel Set", "status": "May be late", "type": "", "customer": "", "waiting": "", "acetates": "", "screens": "", "approver": "Tiiu", "notes": "", "launch": "June 2026", "trials_due": ""}, {"group": "Approved", "name": "Stud Star Stripe", "status": "", "type": "", "customer": "", "waiting": "", "acetates": "", "screens": "", "approver": "Annie", "notes": "", "launch": "TBD", "trials_due": ""}, {"group": "Approved", "name": "Swirled Greek Column", "status": "", "type": "", "customer": "", "waiting": "", "acetates": "", "screens": "", "approver": "Annie", "notes": "", "launch": "TBD", "trials_due": ""}, {"group": "Approved", "name": "Abstracted Wreaths", "status": "", "type": "", "customer": "", "waiting": "", "acetates": "", "screens": "", "approver": "Annie", "notes": "", "launch": "TBD", "trials_due": ""}, {"group": "Approved", "name": "Turini RCL", "status": "", "type": "", "customer": "", "waiting": "", "acetates": "", "screens": "", "approver": "Annie", "notes": "", "launch": "Feb 2026", "trials_due": ""}, {"group": "Approved", "name": "White Lotus RCL", "status": "", "type": "", "customer": "", "waiting": "", "acetates": "", "screens": "", "approver": "Annie", "notes": "", "launch": "Feb 2026", "trials_due": ""}, {"group": "Approved", "name": "Bloomsbury RCL", "status": "", "type": "", "customer": "", "waiting": "", "acetates": "", "screens": "", "approver": "Annie", "notes": "", "launch": "Feb 2026", "trials_due": ""}, {"group": "Approved", "name": "Animal Kingdom", "status": "May be late", "type": "", "customer": "", "waiting": "", "acetates": "", "screens": "", "approver": "Megan Ciraolo", "notes": "", "launch": "Sep 2026", "trials_due": ""}, {"group": "Approved", "name": "Wycombe Park", "status": "Late", "type": "", "customer": "", "waiting": "", "acetates": "", "screens": "", "approver": "Tiiu", "notes": "", "launch": "June 2026", "trials_due": ""}, {"group": "Approved", "name": "Katama RCL", "status": "On time", "type": "", "customer": "", "waiting": "", "acetates": "", "screens": "", "approver": "Megan Chaney", "notes": "", "launch": "Nov 2026", "trials_due": ""}, {"group": "Approved", "name": "Quansoo RCL", "status": "On time", "type": "", "customer": "", "waiting": "", "acetates": "", "screens": "", "approver": "Megan Chaney", "notes": "", "launch": "Nov 2026", "trials_due": ""}, {"group": "Approved", "name": "Salisbury", "status": "Late", "type": "", "customer": "", "waiting": "", "acetates": "", "screens": "", "approver": "Tiiu", "notes": "", "launch": "June 2026", "trials_due": ""}, {"group": "Approved", "name": "Wander West", "status": "May be late", "type": "", "customer": "", "waiting": "", "acetates": "", "screens": "", "approver": "Megan Ciraolo", "notes": "", "launch": "Oct 2026", "trials_due": ""}, {"group": "Approved", "name": "Chinois Palais RCL", "status": "Late", "type": "", "customer": "", "waiting": "", "acetates": "", "screens": "", "approver": "Tiiu", "notes": "", "launch": "July 2026", "trials_due": ""}, {"group": "Approved", "name": "Combed Plaid", "status": "May be late", "type": "", "customer": "", "waiting": "", "acetates": "", "screens": "", "approver": "Hilary", "notes": "", "launch": "Oct 2026", "trials_due": ""}, {"group": "Approved", "name": "Ribbon Stripe", "status": "May be late", "type": "", "customer": "", "waiting": "", "acetates": "", "screens": "", "approver": "Hilary", "notes": "", "launch": "Oct 2026", "trials_due": ""}, {"group": "Contract", "name": "Wisely", "status": "", "type": "", "customer": "", "waiting": "", "acetates": "", "screens": "", "approver": "Paige", "notes": "", "launch": "", "trials_due": ""}, {"group": "Contract", "name": "Wisely", "status": "", "type": "", "customer": "", "waiting": "", "acetates": "", "screens": "", "approver": "Paige", "notes": "", "launch": "", "trials_due": ""}, {"group": "Contract", "name": "Akakina", "status": "", "type": "", "customer": "", "waiting": "", "acetates": "", "screens": "", "approver": "", "notes": "", "launch": "", "trials_due": ""}, {"group": "Contract", "name": "Princess Grace Rose", "status": "", "type": "", "customer": "", "waiting": "", "acetates": "", "screens": "", "approver": "", "notes": "", "launch": "", "trials_due": ""}, {"group": "Contract", "name": "Garden Side", "status": "", "type": "", "customer": "", "waiting": "", "acetates": "", "screens": "", "approver": "Paige", "notes": "", "launch": "TBD", "trials_due": ""}, {"group": "Dropped", "name": "Marella RCL", "status": "", "type": "", "customer": "", "waiting": "", "acetates": "", "screens": "", "approver": "Natalie", "notes": "", "launch": "ON HOLD", "trials_due": ""}, {"group": "Dropped", "name": "Woodperry RCL", "status": "", "type": "", "customer": "", "waiting": "", "acetates": "", "screens": "", "approver": "Tiiu", "notes": "", "launch": "Aug 2026", "trials_due": ""}, {"group": "Dropped", "name": "Botanica", "status": "", "type": "", "customer": "", "waiting": "", "acetates": "", "screens": "", "approver": "", "notes": "", "launch": "", "trials_due": ""}, {"group": "Dropped", "name": "Klimt Squares", "status": "", "type": "", "customer": "", "waiting": "", "acetates": "", "screens": "", "approver": "Natalie", "notes": "", "launch": "Sept 2025", "trials_due": ""}, {"group": "Dropped", "name": "Madaket Ikat", "status": "", "type": "", "customer": "", "waiting": "", "acetates": "", "screens": "", "approver": "", "notes": "", "launch": "", "trials_due": ""}, {"group": "Dropped", "name": "Constance", "status": "", "type": "", "customer": "", "waiting": "", "acetates": "", "screens": "", "approver": "Natalie", "notes": "", "launch": "Jan 2026", "trials_due": ""}, {"group": "Dropped", "name": "Golden Hills", "status": "", "type": "", "customer": "", "waiting": "", "acetates": "", "screens": "", "approver": "Natalie", "notes": "", "launch": "Jan 2026", "trials_due": ""}, {"group": "Dropped", "name": "Oz Floral", "status": "", "type": "", "customer": "", "waiting": "", "acetates": "", "screens": "", "approver": "Tiiu", "notes": "", "launch": "Oct/Nov 2025", "trials_due": ""}, {"group": "Dropped", "name": "Flowers Sisal", "status": "", "type": "", "customer": "", "waiting": "", "acetates": "", "screens": "", "approver": "Tiiu", "notes": "", "launch": "Aug 2026", "trials_due": ""}, {"group": "Dropped", "name": "Beckett Plaid", "status": "On time", "type": "", "customer": "", "waiting": "", "acetates": "", "screens": "", "approver": "Hilary", "notes": "", "launch": "June 2026", "trials_due": ""}, {"group": "Dropped", "name": "Song Garden", "status": "On time", "type": "", "customer": "", "waiting": "", "acetates": "", "screens": "", "approver": "Fabi & Caroline", "notes": "", "launch": "", "trials_due": ""}, {"group": "Dropped", "name": "Marine Toile CNV", "status": "", "type": "", "customer": "", "waiting": "", "acetates": "", "screens": "", "approver": "Paige", "notes": "", "launch": "Oct 2026", "trials_due": ""}];
+  const late = DATA.filter(i=>['May be late','Late'].includes(i.status) && !['Approved','Dropped'].includes(i.group));
+  const trans = DATA.filter(i=>i.group==='Transitions in Progress');
+
+  const lateEl = document.getElementById('bny-late');
+  late.forEach(i=>{
+    const c=i.status==='Late'?'#e05c5c':'#d29922';
+    lateEl.innerHTML+=`<div style="padding:7px 10px;margin-bottom:4px;background:var(--bg2);border:1px solid var(--border);border-left:3px solid ${c};border-radius:3px">
+      <div style="font-size:11px;font-weight:600">${i.name}</div>
+      <div style="font-size:10px;color:${c};margin-top:2px">${i.status} · ${i.group}</div>
+    </div>`;
+  });
+
+  const transEl = document.getElementById('bny-trans');
+  trans.forEach(i=>{
+    const c=i.status==='May be late'?'#d29922':i.status==='Late'?'#e05c5c':i.status==='On time'?'#3fb950':'#8b949e';
+    transEl.innerHTML+=`<div style="padding:6px 8px;margin-bottom:3px;background:var(--bg2);border:1px solid var(--border);border-radius:3px;display:flex;justify-content:space-between;align-items:center">
+      <span style="font-size:11px">${i.name}</span>
+      <span style="font-size:9px;color:${c}">${i.status||'—'}</span>
+    </div>`;
+  });
+})();
+</script>
+
 <a href="index.html" class="back">← Management</a>
 
 <script>
-// ── CLOCK
 function updateClock(){
   const now=new Date();
   document.getElementById('clock').textContent=now.toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit',hour12:true});
@@ -424,273 +447,191 @@ function updateClock(){
 }
 updateClock(); setInterval(updateClock,30000);
 
-// ── CSV PARSER
-function parseCSV(text){
-  const lines=text.trim().split('\n');
-  const headers=lines[0].split(',').map(h=>h.trim().replace(/^"|"$/g,''));
-  return lines.slice(1).map(line=>{
-    const vals=[];
-    let cur='',inQ=false;
-    for(let c of line){
-      if(c==='"'){inQ=!inQ;}
-      else if(c===','&&!inQ){vals.push(cur.trim());cur='';}
-      else cur+=c;
-    }
-    vals.push(cur.trim());
-    const obj={};
-    headers.forEach((h,i)=>obj[h]=vals[i]||'');
-    return obj;
-  });
-}
-
-// ── MACHINES (static - from Jan 2026 CSV data)
+// ── MACHINES
 const MACHINES=[
-  {name:'Sasha',type:'3600',loc:'BNY',max:12000,yds:11782,color:'#3fb950'},
-  {name:'Glow',type:'3600',loc:'BNY',max:12000,yds:14938,color:'#3fb950'},
-  {name:'Trish',type:'3600',loc:'BNY',max:12000,yds:11643,color:'#3fb950'},
-  {name:'Bianca',type:'570',loc:'BNY',max:2500,yds:650,color:'#d29922'},
-  {name:'LASH',type:'570',loc:'BNY',max:2500,yds:380,color:'#e05c5c'},
-  {name:'Chyna',type:'570',loc:'BNY',max:2500,yds:121,color:'#e05c5c'},
-  {name:'Rhonda',type:'570',loc:'BNY',max:2500,yds:0,color:'#e05c5c'},
+  {name:'Sasha',type:'3600',loc:'BNY',max:12000,jan:11782,color:'#3fb950'},
+  {name:'Glow',type:'3600',loc:'BNY',max:12000,jan:14938,color:'#3fb950'},
+  {name:'Trish',type:'3600',loc:'BNY',max:12000,jan:11643,color:'#3fb950'},
+  {name:'Bianca',type:'570',loc:'BNY',max:2500,jan:650,color:'#d29922'},
+  {name:'LASH',type:'570',loc:'BNY',max:2500,jan:380,color:'#e05c5c'},
+  {name:'Chyna',type:'570',loc:'BNY',max:2500,jan:121,color:'#e05c5c'},
+  {name:'Rhonda',type:'570',loc:'BNY',max:2500,jan:0,color:'#e05c5c'},
+  {name:'Dakota Kai',type:'570',loc:'PP',max:2500,jan:952,color:'#d29922'},
+  {name:'Ruby',type:'800',loc:'PP',max:2500,jan:1632,color:'#d29922'},
+  {name:'XIA',type:'570',loc:'PP',max:2500,jan:403,color:'#e05c5c'},
+  {name:'EMBER',type:'570',loc:'PP',max:2500,jan:854,color:'#e05c5c'},
+  {name:'Dementia',type:'570',loc:'PP',max:2500,jan:313,color:'#e05c5c'},
+  {name:'Valhalla',type:'570',loc:'PP',max:2500,jan:547,color:'#e05c5c'},
+  {name:'Ivy Nile',type:'570',loc:'PP',max:2500,jan:964,color:'#d29922'},
+  {name:'Jacy Jayne',type:'570',loc:'PP',max:2500,jan:885,color:'#e05c5c'},
+  {name:'Zoey',type:'570',loc:'PP',max:2500,jan:718,color:'#e05c5c'},
 ];
 const mgEl=document.getElementById('machine-grid');
 MACHINES.forEach(m=>{
-  const pct=Math.round(m.yds/m.max*100);
+  const pct=Math.round(m.jan/m.max*100);
   const barW=Math.min(pct,100);
   mgEl.innerHTML+=`<div class="machine-row">
     <div class="machine-name">${m.name}<span style="font-size:9px;color:var(--muted);margin-left:4px">${m.loc}</span></div>
     <div class="machine-type">${m.type}</div>
     <div class="machine-bar-wrap"><div class="machine-bar" style="width:${barW}%;background:${m.color}"></div></div>
-    <div class="machine-cap" style="color:var(--text2)">${m.yds.toLocaleString()}</div>
+    <div class="machine-cap" style="color:var(--text2)">${m.jan.toLocaleString()}</div>
     <div class="machine-pct" style="color:${m.color}">${pct}%</div>
   </div>`;
 });
 
-// ── FUNNEL: fetch from GitHub CSV
-const GITHUB_ORDERS_CSV = 'https://raw.githubusercontent.com/petergwebster/Paramount-Dashboards/main/x-lift%20data/X-LIFT%20DATA%20ORDERS.csv';
+// ── FUNNEL: Live from LIFT API
+const LIFT_ORDERS_URL = 'https://bny.lifterp.com/ords/lift/erp/flush/ondemand/1162/orders/orders.csv';
 
-const BNY_STATUSES = [
-  {key:'Orders Unallocated',color:'#58a6ff'},
-  {key:'Waiting for Material',color:'#e05c5c'},
-  {key:'Ready to Print',color:'#d29922'},
-  {key:'Approved to Print',color:'#3fb950'},
-  {key:'In Progress',color:'#3fb950'},
-  {key:'In Packing',color:'#58a6ff'},
-  {key:'Shipped',color:'#3fb950'},
+const BNY_FUNNEL_STATUSES = [
+  {status:'Waiting for Material', color:'#e05c5c', phase:'pre'},
+  {status:'Ready to Print',       color:'#d29922', phase:'pre'},
+  {status:'Waiting for Approval', color:'#d29922', phase:'pre'},
+  {status:'Strike Off',           color:'#d29922', phase:'pre'},
+  {status:'Approved to Print',    color:'#3fb950', phase:'prod'},
+  {status:'In Progress',          color:'#3fb950', phase:'prod'},
+  {status:'In Packing',           color:'#58a6ff', phase:'post'},
+  {status:'Ready to Ship',        color:'#58a6ff', phase:'post'},
+  {status:'Shipped',              color:'#3fb950', phase:'post'},
 ];
 
-// Static fallback
-const FUNNEL_FALLBACK=[
-  {status:'Waiting for Material',orders:409,yards:116245,color:'#e05c5c'},
-  {status:'Orders Unallocated',orders:261,yards:124493,color:'#58a6ff'},
-  {status:'Ready to Print',orders:49,yards:18580,color:'#d29922'},
-  {status:'Approved to Print',orders:47,yards:27272,color:'#3fb950'},
-  {status:'In Progress',orders:101,yards:21444,color:'#3fb950'},
-  {status:'In Packing',orders:103,yards:29474,color:'#58a6ff'},
-  {status:'Shipped',orders:66,yards:2345,color:'#3fb950'},
-];
+function parseCSVOrders(text){
+  const lines = text.trim().split('\n');
+  const headers = lines[0].split(',').map(h=>h.trim().replace(/^"|"$/g,''));
+  const rows = [];
+  for(let i=1;i<lines.length;i++){
+    const vals=[];
+    let cur='', inQ=false;
+    for(const c of lines[i]){
+      if(c==='"'){inQ=!inQ;}
+      else if(c===','&&!inQ){vals.push(cur.trim());cur='';}
+      else cur+=c;
+    }
+    vals.push(cur.trim());
+    if(vals.length >= headers.length){
+      const obj={};
+      headers.forEach((h,idx)=>obj[h]=vals[idx]||'');
+      rows.push(obj);
+    }
+  }
+  return rows;
+}
 
-function renderFunnel(data){
+function renderFunnel(funnelData){
   const fEl=document.getElementById('funnel-dig');
   fEl.innerHTML='';
-  const maxY=Math.max(...data.map(r=>r.yards));
-  data.forEach(r=>{
+  const maxY=Math.max(...funnelData.map(r=>r.yards), 1);
+  funnelData.forEach(r=>{
     const pct=Math.round(r.yards/maxY*100);
     fEl.innerHTML+=`<div class="funnel-row">
       <div class="funnel-status"><div class="f-dot" style="background:${r.color}"></div>${r.status}</div>
       <div class="funnel-bar-wrap"><div class="funnel-bar" style="width:${pct}%;background:${r.color};opacity:.7"></div></div>
       <div class="funnel-orders" style="color:${r.color}">${r.orders}</div>
-      <div class="funnel-yds">${r.yards.toLocaleString()}</div>
+      <div class="funnel-yds">${r.yards>0?r.yards.toLocaleString():'—'}</div>
     </div>`;
   });
 }
 
-// Update live data pill timestamp
-function setLiveTimestamp(){
-  const pill=document.querySelector('.live-pill');
-  if(pill){
-    const now=new Date();
-    pill.innerHTML=`<div class="pulse"></div>Live · ${now.toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit',hour12:true})}`;
-  }
+function updatePipelineChips(funnelData){
+  // Update the pipeline chips at the top with live counts
+  const counts={};
+  funnelData.forEach(r=>counts[r.status]=r.orders);
+
+  // Pre-production chips
+  const preEl=document.getElementById('pipeline-pre');
+  if(preEl) preEl.innerHTML=`
+    <div class="step-chip alert"><span class="step-count">${counts['Waiting for Material']||0}</span>Waiting for Material</div>
+    <div class="step-chip warn"><span class="step-count">${counts['Ready to Print']||0}</span>Ready to Print</div>
+    <div class="step-chip warn"><span class="step-count">${counts['Waiting for Approval']||0}</span>Waiting for Approval</div>
+    ${counts['Strike Off']>0?`<div class="step-chip warn"><span class="step-count">${counts['Strike Off']}</span>Strike Off</div>`:''}
+  `;
+
+  // Production chips
+  const prodEl=document.getElementById('pipeline-prod');
+  if(prodEl) prodEl.innerHTML=`
+    <div class="step-chip clear"><span class="step-count">${counts['Approved to Print']||0}</span>Approved to Print</div>
+    <div class="step-chip clear"><span class="step-count">${counts['In Progress']||0}</span>In Progress</div>
+  `;
+
+  // Post-production chips
+  const postEl=document.getElementById('pipeline-post');
+  if(postEl) postEl.innerHTML=`
+    <div class="step-chip normal"><span class="step-count">${counts['In Packing']||0}</span>In Packing</div>
+    <div class="step-chip normal"><span class="step-count">${counts['Ready to Ship']||0}</span>Ready to Ship</div>
+    <div class="step-chip normal"><span class="step-count">${counts['Shipped']||0}</span>Shipped</div>
+  `;
 }
 
-async function loadFunnelFromCSV(){
+async function loadLiftFunnel(){
+  const fEl=document.getElementById('funnel-dig');
+  fEl.innerHTML='<div style="padding:20px;color:var(--text2);font-size:11px">Loading live LIFT data...</div>';
+
   try {
-    const res=await fetch(GITHUB_ORDERS_CSV);
-    if(!res.ok) throw new Error('CSV fetch failed');
-    const text=await res.text();
-    const rows=parseCSV(text);
+    const res = await fetch(LIFT_ORDERS_URL);
+    if(!res.ok) throw new Error('LIFT API returned '+res.status);
+    const text = await res.text();
+    const rows = parseCSVOrders(text);
 
-    // Filter BNY orders (Division = 609 or location = BNY)
-    // Key columns: ORDER_STATUS, TOTAL_YARDS, DIVISION (or similar)
-    // Check what columns exist
-    const sample=rows[0]||{};
-    const statusCol=Object.keys(sample).find(k=>k.toUpperCase().includes('STATUS')&&k.toUpperCase().includes('ORDER'))||
-                    Object.keys(sample).find(k=>k.toUpperCase().includes('STATUS'))||'ORDER_STATUS';
-    const yardsCol=Object.keys(sample).find(k=>k.toUpperCase().includes('TOTAL_YARD'))||
-                   Object.keys(sample).find(k=>k.toUpperCase().includes('YARD'))||'TOTAL_YARDS';
-    const divCol=Object.keys(sample).find(k=>k.toUpperCase().includes('DIVIS'))||'DIVISION';
-
-    // Filter to BNY (609) and active (non-invoiced) statuses
-    const bnyRows=rows.filter(r=>{
-      const div=(r[divCol]||'').toString();
-      return div==='609'||div.includes('BNY')||div.includes('Digital');
-    });
-
-    // If no division filter works, use all rows (fallback)
-    const activeRows=(bnyRows.length>0?bnyRows:rows).filter(r=>{
-      const s=(r[statusCol]||'').trim();
-      return BNY_STATUSES.some(b=>b.key.toLowerCase()===s.toLowerCase());
-    });
+    // Filter: Digital only, exclude Invoiced
+    const bnyActive = rows.filter(r=>
+      r['ORDER_TYPE']==='Digital' &&
+      r['ORDER_STATUS']!=='Invoiced' &&
+      r['ORDER_STATUS']!==''
+    );
 
     // Group by status
     const grouped={};
-    BNY_STATUSES.forEach(b=>grouped[b.key]={orders:0,yards:0,color:b.color});
-    activeRows.forEach(r=>{
-      const s=(r[statusCol]||'').trim();
-      const match=BNY_STATUSES.find(b=>b.key.toLowerCase()===s.toLowerCase());
-      if(match){
-        grouped[match.key].orders++;
-        const y=parseFloat((r[yardsCol]||'0').replace(/,/g,''))||0;
-        grouped[match.key].yards+=y;
+    BNY_FUNNEL_STATUSES.forEach(s=>grouped[s.status]={orders:0,yards:0,color:s.color});
+
+    bnyActive.forEach(r=>{
+      const s=r['ORDER_STATUS'];
+      if(grouped[s]){
+        grouped[s].orders++;
+        const y=parseFloat(r['TOTAL_YARDS'])||0;
+        grouped[s].yards+=y;
       }
     });
 
-    const funnelData=BNY_STATUSES.map(b=>({
-      status:b.key,
-      orders:grouped[b.key].orders,
-      yards:Math.round(grouped[b.key].yards),
-      color:b.color
-    })).filter(r=>r.orders>0||r.yards>0);
-
-    if(funnelData.length>0){
-      renderFunnel(funnelData);
-      setLiveTimestamp();
-      console.log(`✅ Funnel loaded from CSV: ${activeRows.length} BNY orders`);
-    } else {
-      console.warn('No BNY orders found in CSV — using fallback');
-      renderFunnel(FUNNEL_FALLBACK);
-    }
-  } catch(e){
-    console.warn('CSV load failed, using fallback:', e);
-    renderFunnel(FUNNEL_FALLBACK);
-  }
-}
-
-// ── ON-HAND INVENTORY: live from LIFT API
-async function loadOnHandYards(){
-  try {
-    const res=await fetch('/api/lift?report=OnHandYards');
-    if(!res.ok) throw new Error('API failed');
-    const text=await res.text();
-    if(text.trim().startsWith('{')) throw new Error(JSON.parse(text).error||'API error');
-    const rows=parseCSV(text);
-
-    // Sum BNY (location = BNY or Hub) on-hand yards
-    const locCol=Object.keys(rows[0]||{}).find(k=>k.toUpperCase().includes('LOC'))||'LOCATION';
-    const yardCol=Object.keys(rows[0]||{}).find(k=>k.toUpperCase().includes('YARD'))||'ON_HAND_YARDS';
-
-    const bnyYards=rows
-      .filter(r=>{
-        const loc=(r[locCol]||'').toUpperCase();
-        return loc.includes('BNY')||loc.includes('HUB')||loc.includes('BROOKLYN');
-      })
-      .reduce((sum,r)=>sum+parseFloat((r[yardCol]||'0').replace(/,/g,''))||0,0);
-
-    if(bnyYards>0){
-      // Update WIP total kcard if exists
-      const wipEl=document.querySelector('[data-kpi="onhand"]');
-      if(wipEl) wipEl.textContent=Math.round(bnyYards).toLocaleString();
-      console.log(`✅ OnHand yards loaded: ${Math.round(bnyYards).toLocaleString()} yds at BNY`);
-    }
-  } catch(e){
-    console.warn('OnHandYards API failed:', e.message);
-  }
-}
-
-// ── MONDAY BNY PRE-PROD: live from API
-async function loadMondayBNY(){
-  const BOARD_ID='3855381957';
-  const query=`{boards(ids:[${BOARD_ID}]){groups{id title items_page{items{id name column_values{id text value}}}}}}`;
-  try {
-    const res=await fetch('/api/monday',{
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({query})
-    });
-    if(!res.ok) throw new Error('Monday API failed');
-    const data=await res.json();
-    const board=data?.data?.boards?.[0];
-    if(!board) throw new Error('No board data');
-
-    const items=board.groups.flatMap(g=>
-      (g.items_page?.items||[]).map(item=>({
-        name:item.name,
-        group:g.title,
-        status:item.column_values.find(c=>c.id==='status')?.text||
-               item.column_values.find(c=>c.id==='color')?.text||'',
-        approver:item.column_values.find(c=>c.id==='person')?.text||
-                 item.column_values.find(c=>c.id==='approver')?.text||'',
-        launch:item.column_values.find(c=>c.id==='date4')?.text||
-               item.column_values.find(c=>c.id==='launch_date')?.text||'',
+    const funnelData=BNY_FUNNEL_STATUSES
+      .map(s=>({
+        status:s.status,
+        orders:grouped[s.status].orders,
+        yards:Math.round(grouped[s.status].yards),
+        color:s.color
       }))
-    );
+      .filter(r=>r.orders>0);
 
-    // Count by group
-    const studioCount=items.filter(i=>i.group.toLowerCase().includes('studio')).length;
-    const transCount=items.filter(i=>i.group.toLowerCase().includes('transition')).length;
-    const contractCount=items.filter(i=>i.group.toLowerCase().includes('contract')).length;
-    const approvedCount=items.filter(i=>i.group.toLowerCase().includes('approved')).length;
-    const lateItems=items.filter(i=>
-      ['late','may be late'].includes((i.status||'').toLowerCase()) &&
-      !['approved','dropped'].some(g=>i.group.toLowerCase().includes(g))
-    );
+    renderFunnel(funnelData);
+    updatePipelineChips(funnelData);
 
-    document.getElementById('cnt-studio').textContent=studioCount;
-    document.getElementById('cnt-trans').textContent=transCount;
-    document.getElementById('cnt-contract').textContent=contractCount;
-    document.getElementById('cnt-approved').textContent=approvedCount;
-    document.getElementById('cnt-late').textContent=lateItems.length;
+    // Update live pill timestamp
+    const pill=document.querySelector('.live-pill');
+    if(pill) pill.innerHTML=`<div class="pulse"></div>Live · ${new Date().toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit',hour12:true})} · ${bnyActive.length} orders`;
 
-    // Late items list
-    const lateEl=document.getElementById('bny-late');
-    lateEl.innerHTML='';
-    lateItems.forEach(i=>{
-      const c=(i.status||'').toLowerCase()==='late'?'#e05c5c':'#d29922';
-      lateEl.innerHTML+=`<div style="padding:7px 10px;margin-bottom:4px;background:var(--bg2);border:1px solid var(--border);border-left:3px solid ${c};border-radius:3px">
-        <div style="font-size:11px;font-weight:600">${i.name}</div>
-        <div style="font-size:10px;color:${c};margin-top:2px">${i.status} · ${i.group}</div>
-      </div>`;
-    });
+    console.log(`✅ LIFT Funnel loaded: ${bnyActive.length} Digital active orders`);
 
-    // Transitions list
-    const transEl=document.getElementById('bny-trans');
-    transEl.innerHTML='';
-    items.filter(i=>i.group.toLowerCase().includes('transition')).forEach(i=>{
-      const c=(i.status||'').toLowerCase()==='may be late'?'#d29922':
-               (i.status||'').toLowerCase()==='late'?'#e05c5c':
-               (i.status||'').toLowerCase()==='on time'?'#3fb950':'#8b949e';
-      transEl.innerHTML+=`<div style="padding:6px 8px;margin-bottom:3px;background:var(--bg2);border:1px solid var(--border);border-radius:3px;display:flex;justify-content:space-between;align-items:center">
-        <span style="font-size:11px">${i.name}</span>
-        <span style="font-size:9px;color:${c}">${i.status||'—'}</span>
-      </div>`;
-    });
-
-    // Update status pill
-    const now=new Date();
-    document.getElementById('monday-status').textContent=`✓ Live · ${now.toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit',hour12:true})}`;
-    document.getElementById('monday-status').style.color='#3fb950';
-    document.getElementById('monday-status').style.borderColor='rgba(63,185,80,.3)';
-    document.getElementById('monday-status').style.background='rgba(63,185,80,.1)';
-
-    console.log(`✅ Monday BNY loaded: ${items.length} items`);
   } catch(e){
-    console.warn('Monday load failed:', e.message);
-    document.getElementById('monday-status').textContent='⚠ Monday load failed — showing cached data';
+    console.warn('LIFT Funnel failed, using fallback:', e.message);
+    // Fallback to last known good data
+    const FALLBACK=[
+      {status:'Waiting for Material',orders:345,yards:93392,color:'#e05c5c'},
+      {status:'Ready to Print',      orders:30, yards:4568, color:'#d29922'},
+      {status:'Waiting for Approval',orders:25, yards:1316, color:'#d29922'},
+      {status:'Strike Off',          orders:10, yards:702,  color:'#d29922'},
+      {status:'Approved to Print',   orders:4,  yards:356,  color:'#3fb950'},
+      {status:'In Progress',         orders:64, yards:12770,color:'#3fb950'},
+      {status:'In Packing',          orders:54, yards:9468, color:'#58a6ff'},
+      {status:'Ready to Ship',       orders:3,  yards:262,  color:'#58a6ff'},
+      {status:'Shipped',             orders:3,  yards:410,  color:'#3fb950'},
+    ];
+    renderFunnel(FALLBACK);
+    const pill=document.querySelector('.live-pill');
+    if(pill) pill.innerHTML=`<div class="pulse" style="background:var(--amber)"></div>Cached · Mar 20`;
   }
 }
 
-// ── WIP TREND CHART (static historical)
+loadLiftFunnel();
+
+// ── WIP TREND
 const wipCtx=document.getElementById('wipTrendChart').getContext('2d');
 new Chart(wipCtx,{type:'bar',data:{
   labels:['Jul','Aug','Sep','Oct','Nov','Dec','Jan'],
@@ -699,22 +640,17 @@ new Chart(wipCtx,{type:'bar',data:{
     {label:'Remaining WIP',data:[29510,23180,27520,18510,23480,46600,46601],backgroundColor:'rgba(88,166,255,.25)',borderRadius:2,barPercentage:.5},
     {label:'Goal',data:[100000,100000,100000,100000,100000,100000,100000],type:'line',borderColor:'rgba(63,185,80,.5)',borderDash:[4,4],borderWidth:1.5,pointRadius:0,fill:false},
   ]
-},options:{
+},{options:{
   responsive:true,maintainAspectRatio:true,
   plugins:{
     legend:{labels:{color:'#8b949e',font:{size:10},boxWidth:10,padding:10}},
-    tooltip:{backgroundColor:'#1c2330',borderColor:'#2d3748',borderWidth:1,titleColor:'#e6edf3',bodyColor:'#8b949e',padding:8,callbacks:{label:function(ctx){return ' '+ctx.dataset.label+': '+ctx.raw.toLocaleString()+' yds';}}}
+    tooltip:{backgroundColor:'#1c2330',borderColor:'#2d3748',borderWidth:1,titleColor:'#e6edf3',bodyColor:'#8b949e',padding:8,callbacks:{label:ctx=>` ${ctx.dataset.label}: ${ctx.raw.toLocaleString()} yds`}}
   },
   scales:{
     x:{grid:{color:'rgba(45,55,72,.5)'},ticks:{color:'#8b949e',font:{size:10}},stacked:true},
-    y:{grid:{color:'rgba(45,55,72,.5)'},ticks:{color:'#8b949e',font:{size:10},callback:function(v){return v>=1000?Math.round(v/1000)+'K':v;}},stacked:true}
+    y:{grid:{color:'rgba(45,55,72,.5)'},ticks:{color:'#8b949e',font:{size:10},callback:v=>v>=1000?Math.round(v/1000)+'K':v},stacked:true}
   }
 }});
-
-// ── INIT: load all live data
-loadFunnelFromCSV();
-loadOnHandYards();
-loadMondayBNY();
 </script>
 </body>
 </html>
