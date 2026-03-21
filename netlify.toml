@@ -1,11 +1,18 @@
-# Paramount Prints Dashboard
 [build]
   edge_functions = "netlify/edge-functions"
 
+# Monday.com API proxy (existing)
 [[edge_functions]]
-  function = "monday"
   path = "/api/monday"
+  function = "monday"
 
+# LIFT ERP — health check / session ping (must be before the wildcard route)
 [[edge_functions]]
+  path = "/api/lift/ping"
+  function = "lift-ping"
+
+# LIFT ERP — generic CSV proxy
+# Usage: /api/lift/{CSVName}  e.g. /api/lift/Data_Orders_All
+[[edge_functions]]
+  path = "/api/lift/:name"
   function = "lift"
-  path = "/api/lift"
