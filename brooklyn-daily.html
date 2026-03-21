@@ -480,7 +480,7 @@ MACHINES.forEach(m=>{
 });
 
 // ── FUNNEL: Live from LIFT API
-const LIFT_ORDERS_URL = 'https://bny.lifterp.com/ords/lift/erp/flush/ondemand/1162/orders/orders.csv';
+const LIFT_ORDERS_URL = '/api/lift?report=orders';
 
 const BNY_FUNNEL_STATUSES = [
   {status:'Waiting for Material', color:'#e05c5c', phase:'pre'},
