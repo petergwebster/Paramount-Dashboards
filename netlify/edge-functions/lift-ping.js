@@ -1,118 +1,91 @@
+const BASE_URL = 'https://bny.lifterp.com/ords/lift/erp/flush/ondemand/1162';
+
 export default async (request, context) => {
-  // Handle CORS preflight
   if (request.method === 'OPTIONS') {
     return new Response(null, {
       status: 204,
       headers: {
-        'Access-Control-Allow-Origin': 'https://paramountprints-dash.netlify.app',
+        'Access-Control-Allow-Origin': '*',
         'Access-Control-Allow-Methods': 'GET, OPTIONS',
-        'Access-Control-Allow-Headers': 'Content-Type',
       }
     });
   }
 
-  // Cookie stored as full "name=value" pair in Netlify env var
-  // e.g. LIFT_SESSION_COOKIE = "ORA_WWV-R15muB6cIPZZ4GVaomS-uSF1=ORA_WWV-R15muB6cIPZZ4GVaomS-uSF1"
-  const cookie = Deno.env.get('LIFT_SESSION_COOKIE');
   const timestamp = new Date().toISOString();
-
-  // Check 1 — env var present?
-  if (!cookie) {
-    return new Response(JSON.stringify({
-      status: 'error',
-      timestamp,
-      checks: {
-        env_var: { pass: false, message: 'LIFT_SESSION_COOKIE is not set in Netlify environment variables' },
-        lift_reachable: { pass: null, message: 'Skipped — no cookie to test with' },
-        session_valid: { pass: null, message: 'Skipped — no cookie to test with' },
-      },
-      action_required: 'Add LIFT_SESSION_COOKIE to Netlify environment variables as full name=value pair'
-    }), {
-      status: 500,
-      headers: {
-        'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': 'https://paramountprints-dash.netlify.app',
-      }
-    });
-  }
-
-  // Check 2 — use the lightest CSV we have (Machine_Type is small)
-  const testUrl = 'https://bny.lifterp.com/ords/lift/erp/flush/ondemand/1162/Machine_Type/Machine_Type.csv';
+  const testUrl = `${BASE_URL}/OnHandYards/OnHandYards.csv`;
 
   let liftReachable = false;
-  let sessionValid = false;
+  let dataValid = false;
   let rowCount = 0;
-  let errorMessage = null;
   let responseStatus = null;
+  let errorMessage = null;
 
   try {
     const response = await fetch(testUrl, {
       headers: {
-        'Cookie': cookie,
         'Accept': 'text/csv,*/*',
         'User-Agent': 'ParamountPrints-Dashboard/1.0',
       }
     });
 
     responseStatus = response.status;
-    liftReachable = true;
+    liftReachable = response.ok;
 
-    const body = await response.text();
+    if (response.ok) {
+      const body = await response.text();
 
-    // Detect expired session (LIFT redirects to login HTML)
-    if (body.trim().startsWith('<!DOCTYPE') || body.trim().startsWith('<html')) {
-      sessionValid = false;
-      errorMessage = 'LIFT returned an HTML login page — session cookie is expired';
-    } else if (!response.ok) {
-      sessionValid = false;
-      errorMessage = `LIFT returned HTTP ${response.status}`;
+      if (body.trim().startsWith('<!DOCTYPE') || body.trim().startsWith('<html')) {
+        dataValid = false;
+        errorMessage = 'LIFT returned HTML instead of CSV';
+      } else {
+        dataValid = true;
+        rowCount = body.trim().split('\n').length - 1;
+      }
     } else {
-      sessionValid = true;
-      // Count rows (subtract 1 for header)
-      rowCount = body.trim().split('\n').length - 1;
+      errorMessage = `LIFT returned HTTP ${response.status}`;
     }
 
   } catch (err) {
     liftReachable = false;
-    errorMessage = `Network error reaching LIFT: ${err.message}`;
+    errorMessage = `Network error: ${err.message}`;
   }
 
-  const allGood = liftReachable && sessionValid;
+  const allGood = liftReachable && dataValid;
 
   const result = {
     status: allGood ? 'ok' : 'error',
     timestamp,
+    endpoint_tested: testUrl,
     checks: {
-      env_var: {
-        pass: true,
-        message: `LIFT_SESSION_COOKIE is set (${cookie.length} chars)`
-      },
       lift_reachable: {
         pass: liftReachable,
         message: liftReachable
-          ? `LIFT responded with HTTP ${responseStatus}`
-          : errorMessage
+          ? `LIFT responded HTTP ${responseStatus}`
+          : (errorMessage || 'Unreachable')
       },
-      session_valid: {
-        pass: sessionValid,
-        message: sessionValid
-          ? `Session active — Machine_Type CSV returned ${rowCount} rows`
-          : (errorMessage || 'Session invalid')
+      data_valid: {
+        pass: dataValid,
+        message: dataValid
+          ? `OnHandYards returned ${rowCount} rows`
+          : (errorMessage || 'Invalid response')
       }
-    }
+    },
+    available_endpoints: [
+      'orders', 'products', 'shipments', 'po', 'po_details',
+      'shipmentshub', 'invoiceshub', 'printJobs',
+      'InvoiceSummary', 'CreditSummary', 'InvoiceAdjustments', 'OnHandYards'
+    ]
   };
 
   if (!allGood) {
-    result.action_required = sessionValid === false
-      ? 'Refresh cookie in DevTools → update LIFT_SESSION_COOKIE in Netlify env vars as full name=value pair → trigger redeploy'
-      : errorMessage;
+    result.action_required = errorMessage;
   }
 
   return new Response(JSON.stringify(result, null, 2), {
     status: allGood ? 200 : 503,
     headers: {
       'Content-Type': 'application/json',
-      'Access-Control-Allow-Origin': 'https://paramountprints-dash.netlify.app',
+      'Access-Control-Allow-Origin': '*',
       'Cache-Control': 'no-store',
     }
   });
